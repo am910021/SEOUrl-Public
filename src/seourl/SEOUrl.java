@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Data;
@@ -34,16 +36,28 @@ public class SEOUrl {
     /**
      * @param args the command line arguments
      */
-    static Date startTime = new Date();
-    static List<String> urls = new ArrayList<String>();
+    Date startTime = new Date();
+    List<String> urls = new ArrayList<String>();
+    Map<String,  List<Long>> record = new TreeMap<>();
 
-    static String html1 = "<!DOCTYPE html><html lang=\"zh-Hant-TW\"><head><title>域名例表</title><meta charset=\"UTF-8\"><style>a:link{color: #0000FF;}a:visited{color: #FF0000;}</style></head><body><h1>域名例表</h1>";
-    static String html2 = "<p>輸出時間:%s</p>";
-    static String html3 = "</body></html>";
-    static String tLink1 = "<a href=\"%s\"  target=\"_blank\">%s</a></br>";
+    static final String html1 = "<!DOCTYPE html><html lang=\"zh-Hant-TW\"><head><title>域名例表</title><meta charset=\"UTF-8\"><style>a:link{color: #0000FF;}a:visited{color: #FF0000;}</style></head><body><h1>域名例表</h1>";
+    static final String html2 = "<p>輸出時間:%s</p>";
+    static final String html3 = "</body></html>";
+    static final String tLink1 = "<a href=\"%s\"  target=\"_blank\">%s</a></br>";
 
     public static void main(String[] args) {
         // TODO code application logic here
+        Template t = new Template("index");
+        t.insertByKey("time", "aaaaaaa");
+        t.insertByKey("hasRecord", "aaaaaaa","bbbbbbbbb");
+        t.insertByKey("nonRecord", "bbbbbbb","aaaaaaa");
+        t.creatFile();
+        
+        //SEOUrl s = new SEOUrl();
+       // s.start();
+    }
+
+    public void start() {
         loadUrl();
         for (String url : urls) {
             Process p = new Process(url, startTime);
@@ -56,13 +70,13 @@ public class SEOUrl {
         }
     }
 
-    private static void writeToFile() throws Exception {
+    private void writeToFile() throws Exception {
         SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         String path0 = "output/" + sdFormat2.format(startTime) + "/";
         String path1 = sdFormat2.format(startTime) + "/";
 
-        BufferedWriter writer0 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path0 + "index.html"),"UTF-8"));
+        BufferedWriter writer0 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path0 + "index.html"), "UTF-8"));
         writer0.append(html1);
         writer0.append(String.format(html2, sdFormat2.format(startTime)));
         for (String url : urls) {
@@ -74,7 +88,7 @@ public class SEOUrl {
 
     }
 
-    static void loadUrl() {
+    void loadUrl() {
         try {
             File file = new File("input.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));

@@ -144,10 +144,6 @@ public class Process {
         String path1 = path0 + url + "-list.html";
         checkDir(path0);
 
-        System.out.println(path1);
-        
-        
-        
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path1),"UTF-8"));
         writer.append(String.format(html1, url, url));
         writer.append(String.format(html2, sdFormat.format(current)));
@@ -163,38 +159,38 @@ public class Process {
         writer.close();
     }
 
-    private void writeToFile2() throws IOException {
-        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
-        SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-
-        String path0 = "output/" + sdFormat2.format(startTime) + "/";
-        String path1 = path0 + "files/" + url + "/";
-        checkDir(path1);
-
-        BufferedWriter writer0 = new BufferedWriter(new FileWriter(path0 + "files/" + url + "-list.html", false));
-        writer0.append(String.format(html4, url, url));
-        writer0.append(String.format(html5, sdFormat2.format(startTime)));
-
-        for (Entry<Integer, List<Long>> item : snapshots.entrySet()) {
-            String path3 = path1 + item.getKey().toString() + ".html";
-
-            writer0.append(String.format(tLink2, url + "/" + item.getKey() + ".html", item.getKey().toString()));
-
-            Date current = new Date();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path3, false));
-            writer.append(String.format(html1, url, item.getKey(), url, item.getKey()));
-            writer.append(String.format(html2, sdFormat.format(current)));
-            for (Long snapshot : item.getValue()) {
-                writer.append(String.format(tLink, snapshot, url, snapshot));
-            }
-            writer.append(html3);
-            writer.close();
-        }
-
-        writer0.append(html6);
-        writer0.close();
-
-    }
+//    private void writeToFile2() throws IOException {
+//        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+//        SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+//
+//        String path0 = "output/" + sdFormat2.format(startTime) + "/";
+//        String path1 = path0 + "files/" + url + "/";
+//        checkDir(path1);
+//
+//        BufferedWriter writer0 = new BufferedWriter(new FileWriter(path0 + "files/" + url + "-list.html", false));
+//        writer0.append(String.format(html4, url, url));
+//        writer0.append(String.format(html5, sdFormat2.format(startTime)));
+//
+//        for (Entry<Integer, List<Long>> item : snapshots.entrySet()) {
+//            String path3 = path1 + item.getKey().toString() + ".html";
+//
+//            writer0.append(String.format(tLink2, url + "/" + item.getKey() + ".html", item.getKey().toString()));
+//
+//            Date current = new Date();
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(path3, false));
+//            writer.append(String.format(html1, url, item.getKey(), url, item.getKey()));
+//            writer.append(String.format(html2, sdFormat.format(current)));
+//            for (Long snapshot : item.getValue()) {
+//                writer.append(String.format(tLink, snapshot, url, snapshot));
+//            }
+//            writer.append(html3);
+//            writer.close();
+//        }
+//
+//        writer0.append(html6);
+//        writer0.close();
+//
+//    }
 
     private boolean checkDir(String path) {
         try {
