@@ -6,23 +6,20 @@
 package seourl;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lombok.Data;
 import lombok.Getter;
+import seourl.pack.WebArchivePack;
 
 /**
  *
@@ -36,65 +33,52 @@ public class SEOUrl {
     /**
      * @param args the command line arguments
      */
-    Date startTime = new Date();
-    List<String> urls = new ArrayList<String>();
-    Map<String, List<Long>> record = new TreeMap<>();
-
-    static final String html1 = "<!DOCTYPE html><html lang=\"zh-Hant-TW\"><head><title>域名例表</title><meta charset=\"UTF-8\"><style>a:link{color: #0000FF;}a:visited{color: #FF0000;}</style></head><body><h1>域名例表</h1>";
-    static final String html2 = "<p>輸出時間:%s</p>";
-    static final String html3 = "</body></html>";
-    static final String tLink1 = "<a href=\"%s\"  target=\"_blank\">%s</a></br>";
+    private Date startTime = new Date();
+    private List<String> urls = new ArrayList<String>();
+    // url year loadTime snapshots
+    private Map<String, WebArchivePack> mWebArchive = new HashMap<>();
 
     public static void main(String[] args) {
         // TODO code application logic here
-        Template t = new Template("webarchive");
-        t.setSaveName("asdasd.com");
-        t.setSavePath("file");
-
-        t.insertByKey("title", "aaaaaaa");
-        t.insertByKey("time", "isTime");
-        t.insertByKey("domainName", "asdasd.com");
-        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
-        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
-        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
-        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
-        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
-
-        t.creatFile();
-
-        //SEOUrl s = new SEOUrl();
-        // s.start();
+        SEOUrl s = new SEOUrl();
+        s.start();
     }
 
     public void start() {
         loadUrl();
-        for (String url : urls) {
-            Process p = new Process(url, startTime);
-            p.start();
+        for (String u : urls) {
+            WebArchiveFilter wf = new WebArchiveFilter(u);
+            wf.doStart();
+            mWebArchive.put(u, wf.getWap());
         }
-        try {
-            writeToFile();
-        } catch (Exception ex) {
-            Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        write2File();
     }
 
-    private void writeToFile() throws Exception {
-        SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-
-        String path0 = "output/" + sdFormat2.format(startTime) + "/";
-        String path1 = sdFormat2.format(startTime) + "/";
-
-        BufferedWriter writer0 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path0 + "index.html"), "UTF-8"));
-        writer0.append(html1);
-        writer0.append(String.format(html2, sdFormat2.format(startTime)));
+    private void write2File() {
+        Template tIndex = new Template("index", startTime);
+        tIndex.insertByKey("time", Tools.getFormatDate1(startTime));
+        Template tWebArch;
         for (String url : urls) {
-            writer0.append(String.format(tLink1, "files/" + url + "-list.html", url));
+            int size = this.mWebArchive.get(url).getTotalSize();
+            if (size == 0) {
+                tIndex.insertByKey("nonRecord", url);
+            } else {
+                tIndex.insertByKey("hasRecord", String.format("files/%s.html", url), url);
+                tWebArch = new Template("webarchive", startTime);
+                tWebArch.setSavePath("files");
+                tWebArch.setSaveName(url);
+                tWebArch.insertByKey("title", url);
+                tWebArch.insertByKey("domainName", url);
+                tWebArch.insertByKey("time", Tools.getFormatDate1(this.mWebArchive.get(url).getReadTime()));
+                for (Entry<Integer, List<Long>> entry : this.mWebArchive.get(url).getSnapshots().entrySet()) {
+                    for (long snapshot : entry.getValue()) {
+                        tWebArch.insertByKey("record", snapshot, url, snapshot);
+                    }
+                }
+                tWebArch.creatFile();
+            }
         }
-
-        writer0.append(html3);
-        writer0.close();
-
+        tIndex.creatFile();
     }
 
     void loadUrl() {

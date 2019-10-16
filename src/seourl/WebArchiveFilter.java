@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import javafx.util.Pair;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import seourl.pack.WebArchivePack;
 
 /**
  *
@@ -36,8 +38,8 @@ import org.json.JSONObject;
  */
 public class WebArchiveFilter {
 
-    @Getter 
-    private Map<Integer, Pair<Long, List<Long>>> snapshots = new TreeMap<>();
+    @Getter
+    WebArchivePack wap = new WebArchivePack();
     private String url;
 
     public WebArchiveFilter(String url) {
@@ -45,8 +47,22 @@ public class WebArchiveFilter {
     }
 
     private boolean getYears() {
+        String s = "";
+        boolean status = false;
+        while (!status) {
+            System.out.printf("取讀 %s 年代資料．．．．．", url);
+            try {
+                s = getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s&collection=web&output=json", url), 9000);
+                status = true;
+                System.out.println("功成。");
+            } catch (Exception ex) {
+                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("失敗。");
+                Tools.sleep(1000);
+            }
+        }
+
         try {
-            String s = getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s&collection=web&output=json", url), 9000);
             JSONObject jsonO = new JSONObject(s);
             if (!jsonO.has("years")) {
                 return false;
@@ -55,13 +71,13 @@ public class WebArchiveFilter {
             Iterator<String> keys = jsonYears.keys();
             while (keys.hasNext()) {
                 //
-                Pair<Long, List<Long>> pair = new Pair<>(System.currentTimeMillis(), new ArrayList<Long>());
-                snapshots.put(Integer.parseInt(keys.next()), pair);
+                wap.setReadTime(System.currentTimeMillis());
+                wap.put(Integer.parseInt(keys.next()), new ArrayList<Long>());
             }
             Thread.sleep(500);
         } catch (Exception ex) {
             Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         }
 
@@ -72,14 +88,14 @@ public class WebArchiveFilter {
         if (!getYears()) {
             return;
         }
-        for (Entry<Integer, Pair<Long, List<Long>>> item : snapshots.entrySet()) {
+        for (Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
             getSnapshotsPerYear(item.getKey());
-            Tools.sleep(300);
+            Tools.sleep(100);
         }
     }
 
     private void getSnapshotsPerYear(int year) {
-        List<Long> tmp = snapshots.get(year).getValue();
+        List<Long> tmp = wap.getSnapshots().get(year);
         String s = "";
         boolean status = false;
         while (!status) {
@@ -88,13 +104,13 @@ public class WebArchiveFilter {
                 s = getJSON(String.format("http://web.archive.org/__wb/calendarcaptures?url=%s&selected_year=%d", url, year), 9000);
                 status = true;
                 System.out.println("功成。");
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
                 Tools.sleep(1000);
             }
         }
-        
+
         try {
             JSONArray jsonarray = new JSONArray(s);
             for (int i = 0; i < jsonarray.length(); i++) {
@@ -126,9 +142,10 @@ public class WebArchiveFilter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        wap.addTotalSize(tmp.size());
     }
 
-    private static String getJSON(String url, int timeout) throws IOException {
+    private static String getJSON(String url, int timeout) throws Exception {
 
         URL u = new URL(url);
         HttpURLConnection c = (HttpURLConnection) u.openConnection();

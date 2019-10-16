@@ -29,8 +29,6 @@
 <body>
     <h1>域名例表</h1>
     <p>{% key=time content=建立時間:%s %}</p>
-    <a href="https://www.coolaler.com">google2</a></br>
-
     <p>Web Archive 記錄</p>
     <table style="width:100%">
         <tr>
@@ -38,7 +36,7 @@
             <th>無</th>
         </tr>
         {% key=hasRecord content=<tr><td><a href="%s" target="_blank">%s</a></br></td><td> </td></tr> %}
-        {% key=nonRecord content=<tr><td> </td><td><a href="%s" target="_blank">%s</a></br></td></tr> %}
+        {% key=nonRecord content=<tr><td> </td><td>%s</br></td></tr> %}
 		{% key=Records content= %}
     </table>
 

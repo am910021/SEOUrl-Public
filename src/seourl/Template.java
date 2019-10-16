@@ -36,7 +36,7 @@ public class Template {
     String type;
     private Map<String, Pair<String, String>> tVars = new HashMap<>();
     private Map<String, List<String>> records = new HashMap<>();
-    private Date startTime = new Date();
+    private Date startTime;
 
     private List<String> template = new ArrayList<>();
     private Map<Integer, String> log = new HashMap<>();
@@ -46,7 +46,8 @@ public class Template {
     @Setter
     private String saveName;
 
-    public Template(String type) {
+    public Template(String type, Date startTime) {
+        this.startTime = startTime;
         this.type = type;
         loadTemplate();
     }

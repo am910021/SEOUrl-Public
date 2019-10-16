@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -19,7 +21,6 @@ import java.util.Random;
  * @author yuri
  */
 public class Tools {
-    
 
     static Random ran = new Random();
 
@@ -29,7 +30,6 @@ public class Tools {
         }
         return ran.nextInt((max - min) + 1) + min;
     }
-
 
     public static void sleep(int millis) {
         try {
@@ -59,4 +59,21 @@ public class Tools {
         return true;
     }
 
+    static String getFormatDate1(long mi) {
+        return getFormatDate1(new Date(mi));
+    }
+
+    static String getFormatDate1(Date date) {
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+        return sdFormat.format(date);
+    }
+
+    static String getFormatDate2(long mi) {
+        return getFormatDate2(new Date(mi));
+    }
+
+    static String getFormatDate2(Date date) {
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        return sdFormat.format(date);
+    }
 }
