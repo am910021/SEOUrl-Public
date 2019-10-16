@@ -38,7 +38,7 @@ public class SEOUrl {
      */
     Date startTime = new Date();
     List<String> urls = new ArrayList<String>();
-    Map<String,  List<Long>> record = new TreeMap<>();
+    Map<String, List<Long>> record = new TreeMap<>();
 
     static final String html1 = "<!DOCTYPE html><html lang=\"zh-Hant-TW\"><head><title>域名例表</title><meta charset=\"UTF-8\"><style>a:link{color: #0000FF;}a:visited{color: #FF0000;}</style></head><body><h1>域名例表</h1>";
     static final String html2 = "<p>輸出時間:%s</p>";
@@ -47,14 +47,23 @@ public class SEOUrl {
 
     public static void main(String[] args) {
         // TODO code application logic here
-        Template t = new Template("index");
-        t.insertByKey("time", "aaaaaaa");
-        t.insertByKey("hasRecord", "aaaaaaa","bbbbbbbbb");
-        t.insertByKey("nonRecord", "bbbbbbb","aaaaaaa");
+        Template t = new Template("webarchive");
+        t.setSaveName("asdasd.com");
+        t.setSavePath("file");
+
+        t.insertByKey("title", "aaaaaaa");
+        t.insertByKey("time", "isTime");
+        t.insertByKey("domainName", "asdasd.com");
+        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
+        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
+        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
+        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
+        t.insertByKey("record", 2342342, "bbbbbbb", 2342342);
+
         t.creatFile();
-        
+
         //SEOUrl s = new SEOUrl();
-       // s.start();
+        // s.start();
     }
 
     public void start() {

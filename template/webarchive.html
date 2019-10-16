@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    {% key=title content=<title>域名例表 - %s</title>  %}
+    <style>
+        a:link {
+            color: #0000FF;
+        }
+        
+        a:visited {
+            color: #FF0000;
+        }
+        
+        th {
+            text-align: left;
+        }
+        
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% key=domainName content=<h1>域名例表:%s</h1> %}
+    {% key=time content=<p>建立時間:%s</p> %}
+    {% key=record content=<a href="http://web.archive.org/web/%d/http://%s/" target="_blank">%d</a><br> %}
+
+</body>
+
+</html>

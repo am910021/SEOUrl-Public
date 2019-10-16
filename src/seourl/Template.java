@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javafx.util.Pair;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -39,6 +40,11 @@ public class Template {
 
     private List<String> template = new ArrayList<>();
     private Map<Integer, String> log = new HashMap<>();
+
+    @Setter
+    private String savePath;
+    @Setter
+    private String saveName;
 
     public Template(String type) {
         this.type = type;
@@ -103,11 +109,15 @@ public class Template {
     void creatFile() {
         SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String path0 = "output2/" + sdFormat2.format(startTime) + "/";
+        if (savePath != null) {
+            path0 += savePath + "/";
+        }
+
         checkDir(path0);
 
         try {
             Path source = Paths.get(String.format("template/%s.html", type));
-            Path dist = Paths.get(path0 + type + ".html");
+            Path dist = Paths.get(path0 + (saveName != null ? saveName : type) + ".html");
             Files.copy(source.toAbsolutePath(), dist.toAbsolutePath());
             List<String> output = new ArrayList<>();
             List<String> tmp;
