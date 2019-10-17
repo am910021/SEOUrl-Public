@@ -7,25 +7,56 @@ package seourl.pack;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  *
  * @author Yuri
  */
+@ToString
 public class JumingPack {
-    @Getter @Setter
+
+    @Getter
+    @Setter
     boolean reg = false;
-    @Getter @Setter
+    @Getter
+    @Setter
     boolean qq = false;
-    @Getter @Setter
+    @Getter
+    @Setter
     boolean weChat = false;
-    @Getter @Setter
+    @Getter
+    @Setter
     boolean gfw = false;
-    
-    @Getter @Setter
+
+    @Getter
+    @Setter
     boolean error = false;
-    
-    public boolean allPass(){
-        return reg && qq && weChat && gfw;
+
+    public boolean isPass() {
+        return !reg && !qq && !weChat && !gfw;
+    }
+
+    public String getStatus() {
+        String tmp = "";
+        if (this.isReg()) {
+            tmp += "己被註冊  ";
+        }
+        if (this.isQq()) {
+            tmp += "QQ欄截  ";
+        }
+        if (this.isWeChat()) {
+            tmp += "微信欄截  ";
+        }
+        if (this.isGfw()) {
+            tmp += "被墙污染  ";
+        }
+        if (this.isError()) {
+            tmp = "無法查詢  ";
+        }
+        if (this.isPass()) {
+            tmp = "通過";
+        }
+        return tmp;
     }
 }

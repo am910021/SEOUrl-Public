@@ -77,7 +77,7 @@ public class WebArchiveFilter {
             }
             Thread.sleep(500);
         } catch (Exception ex) {
-            Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
             //ex.printStackTrace();
             return false;
         }
@@ -106,7 +106,7 @@ public class WebArchiveFilter {
                 status = true;
                 System.out.println("功成。");
             } catch (Exception ex) {
-                Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
                 Tools.sleep(1000);
             }

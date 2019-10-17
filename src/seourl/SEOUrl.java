@@ -9,8 +9,11 @@ import seourl.filter.WebArchiveFilter;
 import template.Template;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javafx.util.Pair;
 import lombok.Getter;
 import seourl.filter.JumingFilter;
@@ -36,10 +41,11 @@ public class SEOUrl {
 
     @Getter
     private int test;
-
     /**
      * @param args the command line arguments
      */
+    private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
+
     private Date startTime = new Date();
     private List<String> urls = new ArrayList<String>();
     // url year loadTime snapshots
@@ -51,6 +57,13 @@ public class SEOUrl {
 
     public static void main(String[] args) {
         // TODO code application logic here
+
+        try {
+            System.setErr(new PrintStream(new FileOutputStream("error.log")));
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
         SEOUrl s = new SEOUrl();
         s.start();
 
@@ -72,23 +85,23 @@ public class SEOUrl {
             t = new Thread(tc);
             threadMap.put(t, tc);
             t.start();
-            Tools.sleep(100,300);
+            Tools.sleep(100, 300);
         }
         tc = null;
-        t=null;
-        
-        for(Entry<Thread, ThreadController> tm : threadMap.entrySet() ){
+        t = null;
+
+        for (Entry<Thread, ThreadController> tm : threadMap.entrySet()) {
             try {
                 tm.getKey().join();
-                
+
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             this.mJP.putAll(tm.getValue().getMJP());
         }
 
-        write2File();
+        saveFile();
 
     }
 
@@ -106,15 +119,41 @@ public class SEOUrl {
         }
     }
 
-    private void write2File() {
-        TemplateIndex tIndex = new TemplateIndex(startTime);
-        tIndex.insertTime(startTime);
+    private void saveFile() {
+        int passCount = 0;
+        TemplateIndex passT = new TemplateIndex(startTime);
+        passT.insertTime(startTime);
+        passT.setSaveName("index");
 
+        int failCount = 0;
+        TemplateIndex failT = new TemplateIndex(startTime);
+        failT.insertTime(startTime);
+        failT.setSaveName("index_f");
+
+        int unknowCount = 0;
+        JumingPack jp;
+        WebArchivePack wap;
+        String tmp;
         for (String url : urls) {
-            tIndex.insertRecord(String.format("files/%s.html", url), url, this.mWebArchive.get(url).getTotalSize());
+            jp = this.mJP.get(url);
+            wap = this.mWebArchive.get(url);
+
+            if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass()) {
+                tmp = jp.getStatus();
+                failT.insertRecord(String.format("files/%s.html", url), url, wap.getTotalSize(), tmp);
+                failCount++;
+            } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
+                passT.insertRecord(String.format("files/%s.html", url), url, wap.getTotalSize(), "通過");
+                passCount++;
+            } else {
+                unknowCount++;
+            }
+            //System.out.println(jp.toString());
             this.mWebArchive.get(url).saveFile(url, startTime);
         }
-        tIndex.creatFile();
+        passT.creatFile();
+        failT.creatFile();
+        System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), passCount, failCount, unknowCount);
     }
 
     void loadUrl() {
@@ -123,10 +162,14 @@ public class SEOUrl {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
             while ((st = br.readLine()) != null) {
+                if (st.equals("")) {
+                    continue;
+                }
+
                 urls.add(st);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

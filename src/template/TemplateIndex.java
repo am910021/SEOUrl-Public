@@ -26,8 +26,8 @@ public class TemplateIndex extends Template {
         this.insertByKey("time", Tools.getFormatDate1(time));
     }
 
-    public void insertRecord(String url, String name, int size) {
-        this.insertByKey("record", url, name, size, "無");
+    public void insertRecord(String path, String url, int size, String s1) {
+        this.insertByKey("record", path, url, size, url, s1);
     }
 
 }

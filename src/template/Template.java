@@ -104,7 +104,7 @@ public class Template {
 
     public void creatFile() {
         SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String path0 = "output2/" + sdFormat2.format(startTime) + "/";
+        String path0 = "output/" + sdFormat2.format(startTime) + "/";
         if (savePath != null) {
             path0 += savePath + "/";
         }

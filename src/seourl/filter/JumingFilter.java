@@ -68,7 +68,7 @@ public class JumingFilter{
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setUseInsecureSSL(true);
-        webClient.waitForBackgroundJavaScript(1000);
+        webClient.waitForBackgroundJavaScript(3000);
 
         webClient.getCookieManager().setCookiesEnabled(true);
         webClient.getCurrentWindow().setInnerHeight(Integer.MAX_VALUE);
@@ -94,6 +94,7 @@ public class JumingFilter{
                 Tools.sleep(100);
             }
         }
+        Tools.sleep(1, 1000);
         return false;
     }
 
@@ -178,7 +179,9 @@ public class JumingFilter{
                     tmp2 = tds.next().asText().replace(" ", "");
                     switch (tmp) {
                         case "注册状态":
-                            this.jp.setReg(!tmp2.equals("立即注册"));
+                            if(tmp2.indexOf("预定") < 0 && !tmp2.equals("立即注册")){
+                                this.jp.setReg(false);
+                            }
                             break;
                         case "QQ检测":
                             this.jp.setQq(!tmp2.equals("未拦截"));
@@ -195,7 +198,7 @@ public class JumingFilter{
             System.out.printf("取得juming中的 %s 訊息....成功。\n", url);
             return true;
         } catch (Exception ex) {
-            Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
            System.out.printf("取得juming中的 %s 訊息....失敗。\n", url);
            this.jp.setError(true);
         }
