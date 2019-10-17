@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl;
+package seourl.filter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,6 +30,7 @@ import javafx.util.Pair;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import seourl.Tools;
 import seourl.pack.WebArchivePack;
 
 /**
@@ -119,6 +120,7 @@ public class WebArchiveFilter {
                     doAnalysis(secArray.getJSONArray(j), tmp);
                 }
             }
+            wap.addTotalSize(tmp.size());
         } catch (Exception e) {
             System.out.printf("%s %d 年快照資料無法分析。 \n", url, year);
         }
@@ -139,10 +141,10 @@ public class WebArchiveFilter {
                     }
                 }
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
-        wap.addTotalSize(tmp.size());
     }
 
     private static String getJSON(String url, int timeout) throws Exception {

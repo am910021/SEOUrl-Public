@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl;
+package template;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
+import seourl.Tools;
 
 /**
  *
@@ -34,19 +35,19 @@ public class Template {
 
     @Getter
     String type;
-    private Map<String, Pair<String, String>> tVars = new HashMap<>();
-    private Map<String, List<String>> records = new HashMap<>();
-    private Date startTime;
+    protected Map<String, Pair<String, String>> tVars = new HashMap<>();
+    protected Map<String, List<String>> records = new HashMap<>();
+    protected Date startTime;
 
-    private List<String> template = new ArrayList<>();
-    private Map<Integer, String> log = new HashMap<>();
+    protected List<String> template = new ArrayList<>();
+    protected Map<Integer, String> log = new HashMap<>();
 
     @Setter
-    private String savePath;
+    protected String savePath;
     @Setter
-    private String saveName;
+    protected String saveName;
 
-    public Template(String type, Date startTime) {
+    protected Template(String type, Date startTime) {
         this.startTime = startTime;
         this.type = type;
         loadTemplate();
@@ -90,31 +91,25 @@ public class Template {
         Pair<String, String> pair = new Pair<>(tmp, tContent);
         tVars.put(tKey, pair);
         records.put(tKey, new ArrayList<String>());
-
         return tKey;
     }
 
-    void insertByKey(String key, Object... args) {
+    protected void insertByKey(String key, Object... args) {
         if (!tVars.containsKey(key)) {
             return;
         }
-
         String f = tVars.get(key).getValue();
-        if (key.endsWith("hasRecord") || key.endsWith("nonRecord")) {
-            records.get("Records").add(String.format(f, args));
-        } else {
-            records.get(key).add(String.format(f, args));
-        }
+        records.get(key).add(String.format(f, args));
     }
 
-    void creatFile() {
+    public void creatFile() {
         SimpleDateFormat sdFormat2 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String path0 = "output2/" + sdFormat2.format(startTime) + "/";
         if (savePath != null) {
             path0 += savePath + "/";
         }
 
-        checkDir(path0);
+        Tools.checkDir(path0);
 
         try {
             Path source = Paths.get(String.format("template/%s.html", type));
@@ -141,17 +136,4 @@ public class Template {
         }
     }
 
-    private boolean checkDir(String path) {
-        try {
-            File f = new File(path);
-            if (f.exists()) {
-                return true;
-            }
-            f.mkdirs();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 }

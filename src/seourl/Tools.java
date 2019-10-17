@@ -45,7 +45,7 @@ public class Tools {
         }
     }
 
-    static boolean checkDir(String path) {
+    public static boolean checkDir(String path) {
         try {
             File f = new File(path);
             if (f.exists()) {
@@ -59,21 +59,46 @@ public class Tools {
         return true;
     }
 
-    static String getFormatDate1(long mi) {
+    /**
+     *
+     * @param long mi
+     *
+     * @return yyyy/MM/dd HH:mm:ss.SSS
+     */
+    public static String getFormatDate1(long mi) {
         return getFormatDate1(new Date(mi));
     }
 
-    static String getFormatDate1(Date date) {
+    /**
+     *
+     * @param Date date
+     *
+     * @return yyyy/MM/dd HH:mm:ss.SSS
+     */
+    public static String getFormatDate1(Date date) {
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
         return sdFormat.format(date);
     }
 
-    static String getFormatDate2(long mi) {
+    /**
+     *
+     * @param long date
+     *
+     * @return yyyy-MM-dd-HH-mm-ss
+     */
+    public static String getFormatDate2(long mi) {
         return getFormatDate2(new Date(mi));
     }
 
-    static String getFormatDate2(Date date) {
+    /**
+     *
+     * @param Date date
+     *
+     * @return yyyy-MM-dd-HH-mm-ss
+     */
+    public static String getFormatDate2(Date date) {
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         return sdFormat.format(date);
     }
+    
 }
