@@ -5,17 +5,49 @@
  */
 package seourl.filter;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import java.util.List;
+import seourl.filter.ex.DomainFilterAbstract;
 import seourl.filter.ex.FilterAbstract;
 
 /**
  *
  * @author yuri
  */
-public class BaiduDomainFilter extends FilterAbstract{
+public class BaiduDomainFilter extends DomainFilterAbstract {
+
+    public BaiduDomainFilter() {
+        super("Baidu-Domain");
+    }
 
     @Override
-    public boolean doAnalysis(String url) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    final protected String getPageUrl(String url, int i) {
+        String sPage = "";
+        if (i > 1) {
+            sPage = "&pn=" + String.valueOf(i * 10);
+        }
+        return String.format("https://www.baidu.com/s?wd=domain:%s", url, sPage);
     }
-    
+
+    @Override
+    protected List<DomElement> getResultList() {
+        List<DomElement> list = page.getByXPath("//div[@class='result c-container ']");
+
+        return list;
+    }
+
+    @Override
+    protected int getMaxPage() {
+        int maxPage = 1;
+        DomElement p = page.getElementById("page");
+        
+        if (p != null) {
+            maxPage = p.asText().split("\n").length;
+            if (maxPage >= 3) {
+                maxPage = 3;
+            }
+        }
+        return maxPage;
+    }
+
 }

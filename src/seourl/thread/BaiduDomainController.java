@@ -9,31 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import seourl.filter.JumingFilter;
-import seourl.filter.SogouDomainFilter;
-import seourl.pack.JumingPack;
+import seourl.filter.BaiduDomainFilter;
 import seourl.pack.DomainPack;
 
 /**
  *
  * @author Yuri
  */
-public class SogouDomainController extends Thread{
+public class BaiduDomainController extends Thread{
 
     private List<String> urls;
     @Getter
-    private Map<String, DomainPack> mSDP = new HashMap<>();
-
-    public SogouDomainController(List<String> urls) {
+    private Map<String, DomainPack> mDP = new HashMap<>();
+    public BaiduDomainController(List<String> urls) {
         this.urls = urls;
     }
     
     @Override
     public void run() {
-        SogouDomainFilter s = new SogouDomainFilter();
+        BaiduDomainFilter s = new BaiduDomainFilter();
         for (String url : urls) {
             s.doAnalysis(url);
-            mSDP.put(url, s.getDp());
+            mDP.put(url, s.getDp());
         }
         s.close();
     }

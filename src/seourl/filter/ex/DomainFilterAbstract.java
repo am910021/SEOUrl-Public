@@ -24,15 +24,24 @@ import seourl.pack.DomainPack;
  */
 public abstract class DomainFilterAbstract extends FilterAbstract {
 
+    private final String filterType;
     @Setter
-    List<String> lkeyWords = new ArrayList<>();
-
+    protected List<String> lkeyWords = new ArrayList<>();
     @Getter
-    DomainPack dp = new DomainPack();
+    protected DomainPack dp = new DomainPack();
 
-    
-    protected abstract String getPageUrl(String url);
-    
+    public DomainFilterAbstract(String filterType) {
+        super();
+        this.filterType = filterType;
+        System.out.printf("建立 %s 過濾器\n", filterType);
+    }
+
+    protected abstract String getPageUrl(String url, int i);
+
+    protected abstract List<DomElement> getResultList();
+
+    protected abstract int getMaxPage();
+
     @Override
     public boolean doAnalysis(String url) {
         boolean pageError = false;
@@ -43,25 +52,19 @@ public abstract class DomainFilterAbstract extends FilterAbstract {
             return false;
         }
 
-        List<DomElement> tmp = page.getByXPath("//div[@class='results']/div[@class='vrwrap']");
+        List<DomElement> tmp = this.getResultList();
         //如果沒有任何資料，取消該網域的分析 並回傳true表示已完成分析
         if (tmp.size() == 0) {
             return true;
         }
 
         //取得總頁數 最多3頁
-        int maxPage = 1;
-        DomElement p = page.getElementById("pagebar_container");
-        if (p != null) {
-            maxPage = p.asText().split("\n").length;
-            if (maxPage >= 3) {
-                maxPage = 3;
-            }
-        }
+        int maxPage = this.getMaxPage();
+
         //分析第1頁
         boolean pass = false;
-        pass = doAnalysisContent(tmp);
-        System.out.printf("Sogou-domain %s 第%d頁 分析完成。 \n", url, 1);
+        pass = doAnalysisContent(tmp, url);
+        System.out.printf("%s %s 第%d頁 分析完成。 \n", filterType, url, 1);
         dp.setPage(1, pass);
 
         //分析第2頁之後
@@ -72,10 +75,9 @@ public abstract class DomainFilterAbstract extends FilterAbstract {
                 if (pageError) {
                     continue;
                 }
-
-                tmp = page.getByXPath("//div[@class='results']/div[@class='vrwrap']");
-                pass = doAnalysisContent(tmp);
-                System.out.printf("Sogou-domain %s 第%d頁 分析完成。 \n", url, i);
+                tmp = this.getResultList();
+                pass = doAnalysisContent(tmp, url);
+                System.out.printf("%s %s 第%d頁 分析完成。 \n", filterType, url, i);
                 dp.setPage(i, pass);
             }
 
@@ -84,43 +86,48 @@ public abstract class DomainFilterAbstract extends FilterAbstract {
         return true; //並回傳true表示已完成分析
     }
 
-    public boolean getPage(String url, int i) {
-        String sPage = "";
-        if (i > 1) {
-            sPage = "&page=" + String.valueOf(i);
-        }
-
+    protected boolean getPage(String url, int i) {
         boolean status = false;
         long time = System.currentTimeMillis();
         while ((!status && (System.currentTimeMillis() - time) < Configure.RELOAD_PAGE_TIME * 1000)) {
             try {
-                page = webClient.getPage(String.format("https://www.sogou.com/web?query=\"%s\"%s", url, sPage));
+                String tUrl = getPageUrl(url, i);
+                page = webClient.getPage(tUrl);
                 status = true;
-                System.out.printf("Sogou-domain %s 第%d頁 資料讀取功成。 \n", url, i);
+                System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);
             } catch (Exception ex) {
-                Logger.getLogger(SogouDomainFilter.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("Sogou-domain %s 第%d頁 資料讀取失敗，重新讀取中。 \n", url, i);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                System.out.printf("%s %s 第%d頁 資料讀取失敗，重新讀取中。 \n", filterType, url, i);
                 Tools.sleep(20, 200);
             }
         }
         if (!status) {
-            System.out.printf("Sogou-domain %s 第%d頁 資料讀取錯誤。 \n", url, i);
+            System.out.printf("%s %s 第%d頁 資料讀取錯誤。 \n", filterType, url, i);
             return false;
         }
         return true;
     }
 
-    private boolean doAnalysisContent(List<DomElement> list) {
+    private boolean doAnalysisContent(List<DomElement> list, String url) {
         String tmp;
         boolean pageIllegal = false;
         for (DomElement de : list) {
             tmp = de.asText();
             for (String keyword : lkeyWords) {
-                if (tmp.indexOf(keyword) >= 0) {
-                    this.dp.setIllegal(true);
-                    pageIllegal = true;
-                    break;
+                if (Configure.DOMAIN_FILTER_MODE == 1) {
+                    if (tmp.indexOf(keyword) >= 0) {
+                        this.dp.setIllegal(true);
+                        pageIllegal = true;
+                        break;
+                    }
+                } else {
+                    if ((tmp.indexOf(keyword) >= 0) && (tmp.indexOf(url)>=0)) {
+                        this.dp.setIllegal(true);
+                        pageIllegal = true;
+                        break;
+                    }
                 }
+
             }
             if (pageIllegal) {
                 break;

@@ -20,10 +20,14 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import seourl.filter.BaiduDomainFilter;
+import seourl.filter.SogouDomainFilter;
+import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.JumingPack;
 import seourl.pack.DomainPack;
 import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
+import seourl.thread.BaiduDomainController;
 import seourl.thread.SogouDomainController;
 
 /**
@@ -44,14 +48,16 @@ public class SEOUrl {
     private List<String> urls = new ArrayList<String>();
 
     //最終要輸出的資料
-    private Map<String, WebArchivePack> wapMap = new HashMap<>();
-    private Map<String, JumingPack> jpMap = new HashMap<>();
-    private Map<String, DomainPack> sdpMap = new HashMap<>();
+    private Map<String, WebArchivePack> wapMap = new HashMap<>();   //WebArchive資料集
+    private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
+    private Map<String, DomainPack> sdpMap = new HashMap<>();       //搜狗域名資料集
+    private Map<String, DomainPack> bdpMap = new HashMap<>();       //百度域名資料集
 
     //執行中的暫存資料
     private Map<Integer, List<String>> urlSplit = new HashMap<>();
     private Map<Integer, JumingController> jcMap = new HashMap<>();
     private Map<Integer, SogouDomainController> sdcMap = new HashMap<>();
+    private Map<Integer, BaiduDomainController> bdcMap = new HashMap<>();
 
     public static void main(String[] args) {
         // TODO code application logic here
@@ -64,7 +70,11 @@ public class SEOUrl {
         SEOUrl s = new SEOUrl();
         s.loadUrl();
         s.splitUrl(MAX_THREAD);
-        s.startSDF(false);
+        s.startBDF(true);
+        s.startSDF(true);
+        
+        //DomainFilterAbstract bdf = new BaiduDomainFilter();
+        //bdf.doAnalysis("google.com");
 
         //System.out.println(Configure.DOMAIN_FILTER_MODE);
         //Configure.saveConfig();
@@ -73,21 +83,53 @@ public class SEOUrl {
     }
 
     /**
-     * Sogou域名過濾 <br>
+     * 百度域名過濾 <br>
+     * 必需執行：1.loadUrl 2.splitUrl <br>
+     * 單獨呼叫時為"測式用"
+     *
+     * @param show 是否印出除錯訊息
+     */
+    private void startBDF(boolean show) {
+        System.out.println(urlSplit.size());
+        BaiduDomainController bdc;
+        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
+            bdc = new BaiduDomainController(map.getValue());
+            bdcMap.put(map.getKey(), bdc);
+            bdc.start();
+            Tools.sleep(100, 1000);
+        }
+        bdc = null;
+        for (Entry<Integer, BaiduDomainController> map : bdcMap.entrySet()) {
+            try {
+                map.getValue().join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.bdpMap.putAll(map.getValue().getMDP());
+        }
+        bdcMap = null;
+        if (show) {
+            for (Entry<String, DomainPack> item : bdpMap.entrySet()) {
+                item.getValue().print();
+            }
+        }
+    }
+
+    /**
+     * 搜狗域名過濾 <br>
      * 必需執行：1.loadUrl 2.splitUrl <br>
      * 單獨呼叫時為"測式用"
      *
      * @param show 是否印出除錯訊息
      */
     private void startSDF(boolean show) {
-        System.out.println("aaa");
+        System.out.println(urlSplit.size());
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            System.out.println(map.getKey());
-            sdc = new SogouDomainController(map.setValue(urls));
+            sdc = new SogouDomainController(map.getValue());
             sdcMap.put(map.getKey(), sdc);
             sdc.start();
-            Tools.sleep(100, 300);
+            Tools.sleep(100, 1000);
         }
         sdc = null;
 
@@ -117,10 +159,10 @@ public class SEOUrl {
     private void startJPF(boolean show) {
         JumingController tc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            tc = new JumingController(map.setValue(urls));
+            tc = new JumingController(map.getValue());
             jcMap.put(map.getKey(), tc);
             tc.start();
-            Tools.sleep(100, 300);
+            Tools.sleep(100, 1000);
         }
         tc = null;
         for (Entry<Integer, JumingController> map : jcMap.entrySet()) {
@@ -152,8 +194,9 @@ public class SEOUrl {
             wf.doStart();
             wf.getWap().saveFile(u, startTime);
             wapMap.put(u, wf.getWap());
-            if(show)
+            if (show) {
                 wf.getWap().print();
+            }
         }
     }
 
@@ -163,6 +206,7 @@ public class SEOUrl {
         this.startWAF(false);
         this.startJPF(false);
         this.startSDF(false);
+        this.startBDF(false);
 
         saveFile();
 
