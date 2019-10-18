@@ -10,7 +10,5 @@ package seourl.filter.ex;
  * @author yuri
  */
 public interface FilterInterface {
-    
-   
-    
+
 }

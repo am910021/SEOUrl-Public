@@ -15,7 +15,7 @@ import seourl.pack.ex.PackAbstract;
  * @author yuri
  */
 @ToString
-public class DomainPack extends PackAbstract {
+public class SearchEnginePack extends PackAbstract {
 
     @Getter
     @Setter
@@ -24,6 +24,31 @@ public class DomainPack extends PackAbstract {
     private boolean error[] = {false, false, false};
 
     private boolean page[] = {false, false, false};
+
+    private String keyword[] = {"", "", ""};
+
+    public void setKeyWord(int i, String key) {
+        keyword[i - 1] = key;
+    }
+
+    public String getKeyWord() {
+        if (!page[0] && !page[1] && !page[2]) {
+            return "";
+        }
+        String out = "關鍵字：";
+        if (page[0]) {
+            out += keyword[0] + "、";
+        }
+        if (page[1]) {
+            out += keyword[1] + "、";
+        }
+        if (page[2]) {
+            out += keyword[2] + "、";
+        }
+        out = out.substring(0, out.length() - 1);
+        return out;
+
+    }
 
     public void setPage(int i, boolean b) {
         page[i - 1] = b;

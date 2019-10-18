@@ -39,7 +39,7 @@ public abstract class FilterAbstract implements FilterInterface {
     protected BrowserVersion browser;
 
     public abstract boolean doAnalysis(String url);
-    
+
     protected FilterAbstract() {
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);

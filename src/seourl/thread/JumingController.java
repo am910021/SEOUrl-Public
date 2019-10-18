@@ -16,7 +16,7 @@ import seourl.pack.JumingPack;
  *
  * @author Yuri
  */
-public class JumingController extends Thread{
+public class JumingController extends Thread {
 
     private List<String> urls;
     @Getter
@@ -25,7 +25,7 @@ public class JumingController extends Thread{
     public JumingController(List<String> urls) {
         this.urls = urls;
     }
-    
+
     @Override
     public void run() {
         JumingFilter j = new JumingFilter();
@@ -33,7 +33,7 @@ public class JumingController extends Thread{
         j.login();
         for (String url : urls) {
             j.doAnalysis(url);
-            mJP.put(url, j.getJP());
+            mJP.put(url, j.getJp());
         }
         j.close();
     }

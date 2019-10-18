@@ -59,8 +59,8 @@ public class Template {
         BufferedReader br = null;
         int count = 0;
         try {
-            InputStream file = getClass().getResourceAsStream(String.format("/template/%s.html", type)); 
-            
+            InputStream file = getClass().getResourceAsStream(String.format("/template/%s.html", type));
+
             br = new BufferedReader(new InputStreamReader(file));
             String st;
             String key;

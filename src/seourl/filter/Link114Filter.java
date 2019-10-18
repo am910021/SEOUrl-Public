@@ -85,7 +85,7 @@ public class Link114Filter {
     }
 
     public void test() {
-        
+
         String urlParameters = "func=baidu_sl|baidu_qz_ai|baidu_qz_zz|so360_qz_zz|qqaq|wxaq|gfw&websites=google.com";
         byte[] postData = urlParameters.getBytes();
         int postDataLength = postData.length;
@@ -125,7 +125,8 @@ public class Link114Filter {
             e.printStackTrace();
         }
     }
-public void test2() {
+
+    public void test2() {
 
         String checkurl = "http://www.link114.cn/get.php?func=gfw&site=moc.elgoog&r=47875151";
 
@@ -141,7 +142,6 @@ public void test2() {
             conn.setAllowUserInteraction(false);
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-
 
             int responseCode = conn.getResponseCode();
             System.out.println("\nSending 'POST' request to URL : " + checkurl);

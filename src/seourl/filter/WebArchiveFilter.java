@@ -45,7 +45,7 @@ public class WebArchiveFilter {
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
-                Tools.sleep(100,1000);
+                Tools.sleep(100, 1000);
             }
         }
 
@@ -61,7 +61,7 @@ public class WebArchiveFilter {
                 wap.setReadTime(System.currentTimeMillis());
                 wap.put(Integer.parseInt(keys.next()), new ArrayList<Long>());
             }
-            Thread.sleep(1,200);
+            Thread.sleep(1, 200);
         } catch (Exception ex) {
             //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
             //ex.printStackTrace();
@@ -95,7 +95,7 @@ public class WebArchiveFilter {
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
-                Tools.sleep(100,1000);
+                Tools.sleep(100, 1000);
             }
         }
 
@@ -128,7 +128,7 @@ public class WebArchiveFilter {
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }

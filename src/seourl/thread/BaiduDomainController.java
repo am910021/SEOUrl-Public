@@ -10,27 +10,30 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import seourl.filter.BaiduDomainFilter;
-import seourl.pack.DomainPack;
+import seourl.pack.SearchEnginePack;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainController extends Thread{
+public class BaiduDomainController extends Thread {
 
     private List<String> urls;
+    private List<String> keywords;
     @Getter
-    private Map<String, DomainPack> mDP = new HashMap<>();
-    public BaiduDomainController(List<String> urls) {
+    private Map<String, SearchEnginePack> mDP = new HashMap<>();
+
+    public BaiduDomainController(List<String> urls, List<String> keywords) {
         this.urls = urls;
+        this.keywords = keywords;
     }
-    
+
     @Override
     public void run() {
-        BaiduDomainFilter s = new BaiduDomainFilter();
+        BaiduDomainFilter s = new BaiduDomainFilter(keywords);
         for (String url : urls) {
             s.doAnalysis(url);
-            mDP.put(url, s.getDp());
+            mDP.put(url, s.getSep());
         }
         s.close();
     }

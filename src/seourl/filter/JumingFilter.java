@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.*;
 
@@ -23,7 +24,8 @@ import seourl.pack.*;
  */
 public class JumingFilter extends FilterAbstract {
 
-    JumingPack jp = new JumingPack();
+    @Getter
+    private JumingPack jp = new JumingPack();
 
     public JumingFilter() {
         super();
@@ -64,6 +66,7 @@ public class JumingFilter extends FilterAbstract {
     }
 
     public boolean doAnalysis(String url) {
+        this.jp = new JumingPack();
         try {
             page = webClient.getPage(String.format("http://www.juming.com/hao/?cha_ym=%s", url));
             List<DomElement> table = page.getByXPath("//div[@class='orders']/div/table/tbody/tr");
@@ -77,7 +80,7 @@ public class JumingFilter extends FilterAbstract {
                     tmp2 = tds.next().asText().replace(" ", "");
                     switch (tmp) {
                         case "注册状态":
-                            if (!(tmp2.indexOf("预定")>=0 || tmp2.equals("立即注册"))) {
+                            if (!(tmp2.indexOf("预定") >= 0 || tmp2.equals("立即注册"))) {
                                 this.jp.setReg(true);
                             }
                             break;
@@ -104,12 +107,4 @@ public class JumingFilter extends FilterAbstract {
         }
         return false;
     }
-
-    public JumingPack getJP() {
-        JumingPack tmp = this.jp;
-        this.jp = new JumingPack();
-        return tmp;
-
-    }
-
 }

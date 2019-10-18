@@ -15,8 +15,8 @@ import seourl.filter.ex.DomainFilterAbstract;
  */
 public class SogouDomainFilter extends DomainFilterAbstract {
 
-    public SogouDomainFilter() {
-        super("Sogou-domain");
+    public SogouDomainFilter(List<String> lkeyWords) {
+        super("Sogou-domain", lkeyWords);
     }
 
     @Override

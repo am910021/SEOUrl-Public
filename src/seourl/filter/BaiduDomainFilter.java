@@ -16,8 +16,8 @@ import seourl.filter.ex.FilterAbstract;
  */
 public class BaiduDomainFilter extends DomainFilterAbstract {
 
-    public BaiduDomainFilter() {
-        super("Baidu-Domain");
+    public BaiduDomainFilter(List<String> lkeyWords) {
+        super("Baidu-Domain", lkeyWords);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BaiduDomainFilter extends DomainFilterAbstract {
     protected int getMaxPage() {
         int maxPage = 1;
         DomElement p = page.getElementById("page");
-        
+
         if (p != null) {
             maxPage = p.asText().split("\n").length;
             if (maxPage >= 3) {

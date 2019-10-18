@@ -9,31 +9,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import seourl.filter.JumingFilter;
 import seourl.filter.SogouDomainFilter;
-import seourl.pack.JumingPack;
-import seourl.pack.DomainPack;
+import seourl.pack.SearchEnginePack;
 
 /**
  *
  * @author Yuri
  */
-public class SogouDomainController extends Thread{
+public class SogouDomainController extends Thread {
 
     private List<String> urls;
+    private List<String> keywords;
     @Getter
-    private Map<String, DomainPack> mSDP = new HashMap<>();
+    private Map<String, SearchEnginePack> mSDP = new HashMap<>();
 
-    public SogouDomainController(List<String> urls) {
+    public SogouDomainController(List<String> urls, List<String> keywords) {
         this.urls = urls;
+        this.keywords = keywords;
     }
-    
+
     @Override
     public void run() {
-        SogouDomainFilter s = new SogouDomainFilter();
+        SogouDomainFilter s = new SogouDomainFilter(keywords);
         for (String url : urls) {
             s.doAnalysis(url);
-            mSDP.put(url, s.getDp());
+            mSDP.put(url, s.getSep());
         }
         s.close();
     }

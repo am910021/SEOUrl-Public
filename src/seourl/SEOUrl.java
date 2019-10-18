@@ -24,7 +24,7 @@ import seourl.filter.BaiduDomainFilter;
 import seourl.filter.SogouDomainFilter;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.JumingPack;
-import seourl.pack.DomainPack;
+import seourl.pack.SearchEnginePack;
 import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
@@ -46,12 +46,13 @@ public class SEOUrl {
 
     private Date startTime = new Date();
     private List<String> urls = new ArrayList<String>();
+    private List<String> keywords = new ArrayList<String>();
 
     //最終要輸出的資料
     private Map<String, WebArchivePack> wapMap = new HashMap<>();   //WebArchive資料集
     private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
-    private Map<String, DomainPack> sdpMap = new HashMap<>();       //搜狗域名資料集
-    private Map<String, DomainPack> bdpMap = new HashMap<>();       //百度域名資料集
+    private Map<String, SearchEnginePack> sdpMap = new HashMap<>();       //搜狗域名資料集
+    private Map<String, SearchEnginePack> bdpMap = new HashMap<>();       //百度域名資料集
 
     //執行中的暫存資料
     private Map<Integer, List<String>> urlSplit = new HashMap<>();
@@ -69,13 +70,13 @@ public class SEOUrl {
 //        }
         SEOUrl s = new SEOUrl();
         s.loadUrl();
+        s.loadKeyword();
         s.splitUrl(MAX_THREAD);
         s.startBDF(true);
         s.startSDF(true);
-        
+
         //DomainFilterAbstract bdf = new BaiduDomainFilter();
         //bdf.doAnalysis("google.com");
-
         //System.out.println(Configure.DOMAIN_FILTER_MODE);
         //Configure.saveConfig();
         //SEOUrl s = new SEOUrl();
@@ -84,16 +85,15 @@ public class SEOUrl {
 
     /**
      * 百度域名過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl <br>
+     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
      * 單獨呼叫時為"測式用"
      *
      * @param show 是否印出除錯訊息
      */
     private void startBDF(boolean show) {
-        System.out.println(urlSplit.size());
         BaiduDomainController bdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getValue());
+            bdc = new BaiduDomainController(map.getValue(), keywords);
             bdcMap.put(map.getKey(), bdc);
             bdc.start();
             Tools.sleep(100, 1000);
@@ -109,24 +109,23 @@ public class SEOUrl {
         }
         bdcMap = null;
         if (show) {
-            for (Entry<String, DomainPack> item : bdpMap.entrySet()) {
-                item.getValue().print();
+            for (Entry<String, SearchEnginePack> map : bdpMap.entrySet()) {
+                map.getValue().print(map.getKey());
             }
         }
     }
 
     /**
      * 搜狗域名過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl <br>
+     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
      * 單獨呼叫時為"測式用"
      *
      * @param show 是否印出除錯訊息
      */
     private void startSDF(boolean show) {
-        System.out.println(urlSplit.size());
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getValue());
+            sdc = new SogouDomainController(map.getValue(), keywords);
             sdcMap.put(map.getKey(), sdc);
             sdc.start();
             Tools.sleep(100, 1000);
@@ -143,8 +142,8 @@ public class SEOUrl {
         }
         sdcMap = null;
         if (show) {
-            for (Entry<String, DomainPack> item : sdpMap.entrySet()) {
-                item.getValue().print();
+            for (Entry<String, SearchEnginePack> map : sdpMap.entrySet()) {
+                map.getValue().print(map.getKey());
             }
         }
     }
@@ -156,7 +155,7 @@ public class SEOUrl {
      *
      * @param show 是否印出除錯訊息
      */
-    private void startJPF(boolean show) {
+    private void startJF(boolean show) {
         JumingController tc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
             tc = new JumingController(map.getValue());
@@ -176,7 +175,7 @@ public class SEOUrl {
         jcMap = null;
         if (show) {
             for (Entry<String, JumingPack> map : jpMap.entrySet()) {
-                map.getValue().print();
+                map.getValue().print(map.getKey());
             }
         }
     }
@@ -189,13 +188,13 @@ public class SEOUrl {
      * @param show 是否印出除錯訊息
      */
     private void startWAF(boolean show) {
-        for (String u : urls) {
-            WebArchiveFilter wf = new WebArchiveFilter(u);
+        for (String url : urls) {
+            WebArchiveFilter wf = new WebArchiveFilter(url);
             wf.doStart();
-            wf.getWap().saveFile(u, startTime);
-            wapMap.put(u, wf.getWap());
+            wf.getWap().saveFile(url, startTime);
+            wapMap.put(url, wf.getWap());
             if (show) {
-                wf.getWap().print();
+                wf.getWap().print(url);
             }
         }
     }
@@ -204,7 +203,7 @@ public class SEOUrl {
         this.splitUrl(MAX_THREAD);
         this.loadUrl();
         this.startWAF(false);
-        this.startJPF(false);
+        this.startJF(false);
         this.startSDF(false);
         this.startBDF(false);
 
@@ -264,6 +263,7 @@ public class SEOUrl {
     }
 
     private void loadUrl() {
+        urls = new ArrayList<String>();
         try {
             File file = new File("input.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -274,6 +274,26 @@ public class SEOUrl {
                 }
 
                 urls.add(st);
+            }
+        } catch (IOException ex) {
+            //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void loadKeyword() {
+        keywords = new ArrayList<String>();
+        try {
+            File file = new File("keywords.txt");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            while ((st = br.readLine()) != null) {
+                st.replace(" ", "").replace("\n", "");
+
+                if (st.equals("")) {
+                    continue;
+                }
+
+                keywords.add(st);
             }
         } catch (IOException ex) {
             //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);

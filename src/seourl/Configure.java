@@ -49,16 +49,16 @@ public class Configure {
 
     static void saveConfig() throws Exception {
 
-            @Cleanup
-            OutputStream file = new FileOutputStream("config.txt");
-            @Cleanup
-            OutputStreamWriter output = new OutputStreamWriter(file, "utf-8");
-            output.write(comm);
-            Properties prop = new Properties();
-            // set the properties value
-            prop.setProperty("DOMAIN_FILTER_MODE", String.valueOf(DOMAIN_FILTER_MODE));
-            // save properties to project root folder
-            prop.store(output, null);
+        @Cleanup
+        OutputStream file = new FileOutputStream("config.txt");
+        @Cleanup
+        OutputStreamWriter output = new OutputStreamWriter(file, "utf-8");
+        output.write(comm);
+        Properties prop = new Properties();
+        // set the properties value
+        prop.setProperty("DOMAIN_FILTER_MODE", String.valueOf(DOMAIN_FILTER_MODE));
+        // save properties to project root folder
+        prop.store(output, null);
 
     }
 }

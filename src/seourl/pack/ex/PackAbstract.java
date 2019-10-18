@@ -5,14 +5,17 @@
  */
 package seourl.pack.ex;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author yuri
  */
-public class PackAbstract {
-    
-    public void print(){
-        System.out.println(this.toString());
+public abstract class PackAbstract {
+
+    public void print(String url) {
+        System.out.println(url + "  " + this.toString());
     }
-    
+
 }
