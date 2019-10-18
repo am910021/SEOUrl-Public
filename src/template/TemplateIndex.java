@@ -7,6 +7,7 @@ package template;
 
 import java.util.Date;
 import seourl.Tools;
+import seourl.pack.WebArchivePack;
 
 /**
  *
@@ -26,8 +27,8 @@ public class TemplateIndex extends Template {
         this.insertByKey("time", Tools.getFormatDate1(time));
     }
 
-    public void insertRecord(String path, String url, int size, String s1) {
-        this.insertByKey("record", path, url, size, url, s1);
+    public void insertRecord(String path, String url, WebArchivePack wap, String s1) {
+        this.insertByKey("record", path, url, wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""), url, s1);
     }
 
 }

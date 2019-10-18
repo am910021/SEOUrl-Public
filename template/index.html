@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
 
-<head>
-    <title>域名例表</title>
-	<meta charset="UTF-8">
-    <style>
-        a:link {
-            color: #0000FF;
-        }
-        
-        a:visited {
-            color: #FF0000;
-        }
-        
-        th {
-            text-align: left;
-        }
-        
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-    </style>
-</head>
+    <head>
+        <title>域名例表</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style>
+            a:link {
+                color: #0000FF;
+            }
 
-<body>
-    <h1>域名例表</h1>
-    <p>{% key=time content=建立時間:%s %}</p>
-    <p>Web Archive 記錄</p>
-    <table style="width:100%">
-        <tr>
-            <th>名稱</th>
-            <th>快照量</th>
-            <th>juming</th>
-        </tr>
-        {% key=record content=<tr><td><a href="%s" target="_blank">%s</a></br></td><td>%d</td><td><a href="http://www.juming.com/hao/?cha_ym=%s" target="_blank">%s</a></td></tr> %}
-    </table>
+            a:visited {
+                color: #FF0000;
+            }
 
-</body>
+            th {
+                text-align: left;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>域名例表</h1>
+        <p>{% key=time content=建立時間:%s %}</p>
+        <p>Web Archive 記錄</p>
+        <table style="width:100%">
+            <tr>
+                <th>名稱</th>
+                <th>快照量</th>
+                <th>juming</th>
+            </tr>
+            {% key=record content=<tr><td><a href="%s" target="_blank">%s</a></br></td><td>%d %s</td><td><a href="http://www.juming.com/hao/?cha_ym=%s" target="_blank">%s</a></td></tr> %}
+        </table>
+
+    </body>
 
 </html>

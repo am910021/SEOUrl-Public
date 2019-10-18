@@ -6,27 +6,13 @@
 package seourl.filter;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.util.Pair;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,11 +41,11 @@ public class WebArchiveFilter {
             try {
                 s = getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s&collection=web&output=json", url), 9000);
                 status = true;
-                System.out.println("功成。");
+                System.out.println("成功。");
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
-                Tools.sleep(1000);
+                Tools.sleep(100,1000);
             }
         }
 
@@ -75,7 +61,7 @@ public class WebArchiveFilter {
                 wap.setReadTime(System.currentTimeMillis());
                 wap.put(Integer.parseInt(keys.next()), new ArrayList<Long>());
             }
-            Thread.sleep(500);
+            Thread.sleep(1,200);
         } catch (Exception ex) {
             //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
             //ex.printStackTrace();
@@ -87,6 +73,7 @@ public class WebArchiveFilter {
 
     public void doStart() {
         if (!getYears()) {
+            this.wap.setError(true);
             return;
         }
         for (Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
@@ -108,7 +95,7 @@ public class WebArchiveFilter {
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("失敗。");
-                Tools.sleep(1000);
+                Tools.sleep(100,1000);
             }
         }
 

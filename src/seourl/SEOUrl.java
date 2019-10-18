@@ -5,8 +5,8 @@
  */
 package seourl;
 
+import seourl.thread.JumingController;
 import seourl.filter.WebArchiveFilter;
-import template.Template;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,21 +14,16 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import javafx.util.Pair;
 import lombok.Getter;
-import seourl.filter.JumingFilter;
-import seourl.filter.Link114Filter;
+import seourl.filter.SogouDomainFilter;
 import seourl.pack.JumingPack;
 import seourl.pack.WebArchivePack;
 import template.TemplateIndex;
@@ -53,19 +48,25 @@ public class SEOUrl {
     private Map<String, JumingPack> mJP = new HashMap<>();
 
     private Map<Integer, List<String>> proxy = new HashMap<>();
-    private Map<Thread, ThreadController> threadMap = new HashMap<>();
+    private Map<Thread, JumingController> threadMap = new HashMap<>();
 
     public static void main(String[] args) {
         // TODO code application logic here
 
-        try {
-            System.setErr(new PrintStream(new FileOutputStream("error.log")));
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            System.setErr(new PrintStream(new FileOutputStream("error.log", true)));
+//        } catch (FileNotFoundException ex) {
+//            ex.printStackTrace();
+//        }
 
-        SEOUrl s = new SEOUrl();
-        s.start();
+        SogouDomainFilter sdf = new SogouDomainFilter();
+        sdf.doAnalysis("https://www.sogou.com/web?query=\"chinaqscm.com\"");
+        
+        
+        //System.out.println(Configure.DOMAIN_FILTER_MODE);
+        //Configure.saveConfig();
+        //SEOUrl s = new SEOUrl();
+        //s.start();
 
     }
 
@@ -74,14 +75,15 @@ public class SEOUrl {
         for (String u : urls) {
             WebArchiveFilter wf = new WebArchiveFilter(u);
             wf.doStart();
+            wf.getWap().saveFile(u, startTime);
             mWebArchive.put(u, wf.getWap());
         }
 
         splitUrl(4);
-        ThreadController tc;
+        JumingController tc;
         Thread t;
         for (Entry<Integer, List<String>> map : proxy.entrySet()) {
-            tc = new ThreadController(map.setValue(urls));
+            tc = new JumingController(map.setValue(urls));
             t = new Thread(tc);
             threadMap.put(t, tc);
             t.start();
@@ -90,7 +92,7 @@ public class SEOUrl {
         tc = null;
         t = null;
 
-        for (Entry<Thread, ThreadController> tm : threadMap.entrySet()) {
+        for (Entry<Thread, JumingController> tm : threadMap.entrySet()) {
             try {
                 tm.getKey().join();
 
@@ -140,16 +142,16 @@ public class SEOUrl {
 
             if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass()) {
                 tmp = jp.getStatus();
-                failT.insertRecord(String.format("files/%s.html", url), url, wap.getTotalSize(), tmp);
+                failT.insertRecord(String.format("files/%s.html", url), url, wap, tmp);
                 failCount++;
             } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
-                passT.insertRecord(String.format("files/%s.html", url), url, wap.getTotalSize(), "通過");
+                passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過");
                 passCount++;
             } else {
                 unknowCount++;
             }
             //System.out.println(jp.toString());
-            this.mWebArchive.get(url).saveFile(url, startTime);
+            //this.mWebArchive.get(url).saveFile(url, startTime);
         }
         passT.creatFile();
         failT.creatFile();

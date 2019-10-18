@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl;
+package seourl.thread;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,20 +16,20 @@ import seourl.pack.JumingPack;
  *
  * @author Yuri
  */
-public class ThreadController implements Runnable {
+public class JumingController extends ThreadAbstract{
 
     private List<String> urls;
     @Getter
     private Map<String, JumingPack> mJP = new HashMap<>();
 
-    public ThreadController(List<String> urls) {
+    public JumingController(List<String> urls) {
         this.urls = urls;
     }
     
     @Override
     public void run() {
         JumingFilter j = new JumingFilter();
-        j.loadWeb();
+        j.loadWeb("http://www.juming.com");
         j.login();
         for (String url : urls) {
             j.doAnalysis(url);
