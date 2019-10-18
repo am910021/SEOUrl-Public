@@ -15,7 +15,7 @@ import seourl.pack.ex.PackAbstract;
  * @author yuri
  */
 @ToString
-public class SogouDomainPack extends PackAbstract {
+public class DomainPack extends PackAbstract {
 
     @Getter
     @Setter

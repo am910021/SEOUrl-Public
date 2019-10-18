@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl.filter;
+package seourl.filter.ex;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import seourl.Configure;
 import seourl.Tools;
+import seourl.filter.*;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.DomainPack;
 
@@ -21,25 +22,24 @@ import seourl.pack.DomainPack;
  *
  * @author yuri
  */
-public class SogouDomainFilter extends FilterAbstract {
+public abstract class DomainFilterAbstract extends FilterAbstract {
 
     @Setter
     List<String> lkeyWords = new ArrayList<>();
 
     @Getter
-    DomainPack sdp = new DomainPack();
+    DomainPack dp = new DomainPack();
 
-    public SogouDomainFilter() {
-        super();
-    }
-
+    
+    protected abstract String getPageUrl(String url);
+    
     @Override
     public boolean doAnalysis(String url) {
         boolean pageError = false;
         //如果讀取第一頁錯誤，取消該網域的分析 並回傳false表示未完成分析
         pageError = !getPage(url, 1);
         if (pageError) {
-            sdp.setError(1, pageError);
+            dp.setError(1, pageError);
             return false;
         }
 
@@ -62,13 +62,13 @@ public class SogouDomainFilter extends FilterAbstract {
         boolean pass = false;
         pass = doAnalysisContent(tmp);
         System.out.printf("Sogou-domain %s 第%d頁 分析完成。 \n", url, 1);
-        sdp.setPage(1, pass);
+        dp.setPage(1, pass);
 
         //分析第2頁之後
         if (maxPage > 1) {
             for (int i = 2; i <= 3; i++) {
                 pageError = !getPage(url, i);
-                sdp.setError(i, pageError);
+                dp.setError(i, pageError);
                 if (pageError) {
                     continue;
                 }
@@ -76,7 +76,7 @@ public class SogouDomainFilter extends FilterAbstract {
                 tmp = page.getByXPath("//div[@class='results']/div[@class='vrwrap']");
                 pass = doAnalysisContent(tmp);
                 System.out.printf("Sogou-domain %s 第%d頁 分析完成。 \n", url, i);
-                sdp.setPage(i, pass);
+                dp.setPage(i, pass);
             }
 
         }
@@ -117,7 +117,7 @@ public class SogouDomainFilter extends FilterAbstract {
             tmp = de.asText();
             for (String keyword : lkeyWords) {
                 if (tmp.indexOf(keyword) >= 0) {
-                    this.sdp.setIllegal(true);
+                    this.dp.setIllegal(true);
                     pageIllegal = true;
                     break;
                 }

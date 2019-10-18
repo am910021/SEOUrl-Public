@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import seourl.pack.JumingPack;
-import seourl.pack.SogouDomainPack;
+import seourl.pack.DomainPack;
 import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.SogouDomainController;
@@ -46,7 +46,7 @@ public class SEOUrl {
     //最終要輸出的資料
     private Map<String, WebArchivePack> wapMap = new HashMap<>();
     private Map<String, JumingPack> jpMap = new HashMap<>();
-    private Map<String, SogouDomainPack> sdpMap = new HashMap<>();
+    private Map<String, DomainPack> sdpMap = new HashMap<>();
 
     //執行中的暫存資料
     private Map<Integer, List<String>> urlSplit = new HashMap<>();
@@ -101,7 +101,7 @@ public class SEOUrl {
         }
         sdcMap = null;
         if (show) {
-            for (Entry<String, SogouDomainPack> item : sdpMap.entrySet()) {
+            for (Entry<String, DomainPack> item : sdpMap.entrySet()) {
                 item.getValue().print();
             }
         }

@@ -12,7 +12,7 @@ import lombok.Getter;
 import seourl.filter.JumingFilter;
 import seourl.filter.SogouDomainFilter;
 import seourl.pack.JumingPack;
-import seourl.pack.SogouDomainPack;
+import seourl.pack.DomainPack;
 
 /**
  *
@@ -22,7 +22,7 @@ public class SogouDomainController extends Thread{
 
     private List<String> urls;
     @Getter
-    private Map<String, SogouDomainPack> mSDP = new HashMap<>();
+    private Map<String, DomainPack> mSDP = new HashMap<>();
 
     public SogouDomainController(List<String> urls) {
         this.urls = urls;
