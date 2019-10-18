@@ -11,17 +11,21 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateWebArch;
 
 /**
  *
  * @author yuri
  */
-public class WebArchivePack {
+@ToString
+public class WebArchivePack extends PackAbstract {
 
     @Getter
     @Setter
     private long readTime = System.currentTimeMillis();
+    @ToString.Exclude
     @Getter
     private Map<Integer, List<Long>> snapshots = new HashMap<>();
     @Getter

@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl.thread;
+package seourl.pack.ex;
 
 /**
  *
  * @author yuri
  */
-public abstract class ThreadAbstract implements Runnable {
- 
+public class PackAbstract {
+    
+    public void print(){
+        System.out.println(this.toString());
+    }
+    
 }

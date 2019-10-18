@@ -24,6 +24,7 @@ public class Configure {
     private static String comm = "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \n";
 
     static final int DOMAIN_FILTER_MODE;
+    public static final int RELOAD_PAGE_TIME = 10; //網頁出錯的話，在10秒內重復讀
 
     static {
         int domainFilterMode = 1;

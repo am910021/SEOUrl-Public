@@ -10,31 +10,31 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import seourl.filter.JumingFilter;
+import seourl.filter.SogouDomainFilter;
 import seourl.pack.JumingPack;
+import seourl.pack.SogouDomainPack;
 
 /**
  *
  * @author Yuri
  */
-public class JumingController extends Thread{
+public class SogouDomainController extends Thread{
 
     private List<String> urls;
     @Getter
-    private Map<String, JumingPack> mJP = new HashMap<>();
+    private Map<String, SogouDomainPack> mSDP = new HashMap<>();
 
-    public JumingController(List<String> urls) {
+    public SogouDomainController(List<String> urls) {
         this.urls = urls;
     }
     
     @Override
     public void run() {
-        JumingFilter j = new JumingFilter();
-        j.loadWeb("http://www.juming.com");
-        j.login();
+        SogouDomainFilter s = new SogouDomainFilter();
         for (String url : urls) {
-            j.doAnalysis(url);
-            mJP.put(url, j.getJP());
+            s.doAnalysis(url);
+            mSDP.put(url, s.getSdp());
         }
-        j.close();
+        s.close();
     }
 }

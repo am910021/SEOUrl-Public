@@ -8,13 +8,14 @@ package seourl.pack;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import seourl.pack.ex.PackAbstract;
 
 /**
  *
  * @author Yuri
  */
 @ToString
-public class JumingPack {
+public class JumingPack extends PackAbstract {
 
     @Getter
     @Setter
