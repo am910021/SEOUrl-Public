@@ -9,11 +9,10 @@ import seourl.thread.JumingController;
 import seourl.filter.WebArchiveFilter;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,10 +22,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.SogouDomainFilter;
 import seourl.pack.JumingPack;
 import seourl.pack.WebArchivePack;
-import template.TemplateIndex;
+import seourl.template.TemplateIndex;
 
 /**
  *
@@ -59,14 +57,15 @@ public class SEOUrl {
 //            ex.printStackTrace();
 //        }
 
-        SogouDomainFilter sdf = new SogouDomainFilter();
-        sdf.doAnalysis("https://www.sogou.com/web?query=\"chinaqscm.com\"");
+        //SogouDomainFilter sdf = new SogouDomainFilter();
+        //sdf.doAnalysis("https://www.sogou.com/web?query=\"chinaqscm.com\"");
         
+
         
         //System.out.println(Configure.DOMAIN_FILTER_MODE);
         //Configure.saveConfig();
-        //SEOUrl s = new SEOUrl();
-        //s.start();
+        SEOUrl s = new SEOUrl();
+        s.start();
 
     }
 

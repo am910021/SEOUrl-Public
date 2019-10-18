@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package template;
+package seourl.template;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,8 +59,9 @@ public class Template {
         BufferedReader br = null;
         int count = 0;
         try {
-            File file = new File(String.format("template/%s.html", type));
-            br = new BufferedReader(new FileReader(file));
+            InputStream file = getClass().getResourceAsStream(String.format("/template/%s.html", type)); 
+            
+            br = new BufferedReader(new InputStreamReader(file));
             String st;
             String key;
             while ((st = br.readLine()) != null) {
@@ -112,9 +115,9 @@ public class Template {
         Tools.checkDir(path0);
 
         try {
-            Path source = Paths.get(String.format("template/%s.html", type));
+            //Path source = Paths.get(String.format("template/%s.html", type));
             Path dist = Paths.get(path0 + (saveName != null ? saveName : type) + ".html");
-            Files.copy(source.toAbsolutePath(), dist.toAbsolutePath());
+            //Files.copy(source.toAbsolutePath(), dist.toAbsolutePath());
             List<String> output = new ArrayList<>();
             List<String> tmp;
             for (int i = 0; i < template.size(); i++) {

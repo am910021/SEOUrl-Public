@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import template.TemplateWebArch;
+import seourl.template.TemplateWebArch;
 
 /**
  *
@@ -21,7 +21,7 @@ public class WebArchivePack {
 
     @Getter
     @Setter
-    private long readTime;
+    private long readTime = System.currentTimeMillis();
     @Getter
     private Map<Integer, List<Long>> snapshots = new HashMap<>();
     @Getter
