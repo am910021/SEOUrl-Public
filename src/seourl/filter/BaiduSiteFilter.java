@@ -7,31 +7,30 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
-import seourl.filter.ex.DomainFilterAbstract;
-import seourl.filter.ex.FilterAbstract;
-import seourl.pack.BaiduDomainPack;
+import seourl.filter.ex.SearchEngineFilterAbstract;
+import seourl.pack.BaiduSitePack;
 
 /**
  *
  * @author yuri
  */
-public class BaiduDomainFilter extends DomainFilterAbstract {
+public class BaiduSiteFilter extends SearchEngineFilterAbstract {
 
-    public BaiduDomainFilter(List<String> lkeyWords) {
-        super("Baidu-Domain", lkeyWords);
+    public BaiduSiteFilter(List<String> lkeyWords) {
+        super("Baidu-Site", lkeyWords);
     }
 
-    public BaiduDomainPack getBDP() {
-        return (BaiduDomainPack) this.getSep();
+    public BaiduSitePack getBSP() {
+        return (BaiduSitePack) this.getSep();
     }
 
     @Override
-    final protected String getPageUrl(String url, int i) {
+    protected String getPageUrl(String url, int i) {
         String sPage = "";
         if (i > 1) {
-            sPage = "&pn=" + String.valueOf(i * 10);
+            sPage = "&pn=" + String.valueOf(i);
         }
-        return String.format("https://www.baidu.com/s?wd=domain:%s%s", url, sPage);
+        return String.format("https://www.baidu.com/s?wd=site:%s%s", url, sPage);
     }
 
     @Override
@@ -54,8 +53,18 @@ public class BaiduDomainFilter extends DomainFilterAbstract {
     }
 
     @Override
+    final protected boolean doFilter(String tmp, String keyword, String url) {
+        boolean pageIllegal = false;
+        if (tmp.contains(keyword)) {
+            this.getBSP().setIllegal(true);
+            pageIllegal = true;
+        }
+        return pageIllegal;
+    }
+
+    @Override
     protected void createNewSearchEnginePack() {
-        this.sep = new BaiduDomainPack();
+        this.sep = new BaiduSitePack();
     }
 
     @Override

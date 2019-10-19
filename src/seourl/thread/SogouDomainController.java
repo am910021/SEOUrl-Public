@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import seourl.filter.SogouDomainFilter;
-import seourl.pack.SearchEnginePack;
+import seourl.pack.SogouDomainPack;
 
 /**
  *
@@ -21,7 +21,7 @@ public class SogouDomainController extends Thread {
     private List<String> urls;
     private List<String> keywords;
     @Getter
-    private Map<String, SearchEnginePack> mSDP = new HashMap<>();
+    private Map<String, SogouDomainPack> mSDP = new HashMap<>();
     private final int pid;
 
     public SogouDomainController(int pid, List<String> urls, List<String> keywords) {
@@ -38,7 +38,7 @@ public class SogouDomainController extends Thread {
         s.loadCookie();
         for (String url : urls) {
             s.doAnalysis(url);
-            mSDP.put(url, s.getSep());
+            mSDP.put(url, s.getSSP());
         }
         s.saveCookie();
         s.close();

@@ -7,38 +7,37 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
-import seourl.filter.ex.DomainFilterAbstract;
-import seourl.pack.SogouDomainPack;
+import seourl.filter.ex.SearchEngineFilterAbstract;
+import seourl.pack.SogouSerachPack;
 
 /**
  *
  * @author yuri
  */
-public class SogouDomainFilter extends DomainFilterAbstract {
-    
-    
-    public SogouDomainFilter(List<String> lkeyWords) {
-        super("Sogou-domain", lkeyWords);
+public class SogouSearchFilter extends SearchEngineFilterAbstract {
+
+    public SogouSearchFilter(List<String> lkeyWords) {
+        super("Sogou-Search", lkeyWords);
     }
-    
-    public SogouDomainPack getSSP() {
-        return (SogouDomainPack) this.getSep();
+
+    public SogouSerachPack getSSP() {
+        return (SogouSerachPack) this.getSep();
     }
-    
+
     @Override
     final protected String getPageUrl(String url, int i) {
         String sPage = "";
         if (i > 1) {
             sPage = "&page=" + String.valueOf(i);
         }
-        return String.format("https://www.sogou.com/web?query=\"%s\"%s", url, sPage);
+        return String.format("https://www.sogou.com/web?query=%s%s", url, sPage);
     }
-    
+
     @Override
     final protected List<DomElement> getResultList() {
         return page.getByXPath("//div[@class='results']/div[@class='vrwrap']");
     }
-    
+
     @Override
     protected int getMaxPage() {
         int maxPage = 1;
@@ -51,15 +50,24 @@ public class SogouDomainFilter extends DomainFilterAbstract {
         }
         return maxPage;
     }
-    
+
     @Override
-    final protected void createNewSearchEnginePack() {
-        this.sep = new SogouDomainPack();
+    final protected boolean doFilter(String tmp, String keyword, String url) {
+        boolean pageIllegal = false;
+        if ((tmp.contains(keyword)) && (tmp.contains(url))) {
+            this.getSSP().setIllegal(true);
+            pageIllegal = true;
+        }
+        return pageIllegal;
+    }
+
+    @Override
+    protected void createNewSearchEnginePack() {
+        this.sep = new SogouSerachPack();
     }
 
     @Override
     protected boolean hasPageError() {
-        System.out.println(page.asXml());
         return page.asText().contains("异常访问");
     }
 }

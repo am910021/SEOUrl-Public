@@ -9,22 +9,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import seourl.filter.So360SearchFilter;
-import seourl.pack.So360SerachPack;
+import seourl.filter.SogouSearchFilter;
+import seourl.pack.SogouSerachPack;
 
 /**
  *
  * @author Yuri
  */
-public class So360SearchController extends Thread {
+public class SogouSearchController extends Thread {
 
     private List<String> urls;
     private List<String> keywords;
     @Getter
-    private Map<String, So360SerachPack> mSDP = new HashMap<>();
+    private Map<String, SogouSerachPack> mSDP = new HashMap<>();
     private final int pid;
 
-    public So360SearchController(int pid, List<String> urls, List<String> keywords) {
+    public SogouSearchController(int pid, List<String> urls, List<String> keywords) {
         this.pid = pid;
         this.urls = urls;
         this.keywords = keywords;
@@ -32,8 +32,8 @@ public class So360SearchController extends Thread {
 
     @Override
     public void run() {
-        So360SearchFilter s = new So360SearchFilter(keywords);
-        s.setCookiePath("cache/360SO-Search/");
+        SogouSearchFilter s = new SogouSearchFilter(keywords);
+        s.setCookiePath("cache/Sogou-Search/");
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         for (String url : urls) {

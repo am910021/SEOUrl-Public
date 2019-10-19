@@ -22,6 +22,7 @@ public class JumingController extends Thread {
     @Getter
     private Map<String, JumingPack> mJP = new HashMap<>();
     private final int pid;
+
     public JumingController(int pid, List<String> urls) {
         this.pid = pid;
         this.urls = urls;
@@ -31,7 +32,7 @@ public class JumingController extends Thread {
     public void run() {
         JumingFilter j = new JumingFilter();
         j.setCookiePath("cache/Juming/");
-        j.setCookie(pid+"-cookie.bin");
+        j.setCookie(pid + "-cookie.bin");
         j.loadCookie();
         j.loadWeb("http://www.juming.com");
         j.login();

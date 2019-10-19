@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import seourl.Configure;
@@ -25,7 +26,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
     private final String filterType;
     @Setter
     protected List<String> lkeyWords = new ArrayList<>();
-    @Getter
+    @Getter(AccessLevel.PROTECTED)
     protected SearchEnginePack sep = new SearchEnginePack();
 
     public SearchEngineFilterAbstract(String filterType, List<String> lkeyWords) {
@@ -43,13 +44,18 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
 
     protected abstract boolean doFilter(String tmp, String keyword, String url);
 
+    protected abstract void createNewSearchEnginePack();
+
+    protected abstract boolean hasPageError();
+
     @Override
     public boolean doAnalysis(String url) {
-        sep = new SearchEnginePack();
+        this.createNewSearchEnginePack();
         boolean pageError = false;
         //如果讀取第一頁錯誤，取消該網域的分析 並回傳false表示未完成分析
-        pageError = !getPage(url, 1);
-        if (pageError) {
+
+        pageError = !getPage(url, 1) || this.hasPageError();
+        if (pageError ) {
             sep.setError(1, pageError);
             return false;
         }
@@ -94,6 +100,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         while ((!status && (System.currentTimeMillis() - time) < Configure.RELOAD_PAGE_TIME * 1000)) {
             try {
                 String tUrl = getPageUrl(url, i);
+                System.out.println(tUrl);
                 page = webClient.getPage(tUrl);
                 status = true;
                 System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);

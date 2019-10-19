@@ -8,21 +8,22 @@ package seourl.filter;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.Iterator;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
-import seourl.pack.So360SerachPack;
+import seourl.pack.So360SitePack;
 
 /**
  *
  * @author yuri
  */
-public class So360SearchFilter extends SearchEngineFilterAbstract {
+public class So360SiteFilter extends SearchEngineFilterAbstract {
 
-    public So360SearchFilter(List<String> lkeyWords) {
-        super("360SO-Search", lkeyWords);
+    public So360SiteFilter(List<String> lkeyWords) {
+        super("360SO-Site", lkeyWords);
     }
 
-    public So360SerachPack getSSP() {
-        return (So360SerachPack) this.getSep();
+    public So360SitePack getSSP() {
+        return (So360SitePack) this.getSep();
     }
 
     @Override
@@ -31,7 +32,7 @@ public class So360SearchFilter extends SearchEngineFilterAbstract {
         if (i > 1) {
             sPage = "&pn=" + String.valueOf(i);
         }
-        return String.format("https://www.so.com/s?q=%s%s", url, sPage);
+        return String.format("https://www.so.com/s?q=site:%s%s", url, sPage);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class So360SearchFilter extends SearchEngineFilterAbstract {
     @Override
     final protected boolean doFilter(String tmp, String keyword, String url) {
         boolean pageIllegal = false;
-        if ((tmp.contains(keyword)) && (tmp.contains(url))) {
+        if (tmp.contains(keyword)) {
             this.getSSP().setIllegal(true);
             pageIllegal = true;
         }
@@ -68,7 +69,7 @@ public class So360SearchFilter extends SearchEngineFilterAbstract {
 
     @Override
     protected void createNewSearchEnginePack() {
-        this.sep = new So360SerachPack();
+        this.sep = new So360SitePack();
     }
 
     @Override

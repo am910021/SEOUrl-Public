@@ -56,11 +56,11 @@ public abstract class FilterAbstract implements FilterInterface {
         initWebClient();
     }
 
-    public void setCookiePath(String path){
+    public void setCookiePath(String path) {
         Tools.checkDir(path);
         this.cookiePath = path;
     }
-    
+
     protected void initWebClient() {
         ConfirmHandler okHandler = new ConfirmHandler() {
             public boolean handleConfirm(Page page, String message) {
@@ -68,7 +68,7 @@ public abstract class FilterAbstract implements FilterInterface {
             }
         };
         int r = Tools.getRandomNumberInRange(0, 7);
-        
+
         browser = new BrowserVersion.BrowserVersionBuilder(BrowserVersion.BEST_SUPPORTED).setUserAgent(Device.getById(r).getType()).build();
         webClient = new WebClient(browser);
         webClient.getOptions().setJavaScriptEnabled(true);
@@ -116,7 +116,7 @@ public abstract class FilterAbstract implements FilterInterface {
     public final void loadCookie() {
         ObjectInputStream in = null;
         try {
-            File file = new File(this.cookiePath+this.cookie);
+            File file = new File(this.cookiePath + this.cookie);
             if (!file.exists()) {
                 return;
             }
@@ -135,7 +135,7 @@ public abstract class FilterAbstract implements FilterInterface {
 
     public final void saveCookie() {
         try {
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(this.cookiePath+this.cookie));
+            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(this.cookiePath + this.cookie));
             out.writeObject(webClient.getCookieManager().getCookies());
             out.close();
         } catch (IOException ex) {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import seourl.filter.BaiduDomainFilter;
-import seourl.pack.SearchEnginePack;
+import seourl.pack.BaiduDomainPack;
 
 /**
  *
@@ -21,7 +21,7 @@ public class BaiduDomainController extends Thread {
     private List<String> urls;
     private List<String> keywords;
     @Getter
-    private Map<String, SearchEnginePack> mDP = new HashMap<>();
+    private Map<String, BaiduDomainPack> mDP = new HashMap<>();
     private final int pid;
 
     public BaiduDomainController(int pid, List<String> urls, List<String> keywords) {
@@ -34,11 +34,11 @@ public class BaiduDomainController extends Thread {
     public void run() {
         BaiduDomainFilter s = new BaiduDomainFilter(keywords);
         s.setCookiePath("cache/BaiduDomain/");
-        s.setCookie(pid+"-cookie.bin");
+        s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         for (String url : urls) {
             s.doAnalysis(url);
-            mDP.put(url, s.getSep());
+            mDP.put(url, s.getBDP());
         }
         s.saveCookie();
         s.close();
