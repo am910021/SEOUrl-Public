@@ -29,7 +29,6 @@ public class JumingFilter extends FilterAbstract {
 
     public JumingFilter() {
         super();
-        this.loadCookie();
     }
 
     public boolean login() {

@@ -35,7 +35,7 @@ public class JumingPack extends PackAbstract {
     boolean error = false;
 
     public boolean isPass() {
-        return !reg && !qq && !weChat && !gfw;
+        return !reg && !qq && !weChat && !gfw && !error;
     }
 
     public String getStatus() {

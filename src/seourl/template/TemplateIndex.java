@@ -27,8 +27,8 @@ public class TemplateIndex extends Template {
         this.insertByKey("time", Tools.getFormatDate1(time));
     }
 
-    public void insertRecord(String path, String url, WebArchivePack wap, String s1) {
-        this.insertByKey("record", path, url, wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""), url, s1);
+    public void insertRecord(String path, String url, WebArchivePack wap, String juming, String sogo, String baidu) {
+        this.insertByKey("record", path, url, wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""), url, juming, url, sogo, url, baidu);
     }
 
 }

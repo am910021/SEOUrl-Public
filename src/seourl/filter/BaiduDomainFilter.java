@@ -31,9 +31,7 @@ public class BaiduDomainFilter extends DomainFilterAbstract {
 
     @Override
     protected List<DomElement> getResultList() {
-        List<DomElement> list = page.getByXPath("//div[@class='result c-container ']");
-
-        return list;
+        return page.getByXPath("//div[@class='result c-container ']");
     }
 
     @Override

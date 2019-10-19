@@ -21,20 +21,26 @@ public class JumingController extends Thread {
     private List<String> urls;
     @Getter
     private Map<String, JumingPack> mJP = new HashMap<>();
-
-    public JumingController(List<String> urls) {
+    private final int pid;
+    public JumingController(int pid, List<String> urls) {
+        this.pid = pid;
         this.urls = urls;
     }
 
     @Override
     public void run() {
         JumingFilter j = new JumingFilter();
+        j.setCookiePath("cache/Juming/");
+        j.setCookie(pid+"-cookie.bin");
+        j.loadCookie();
         j.loadWeb("http://www.juming.com");
         j.login();
+        j.saveCookie();
         for (String url : urls) {
             j.doAnalysis(url);
             mJP.put(url, j.getJp());
         }
+        j.saveCookie();
         j.close();
     }
 }

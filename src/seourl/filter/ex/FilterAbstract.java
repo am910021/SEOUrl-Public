@@ -24,7 +24,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.logging.LogFactory;
+import seourl.Device;
 import seourl.Tools;
 import seourl.filter.JumingFilter;
 
@@ -40,6 +43,12 @@ public abstract class FilterAbstract implements FilterInterface {
 
     public abstract boolean doAnalysis(String url);
 
+    @Getter
+    @Setter
+    private String cookie = "cookie.bin";
+    @Getter
+    private String cookiePath = "cache/";
+
     protected FilterAbstract() {
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);
@@ -47,14 +56,20 @@ public abstract class FilterAbstract implements FilterInterface {
         initWebClient();
     }
 
+    public void setCookiePath(String path){
+        Tools.checkDir(path);
+        this.cookiePath = path;
+    }
+    
     protected void initWebClient() {
         ConfirmHandler okHandler = new ConfirmHandler() {
             public boolean handleConfirm(Page page, String message) {
                 return true;
             }
         };
-
-        browser = new BrowserVersion.BrowserVersionBuilder(BrowserVersion.BEST_SUPPORTED).setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36").build();
+        int r = Tools.getRandomNumberInRange(0, 7);
+        
+        browser = new BrowserVersion.BrowserVersionBuilder(BrowserVersion.BEST_SUPPORTED).setUserAgent(Device.getById(r).getType()).build();
         webClient = new WebClient(browser);
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setCssEnabled(true);
@@ -98,10 +113,10 @@ public abstract class FilterAbstract implements FilterInterface {
         page = null;
     }
 
-    protected final void loadCookie() {
+    public final void loadCookie() {
         ObjectInputStream in = null;
         try {
-            File file = new File("cookie.file");
+            File file = new File(this.cookiePath+this.cookie);
             if (!file.exists()) {
                 return;
             }
@@ -118,9 +133,9 @@ public abstract class FilterAbstract implements FilterInterface {
         webClient.getCookieManager().clearExpired(new Date());
     }
 
-    protected final void saveCookie() {
+    public final void saveCookie() {
         try {
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream("cookie.file"));
+            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(this.cookiePath+this.cookie));
             out.writeObject(webClient.getCookieManager().getCookies());
             out.close();
         } catch (IOException ex) {

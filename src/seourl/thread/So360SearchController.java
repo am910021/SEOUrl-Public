@@ -9,22 +9,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import seourl.filter.BaiduDomainFilter;
+import seourl.filter.So360SearchFilter;
+import seourl.filter.SogouDomainFilter;
 import seourl.pack.SearchEnginePack;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainController extends Thread {
+public class So360SearchController extends Thread {
 
     private List<String> urls;
     private List<String> keywords;
     @Getter
-    private Map<String, SearchEnginePack> mDP = new HashMap<>();
+    private Map<String, SearchEnginePack> mSDP = new HashMap<>();
     private final int pid;
 
-    public BaiduDomainController(int pid, List<String> urls, List<String> keywords) {
+    public So360SearchController(int pid, List<String> urls, List<String> keywords) {
         this.pid = pid;
         this.urls = urls;
         this.keywords = keywords;
@@ -32,13 +33,13 @@ public class BaiduDomainController extends Thread {
 
     @Override
     public void run() {
-        BaiduDomainFilter s = new BaiduDomainFilter(keywords);
-        s.setCookiePath("cache/BaiduDomain/");
-        s.setCookie(pid+"-cookie.bin");
+        So360SearchFilter s = new So360SearchFilter(keywords);
+        s.setCookiePath("cache/360SO-Search/");
+        s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         for (String url : urls) {
             s.doAnalysis(url);
-            mDP.put(url, s.getSep());
+            mSDP.put(url, s.getSep());
         }
         s.saveCookie();
         s.close();

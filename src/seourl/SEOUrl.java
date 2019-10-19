@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import seourl.filter.BaiduDomainFilter;
+import seourl.filter.So360SearchFilter;
 import seourl.filter.SogouDomainFilter;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.JumingPack;
@@ -28,6 +29,7 @@ import seourl.pack.SearchEnginePack;
 import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
+import seourl.thread.So360SearchController;
 import seourl.thread.SogouDomainController;
 
 /**
@@ -46,6 +48,7 @@ public class SEOUrl {
 
     private Date startTime = new Date();
     private List<String> urls = new ArrayList<String>();
+    @Getter
     private List<String> keywords = new ArrayList<String>();
 
     //最終要輸出的資料
@@ -53,12 +56,14 @@ public class SEOUrl {
     private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
     private Map<String, SearchEnginePack> sdpMap = new HashMap<>();       //搜狗域名資料集
     private Map<String, SearchEnginePack> bdpMap = new HashMap<>();       //百度域名資料集
+    private Map<String, SearchEnginePack> sspMap = new HashMap<>();       //360搜資料集
 
     //執行中的暫存資料
     private Map<Integer, List<String>> urlSplit = new HashMap<>();
     private Map<Integer, JumingController> jcMap = new HashMap<>();
     private Map<Integer, SogouDomainController> sdcMap = new HashMap<>();
     private Map<Integer, BaiduDomainController> bdcMap = new HashMap<>();
+    private Map<Integer, So360SearchController> sscMap = new HashMap<>();
 
     public static void main(String[] args) {
         // TODO code application logic here
@@ -68,18 +73,23 @@ public class SEOUrl {
 //        } catch (FileNotFoundException ex) {
 //            ex.printStackTrace();
 //        }
+        
+
+
         SEOUrl s = new SEOUrl();
         s.loadUrl();
+        s.splitUrl(4);
         s.loadKeyword();
-        s.splitUrl(MAX_THREAD);
-        s.startBDF(true);
-        s.startSDF(true);
-
+        s.startSSF(true);
+        
+        
+        //s.splitUrl(MAX_THREAD);
+        //s.startBDF(true);
+        //s.startSDF(true);
         //DomainFilterAbstract bdf = new BaiduDomainFilter();
         //bdf.doAnalysis("google.com");
         //System.out.println(Configure.DOMAIN_FILTER_MODE);
         //Configure.saveConfig();
-        //SEOUrl s = new SEOUrl();
         //s.start();
     }
 
@@ -93,7 +103,7 @@ public class SEOUrl {
     private void startBDF(boolean show) {
         BaiduDomainController bdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getValue(), keywords);
+            bdc = new BaiduDomainController(map.getKey(), map.getValue(), keywords);
             bdcMap.put(map.getKey(), bdc);
             bdc.start();
             Tools.sleep(100, 1000);
@@ -116,6 +126,38 @@ public class SEOUrl {
     }
 
     /**
+     * 360搜過濾 <br>
+     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
+     * 單獨呼叫時為"測式用"
+     *
+     * @param show 是否印出除錯訊息
+     */
+    private void startSSF(boolean show) {
+        So360SearchController ssc;
+        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
+            ssc = new So360SearchController(map.getKey(), map.getValue(), keywords);
+            sscMap.put(map.getKey(), ssc);
+            ssc.start();
+            Tools.sleep(100, 1000);
+        }
+        ssc = null;
+        for (Entry<Integer, So360SearchController> map : sscMap.entrySet()) {
+            try {
+                map.getValue().join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.sspMap.putAll(map.getValue().getMSDP());
+        }
+        sscMap = null;
+        if (show) {
+            for (Entry<String, SearchEnginePack> map : sspMap.entrySet()) {
+                map.getValue().print(map.getKey());
+            }
+        }
+    }
+    
+    /**
      * 搜狗域名過濾 <br>
      * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
      * 單獨呼叫時為"測式用"
@@ -125,10 +167,10 @@ public class SEOUrl {
     private void startSDF(boolean show) {
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getValue(), keywords);
+            sdc = new SogouDomainController(map.getKey(), map.getValue(), keywords);
             sdcMap.put(map.getKey(), sdc);
             sdc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1000, 3000);
         }
         sdc = null;
 
@@ -158,10 +200,10 @@ public class SEOUrl {
     private void startJF(boolean show) {
         JumingController tc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            tc = new JumingController(map.getValue());
+            tc = new JumingController(map.getKey(), map.getValue());
             jcMap.put(map.getKey(), tc);
             tc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(300, 1000);
         }
         tc = null;
         for (Entry<Integer, JumingController> map : jcMap.entrySet()) {
@@ -200,15 +242,16 @@ public class SEOUrl {
     }
 
     public void start() {
-        this.splitUrl(MAX_THREAD);
+
         this.loadUrl();
-        this.startWAF(false);
-        this.startJF(false);
-        this.startSDF(false);
-        this.startBDF(false);
+        this.splitUrl(MAX_THREAD);
+        this.loadKeyword();
+        this.startWAF(true);
+        this.startJF(true);
+        this.startSDF(true);
+        this.startBDF(true);
 
         saveFile();
-
     }
 
     private void splitUrl(int max) {
@@ -239,17 +282,19 @@ public class SEOUrl {
         int unknowCount = 0;
         JumingPack jp;
         WebArchivePack wap;
-        String tmp;
+        SearchEnginePack sdp;
+        SearchEnginePack bdp;
         for (String url : urls) {
             jp = this.jpMap.get(url);
             wap = this.wapMap.get(url);
+            sdp = this.sdpMap.get(url);
+            bdp = this.bdpMap.get(url);
 
-            if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass()) {
-                tmp = jp.getStatus();
-                failT.insertRecord(String.format("files/%s.html", url), url, wap, tmp);
+            if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass() || sdp.isIllegal() || sdp.isError() || bdp.isIllegal() || bdp.isError()) {
+                failT.insertRecord(String.format("files/%s.html", url), url, wap, jp.getStatus(), sdp.getStatus(), bdp.getStatus());
                 failCount++;
             } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
-                passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過");
+                passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過", "通過", "通過");
                 passCount++;
             } else {
                 unknowCount++;

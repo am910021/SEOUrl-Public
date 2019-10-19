@@ -22,8 +22,10 @@ public class SogouDomainController extends Thread {
     private List<String> keywords;
     @Getter
     private Map<String, SearchEnginePack> mSDP = new HashMap<>();
+    private final int pid;
 
-    public SogouDomainController(List<String> urls, List<String> keywords) {
+    public SogouDomainController(int pid, List<String> urls, List<String> keywords) {
+        this.pid = pid;
         this.urls = urls;
         this.keywords = keywords;
     }
@@ -31,10 +33,14 @@ public class SogouDomainController extends Thread {
     @Override
     public void run() {
         SogouDomainFilter s = new SogouDomainFilter(keywords);
+        s.setCookiePath("cache/SogouDomain/");
+        s.setCookie(pid + "-cookie.bin");
+        s.loadCookie();
         for (String url : urls) {
             s.doAnalysis(url);
             mSDP.put(url, s.getSep());
         }
+        s.saveCookie();
         s.close();
     }
 }

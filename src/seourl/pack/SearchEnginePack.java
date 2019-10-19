@@ -27,6 +27,14 @@ public class SearchEnginePack extends PackAbstract {
 
     private String keyword[] = {"", "", ""};
 
+    public String getStatus() {
+        return this.getError() + "\n" + this.getPage() + "\n" + this.getKeyWord();
+    }
+
+    public boolean isError() {
+        return error[0] || error[1] || error[2];
+    }
+
     public void setKeyWord(int i, String key) {
         keyword[i - 1] = key;
     }

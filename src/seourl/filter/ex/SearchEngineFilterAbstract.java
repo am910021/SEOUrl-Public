@@ -25,7 +25,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
     private final String filterType;
     @Setter
     protected List<String> lkeyWords = new ArrayList<>();
-@Getter
+    @Getter
     protected SearchEnginePack sep = new SearchEnginePack();
 
     public SearchEngineFilterAbstract(String filterType, List<String> lkeyWords) {
