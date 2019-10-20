@@ -356,26 +356,26 @@ public class SEOUrl {
         this.loadUrl();
         this.splitUrl(MAX_THREAD);
         this.loadKeyword();
-        this.startWAF(true);
-        this.startJF(true);
+        this.startWAF(Configure.DEBUG);
+        this.startJF(Configure.DEBUG);
 
         if (Configure.ENABLE_BAIDU_DOMAIN) {
-            this.startBaiduDomainFilter(true);
+            this.startBaiduDomainFilter(Configure.DEBUG);
         }
         if (Configure.ENABLE_BAIDU_SITE) {
-            this.startBaiduSiteFilter(true);
+            this.startBaiduSiteFilter(Configure.DEBUG);
         }
         if (Configure.ENABLE_SO360_SEARCH) {
-            this.startSo360SearchFIlter(true);
+            this.startSo360SearchFIlter(Configure.DEBUG);
         }
         if (Configure.ENABLE_SO360_SITE) {
-            this.startSo360SiteFilter(true);
+            this.startSo360SiteFilter(Configure.DEBUG);
         }
         if (Configure.ENABLE_SOGOU_SEARCH) {
-            this.startSogouSearcFilter(true);
+            this.startSogouSearcFilter(Configure.DEBUG);
         }
         if (Configure.ENABLE_SOGOU_DOMAIN) {
-            this.startSogouDomainFilter(true);
+            this.startSogouDomainFilter(Configure.DEBUG);
         }
 
         saveFile();

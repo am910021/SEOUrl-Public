@@ -6,12 +6,11 @@
 package seourl.template;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,7 +59,7 @@ public class Template {
         try {
             InputStream file = getClass().getResourceAsStream(String.format("/template/%s.html", type));
 
-            br = new BufferedReader(new InputStreamReader(file));
+            br = new BufferedReader(new InputStreamReader(file, "UTF-8"));
             String st;
             String key;
             while ((st = br.readLine()) != null) {
@@ -133,7 +131,7 @@ public class Template {
                     output.add(template.get(i));
                 }
             }
-            Files.write(dist, output);
+            Files.write(dist, output, StandardCharsets.UTF_8);
         } catch (Exception ex) {
             Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
         }

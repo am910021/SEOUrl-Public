@@ -100,7 +100,9 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         while ((!status && (System.currentTimeMillis() - time) < Configure.RELOAD_PAGE_TIME * 1000)) {
             try {
                 String tUrl = getPageUrl(url, i);
-                System.out.println(tUrl);
+                if (Configure.DEBUG) {
+                    System.out.println(tUrl);
+                }
                 page = webClient.getPage(tUrl);
                 status = true;
                 System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);
