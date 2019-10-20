@@ -27,7 +27,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
     @Setter
     protected List<String> lkeyWords = new ArrayList<>();
     @Getter(AccessLevel.PROTECTED)
-    protected SearchEnginePack sep = new SearchEnginePack();
+    protected SearchEnginePack sep;
 
     public SearchEngineFilterAbstract(String filterType, List<String> lkeyWords) {
         super();
@@ -55,7 +55,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         //如果讀取第一頁錯誤，取消該網域的分析 並回傳false表示未完成分析
 
         pageError = !getPage(url, 1) || this.hasPageError();
-        if (pageError ) {
+        if (pageError) {
             sep.setError(1, pageError);
             return false;
         }

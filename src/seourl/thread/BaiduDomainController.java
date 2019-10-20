@@ -5,6 +5,7 @@
  */
 package seourl.thread;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,16 +19,18 @@ import seourl.pack.BaiduDomainPack;
  */
 public class BaiduDomainController extends Thread {
 
+    private Date startTime;
     private List<String> urls;
     private List<String> keywords;
     @Getter
     private Map<String, BaiduDomainPack> mDP = new HashMap<>();
     private final int pid;
 
-    public BaiduDomainController(int pid, List<String> urls, List<String> keywords) {
+    public BaiduDomainController(int pid, Date startTime, List<String> urls, List<String> keywords) {
         this.pid = pid;
         this.urls = urls;
         this.keywords = keywords;
+        this.startTime = startTime;
     }
 
     @Override
@@ -39,6 +42,7 @@ public class BaiduDomainController extends Thread {
         for (String url : urls) {
             s.doAnalysis(url);
             mDP.put(url, s.getBDP());
+            s.getBDP().saveFile(url, startTime);
         }
         s.saveCookie();
         s.close();

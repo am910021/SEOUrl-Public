@@ -7,6 +7,7 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.BaiduSitePack;
 
@@ -30,7 +31,7 @@ public class BaiduSiteFilter extends SearchEngineFilterAbstract {
         if (i > 1) {
             sPage = "&pn=" + String.valueOf(i);
         }
-        return String.format("https://www.baidu.com/s?wd=site:%s%s", url, sPage);
+        return String.format(Configure.BAIDU_SITE + "%s%s", url, sPage);
     }
 
     @Override

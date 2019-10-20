@@ -5,10 +5,17 @@
  */
 package seourl.pack;
 
+import seourl.Configure;
+
 /**
  *
  * @author yuri
  */
 public class SogouSerachPack extends SearchEnginePack {
+
+    public SogouSerachPack() {
+        super("files/SogouSerach/", "搜狗搜尋");
+        this.url = Configure.SOGOU_SEARCH;
+    }
 
 }

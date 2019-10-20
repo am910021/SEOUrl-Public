@@ -5,10 +5,15 @@
  */
 package seourl.pack;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import seourl.pack.ex.PackAbstract;
+import seourl.template.TemplateSearchEngine;
+import seourl.template.TemplateWebArch;
 
 /**
  *
@@ -59,5 +64,19 @@ public class JumingPack extends PackAbstract {
             tmp = "通過";
         }
         return tmp;
+    }
+
+    @Override
+    public void saveFile(String domain, Date startTime) {
+//        TemplateSearchEngine tse = new TemplateSearchEngine(startTime);
+//        tse.setSavePath("files/Juming");
+//        tse.setSaveName(domain);
+//        tse.insertTitle("聚名網",domain);
+//        tse.insertType("聚名網");
+//        tse.insertDomain(domain);
+//        tse.insertTime(this.getReadTime());
+//        String url = String.format("http://www.juming.com/hao/?cha_ym=%s", domain);
+//        tse.insertRecord(url, domain, this.getStatus());
+//        tse.creatFile();
     }
 }

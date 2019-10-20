@@ -23,7 +23,6 @@ import lombok.Getter;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
-import seourl.pack.SearchEnginePack;
 import seourl.pack.So360SerachPack;
 import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
@@ -52,9 +51,10 @@ public class SEOUrl {
     private static final int MAX_THREAD = 4; //多線程，聚名網 sogou 專用
 
     private Date startTime = new Date();
-    private List<String> urls = new ArrayList<String>();
+    private List<String> urls;
     @Getter
-    private List<String> keywords = new ArrayList<String>();
+    private List<String> keywords;
+    private Map<Integer, List<String>> urlSplit;
 
     //最終要輸出的資料
     private Map<String, WebArchivePack> wapMap = new HashMap<>();   //WebArchive資料集
@@ -70,7 +70,6 @@ public class SEOUrl {
     private Map<String, So360SitePack> so360SitePMap = new HashMap<>();
 
     //執行中的暫存資料
-    private Map<Integer, List<String>> urlSplit = new HashMap<>();
     private Map<Integer, JumingController> jcMap = new HashMap<>();
 
     private Map<Integer, SogouDomainController> sogoDomainCMap = new HashMap<>();
@@ -82,6 +81,14 @@ public class SEOUrl {
     private Map<Integer, BaiduSiteController> baiduSiteCMap = new HashMap<>();
     private Map<Integer, So360SiteController> so360SiteCMap = new HashMap<>();
 
+    public SEOUrl() {
+        if(Configure.ENABLE_BAIDU_SITE){
+            
+        }
+    }
+
+    
+    
     public static void main(String[] args) {
         // TODO code application logic here
 
@@ -90,14 +97,14 @@ public class SEOUrl {
 //        } catch (FileNotFoundException ex) {
 //            ex.printStackTrace();
 //        }
-        SEOUrl s = new SEOUrl();
-        s.loadUrl();
-        s.splitUrl(MAX_THREAD);
-        s.loadKeyword();
-        s.startSogouDomainFilter(true);
 
-        //Configure.saveConfig();
-        //s.start();
+        SEOUrl s = new SEOUrl();
+        //s.loadUrl();
+        //s.splitUrl(MAX_THREAD);
+        //s.loadKeyword();
+        //s.startSogouDomainFilter(true);
+
+        s.start();
     }
 
     /**
@@ -110,7 +117,7 @@ public class SEOUrl {
     private void startSo360SiteFilter(boolean show) {
         So360SiteController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SiteController(map.getKey(), map.getValue(), keywords);
+            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), keywords);
             so360SiteCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -142,7 +149,7 @@ public class SEOUrl {
     private void startBaiduSiteFilter(boolean show) {
         BaiduSiteController bsc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bsc = new BaiduSiteController(map.getKey(), map.getValue(), keywords);
+            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), keywords);
             baiduSiteCMap.put(map.getKey(), bsc);
             bsc.start();
             Tools.sleep(100, 1000);
@@ -174,7 +181,7 @@ public class SEOUrl {
     private void startSogouSearcFilter(boolean show) {
         SogouSearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new SogouSearchController(map.getKey(), map.getValue(), keywords);
+            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), keywords);
             sogouSearchCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -206,7 +213,7 @@ public class SEOUrl {
     private void startBaiduDomainFilter(boolean show) {
         BaiduDomainController bdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getKey(), map.getValue(), keywords);
+            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), keywords);
             baiduDomainCMap.put(map.getKey(), bdc);
             bdc.start();
             Tools.sleep(100, 1000);
@@ -238,7 +245,7 @@ public class SEOUrl {
     private void startSo360SearchFIlter(boolean show) {
         So360SearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SearchController(map.getKey(), map.getValue(), keywords);
+            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), keywords);
             so360SearchMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -270,7 +277,7 @@ public class SEOUrl {
     private void startSogouDomainFilter(boolean show) {
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getKey(), map.getValue(), keywords);
+            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), keywords);
             sogoDomainCMap.put(map.getKey(), sdc);
             sdc.start();
             Tools.sleep(1000, 3000);
@@ -352,19 +359,30 @@ public class SEOUrl {
         this.startWAF(true);
         this.startJF(true);
 
-        this.startSogouDomainFilter(true);
-        this.startBaiduDomainFilter(true);
-
-        this.startSo360SearchFIlter(true);
-        this.startSogouSearcFilter(true);
-
-        this.startSo360SiteFilter(true);
-        this.startBaiduSiteFilter(true);
+        if (Configure.ENABLE_BAIDU_DOMAIN) {
+            this.startBaiduDomainFilter(true);
+        }
+        if (Configure.ENABLE_BAIDU_SITE) {
+            this.startBaiduSiteFilter(true);
+        }
+        if (Configure.ENABLE_SO360_SEARCH) {
+            this.startSo360SearchFIlter(true);
+        }
+        if (Configure.ENABLE_SO360_SITE) {
+            this.startSo360SiteFilter(true);
+        }
+        if (Configure.ENABLE_SOGOU_SEARCH) {
+            this.startSogouSearcFilter(true);
+        }
+        if (Configure.ENABLE_SOGOU_DOMAIN) {
+            this.startSogouDomainFilter(true);
+        }
 
         saveFile();
     }
 
     private void splitUrl(int max) {
+        urlSplit = new HashMap<>();
         int count = 0;
         for (int i = 0; i < urls.size(); i++) {
             if (!urlSplit.containsKey(count)) {
@@ -379,42 +397,104 @@ public class SEOUrl {
     }
 
     private void saveFile() {
-        int passCount = 0;
+
+        int[] count = {0, 0, 0};
+
         TemplateIndex passT = new TemplateIndex(startTime);
         passT.insertTime(startTime);
         passT.setSaveName("index");
 
-        int failCount = 0;
         TemplateIndex failT = new TemplateIndex(startTime);
         failT.insertTime(startTime);
         failT.setSaveName("index_f");
 
-        int unknowCount = 0;
-        JumingPack jp;
-        WebArchivePack wap;
-        SearchEnginePack sdp;
-        SearchEnginePack bdp;
         for (String url : urls) {
-            jp = this.jpMap.get(url);
-            wap = this.wapMap.get(url);
-            sdp = this.sogouDomainPMap.get(url);
-            bdp = this.baiduDomainPMap.get(url);
-
-            if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass() || sdp.isIllegal() || sdp.isError() || bdp.isIllegal() || bdp.isError()) {
-                failT.insertRecord(String.format("files/%s.html", url), url, wap, jp.getStatus(), sdp.getStatus(), bdp.getStatus());
-                failCount++;
-            } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
-                passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過", "通過", "通過");
-                passCount++;
-            } else {
-                unknowCount++;
-            }
-            //System.out.println(jp.toString());
-            //this.mWebArchive.get(url).saveFile(url, startTime);
+            this.insertRecord(passT, failT, url, count);
         }
         passT.creatFile();
         failT.creatFile();
-        System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), passCount, failCount, unknowCount);
+        System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), count[0], count[1], count[2]);
+    }
+
+    private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {
+        JumingPack jp;
+        WebArchivePack wap;
+
+        String[] bdpStr = {"", "未啟用"};
+        String[] bspStr = {"", "未啟用"};
+        String[] s3sepStr = {"", "未啟用"};
+        String[] s3sipStr = {"", "未啟用"};
+        String[] sdpStr = {"", "未啟用"};
+        String[] sspStr = {"", "未啟用"};
+
+        boolean isPass = true;
+
+        if (Configure.ENABLE_BAIDU_DOMAIN) {
+            BaiduDomainPack bdp = this.baiduDomainPMap.get(url);
+            isPass = isPass && bdp.allPass();
+            bdpStr[0] = bdp.getSaveLocation();
+            bdpStr[1] = bdp.allPass() ? "通過" : "未通過";
+        }
+        if (Configure.ENABLE_BAIDU_SITE) {
+            BaiduSitePack bsp = this.baiduSitePMap.get(url);
+            isPass = isPass && bsp.allPass();
+            bspStr[0] = bsp.getSaveLocation();
+            bspStr[1] = bsp.allPass() ? "通過" : "未通過";
+        }
+        if (Configure.ENABLE_SO360_SEARCH) {
+            So360SerachPack s3sep = this.so360SearchPMap.get(url);
+            isPass = isPass && s3sep.allPass();
+            s3sepStr[0] = s3sep.getSaveLocation();
+            s3sepStr[1] = s3sep.allPass() ? "通過" : "未通過";
+        }
+        if (Configure.ENABLE_SO360_SITE) {
+            So360SitePack s3sip = this.so360SitePMap.get(url);
+            isPass = isPass && s3sip.allPass();
+            s3sipStr[0] = s3sip.getSaveLocation();
+            s3sipStr[1] = s3sip.allPass() ? "通過" : "未通過";
+        }
+        if (Configure.ENABLE_SOGOU_DOMAIN) {
+            SogouDomainPack sdp = this.sogouDomainPMap.get(url);
+            isPass = isPass && sdp.allPass();
+            sdpStr[0] = sdp.getSaveLocation();
+            sdpStr[1] = sdp.allPass() ? "通過" : "未通過";
+        }
+        if (Configure.ENABLE_SOGOU_SEARCH) {
+            SogouSerachPack ssp = this.sogoSearchPMap.get(url);
+            isPass = isPass && ssp.allPass();
+            sspStr[0] = ssp.getSaveLocation();
+            sspStr[1] = ssp.allPass() ? "通過" : "未通過";
+        }
+        jp = this.jpMap.get(url);
+        wap = this.wapMap.get(url);
+
+//        String[] bdpStr = {"", "未啟用"};
+//        String[] bspStr = {"", "未啟用"};
+//        String[] s3sepStr = {"", "未啟用"};
+//        String[] s3sipStr = {"", "未啟用"};
+//        String[] sdpStr = {"", "未啟用"};
+//        String[] sspStr = {"", "未啟用"};
+        if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass() || !isPass) {
+            failT.insertRecord(String.format("files/%s.html", url), url, wap, jp.getStatus(),
+                    bdpStr,
+                    bspStr,
+                    s3sepStr,
+                    s3sipStr,
+                    sdpStr,
+                    sspStr);
+            count[1]++;
+        } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
+            passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過",
+                    bdpStr,
+                    bspStr,
+                    s3sepStr,
+                    s3sipStr,
+                    sdpStr,
+                    sspStr);
+            count[0]++;
+        } else {
+            count[2]++;
+        }
     }
 
     private void loadUrl() {

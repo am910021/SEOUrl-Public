@@ -7,6 +7,7 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.BaiduDomainPack;
@@ -31,7 +32,7 @@ public class BaiduDomainFilter extends DomainFilterAbstract {
         if (i > 1) {
             sPage = "&pn=" + String.valueOf(i * 10);
         }
-        return String.format("https://www.baidu.com/s?wd=domain:%s%s", url, sPage);
+        return String.format(Configure.BAIDU_DOMAIN + "%s%s", url, sPage);
     }
 
     @Override

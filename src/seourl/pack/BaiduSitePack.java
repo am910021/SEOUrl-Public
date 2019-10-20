@@ -5,10 +5,17 @@
  */
 package seourl.pack;
 
+import seourl.Configure;
+
 /**
  *
  * @author yuri
  */
 public class BaiduSitePack extends SearchEnginePack {
+
+    public BaiduSitePack() {
+        super("files/BaiduSite/", "百度搜尋");
+        this.url = Configure.BAIDU_SITE;
+    }
 
 }

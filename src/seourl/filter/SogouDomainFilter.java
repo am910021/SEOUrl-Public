@@ -7,6 +7,7 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.SogouDomainPack;
 
@@ -15,30 +16,29 @@ import seourl.pack.SogouDomainPack;
  * @author yuri
  */
 public class SogouDomainFilter extends DomainFilterAbstract {
-    
-    
+
     public SogouDomainFilter(List<String> lkeyWords) {
         super("Sogou-domain", lkeyWords);
     }
-    
+
     public SogouDomainPack getSSP() {
         return (SogouDomainPack) this.getSep();
     }
-    
+
     @Override
     final protected String getPageUrl(String url, int i) {
         String sPage = "";
         if (i > 1) {
             sPage = "&page=" + String.valueOf(i);
         }
-        return String.format("https://www.sogou.com/web?query=\"%s\"%s", url, sPage);
+        return String.format(Configure.SOGOU_DOMAIN + "\"%s\"%s", url, sPage);
     }
-    
+
     @Override
     final protected List<DomElement> getResultList() {
         return page.getByXPath("//div[@class='results']/div[@class='vrwrap']");
     }
-    
+
     @Override
     protected int getMaxPage() {
         int maxPage = 1;
@@ -51,7 +51,7 @@ public class SogouDomainFilter extends DomainFilterAbstract {
         }
         return maxPage;
     }
-    
+
     @Override
     final protected void createNewSearchEnginePack() {
         this.sep = new SogouDomainPack();
@@ -59,7 +59,10 @@ public class SogouDomainFilter extends DomainFilterAbstract {
 
     @Override
     protected boolean hasPageError() {
-        System.out.println(page.asXml());
+//        if(page.asText().contains("异常访问")){
+//            System.out.println(page.getUrl());
+//            System.out.println(page.asXml());
+//        }
         return page.asText().contains("异常访问");
     }
 }

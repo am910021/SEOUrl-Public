@@ -29,6 +29,7 @@ public class JumingFilter extends FilterAbstract {
 
     public JumingFilter() {
         super();
+        System.out.println("建立聚名網過濾器。");
     }
 
     public boolean login() {

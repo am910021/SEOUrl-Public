@@ -5,10 +5,17 @@
  */
 package seourl.pack;
 
+import seourl.Configure;
+
 /**
  *
  * @author yuri
  */
 public class So360SerachPack extends SearchEnginePack {
+
+    public So360SerachPack() {
+        super("files/So360Serach/", "360搜尋");
+        this.url = Configure.SO360_SEARCH;
+    }
 
 }

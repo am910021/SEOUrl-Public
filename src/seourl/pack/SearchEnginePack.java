@@ -5,10 +5,12 @@
  */
 package seourl.pack;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import seourl.pack.ex.PackAbstract;
+import seourl.template.TemplateSearchEngine;
 
 /**
  *
@@ -16,6 +18,11 @@ import seourl.pack.ex.PackAbstract;
  */
 @ToString
 public class SearchEnginePack extends PackAbstract {
+
+    protected String path;
+    protected String type;
+    protected String url;
+    protected String domain;
 
     @Getter
     @Setter
@@ -26,6 +33,11 @@ public class SearchEnginePack extends PackAbstract {
     private boolean page[] = {false, false, false};
 
     private String keyword[] = {"", "", ""};
+
+    public SearchEnginePack(String path, String type) {
+        this.path = path;
+        this.type = type;
+    }
 
     public String getStatus() {
         return this.getError() + "\n" + this.getPage() + "\n" + this.getKeyWord();
@@ -102,6 +114,36 @@ public class SearchEnginePack extends PackAbstract {
         out = out.substring(0, out.length() - 1);
         out += "頁錯誤";
         return out;
+    }
+
+    public boolean allPass() {
+        return !this.isError() && !this.isIllegal();
+    }
+
+    public final String getFinalPath() {
+        if (this.isError() || this.isIllegal()) {
+            return this.path + "fail/";
+        } else {
+            return this.path + "pass/";
+        }
+    }
+
+    public final String getSaveLocation() {
+        return getFinalPath() + domain+".html";
+    }
+
+    @Override
+    public void saveFile(String domain, Date startTime) {
+        this.domain = domain;
+        TemplateSearchEngine tse = new TemplateSearchEngine(startTime);
+        tse.setSavePath(this.getFinalPath());
+        tse.setSaveName(domain);
+        tse.insertTitle(this.type, domain);
+        tse.insertType(this.type);
+        tse.insertDomain(domain);
+        tse.insertTime(this.getReadTime());
+        tse.insertRecord(url + domain, domain, this.getError(), this.getPage(), this.getKeyWord());
+        tse.creatFile();
     }
 
 }

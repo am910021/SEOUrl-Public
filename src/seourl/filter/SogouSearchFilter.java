@@ -7,6 +7,7 @@ package seourl.filter;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.SogouSerachPack;
 
@@ -30,7 +31,7 @@ public class SogouSearchFilter extends SearchEngineFilterAbstract {
         if (i > 1) {
             sPage = "&page=" + String.valueOf(i);
         }
-        return String.format("https://www.sogou.com/web?query=%s%s", url, sPage);
+        return String.format(Configure.SOGOU_SEARCH + "%s%s", url, sPage);
     }
 
     @Override
@@ -68,6 +69,11 @@ public class SogouSearchFilter extends SearchEngineFilterAbstract {
 
     @Override
     protected boolean hasPageError() {
+//        if(page.asText().contains("异常访问")){
+//            System.out.println(page.getUrl());
+//            System.out.println(page.asXml());
+//        }
+
         return page.asText().contains("异常访问");
     }
 }

@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Cleanup;
 
 /**
@@ -21,13 +23,43 @@ import lombok.Cleanup;
  */
 public class Configure {
 
-    private static String comm = "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \n";
+    public static final String BAIDU_DOMAIN = "https://www.baidu.com/s?wd=domain:";
+    public static final String BAIDU_SITE = "https://www.baidu.com/s?wd=site:";
+    public static final String SO360_SEARCH = "https://www.so.com/s?q=";
+    public static final String SO360_SITE = "https://www.so.com/s?q=site:";
+    public static final String SOGOU_DOMAIN = "https://www.sogou.com/web?query=";
+    public static final String SOGOU_SEARCH = "https://www.sogou.com/web?query=";
+
+    public static final boolean ENABLE_BAIDU_DOMAIN;
+    public static final boolean ENABLE_BAIDU_SITE;
+    public static final boolean ENABLE_SO360_SEARCH;
+    public static final boolean ENABLE_SO360_SITE;
+    public static final boolean ENABLE_SOGOU_DOMAIN;
+    public static final boolean ENABLE_SOGOU_SEARCH;
+    public static final boolean DEBUG = false;
+
+    private static String comm = "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \r"
+            + "#ENABLE_BAIDU_DOMAIN //百度域名 1=啟動 0=關閉 \r"
+            + "#ENABLE_BAIDU_SITE   //百度網站 1=啟動 0=關閉 \r"
+            + "#ENABLE_SO360_SEARCH //360搜尋  1=啟動 0=關閉 \r"
+            + "#ENABLE_SO360_SITE   //360網站  1=啟動 0=關閉 \r"
+            + "#ENABLE_SOGOU_DOMAIN //搜狗域名 1=啟動 0=關閉 \r"
+            + "#ENABLE_SOGOU_SEARCH //搜狗搜尋 1=啟動 0=關閉 \r";
 
     public static final int DOMAIN_FILTER_MODE;
     public static final int RELOAD_PAGE_TIME = 10; //網頁出錯的話，在10秒內重復讀
 
     static {
         int domainFilterMode = 1;
+        boolean enableBaiduDomain = true;
+        boolean enableBaiduSite = true;
+        boolean enableSo360Search = true;
+        boolean enableSo360Site = true;
+        boolean enableSogouDomain = true;
+        boolean enableSogouSearch = true;
+
+        
+        
         try (InputStream input = new FileInputStream("config.txt")) {
 
             Properties prop = new Properties();
@@ -39,14 +71,53 @@ public class Configure {
             if (prop.containsKey("DOMAIN_FILTER_MODE")) {
                 domainFilterMode = Integer.parseInt(prop.getProperty("DOMAIN_FILTER_MODE"));
             }
+            enableBaiduDomain = (prop.containsKey("ENABLE_BAIDU_DOMAIN") && (Integer.parseInt(prop.getProperty("ENABLE_BAIDU_DOMAIN")) == 1));
+            enableBaiduSite = (prop.containsKey("ENABLE_BAIDU_SITE") && (Integer.parseInt(prop.getProperty("ENABLE_BAIDU_SITE")) == 1));
+            enableSo360Search = (prop.containsKey("ENABLE_SO360_SEARCH") && (Integer.parseInt(prop.getProperty("ENABLE_SO360_SEARCH")) == 1));
+            enableSo360Site = (prop.containsKey("ENABLE_SO360_SITE") && (Integer.parseInt(prop.getProperty("ENABLE_SO360_SITE")) == 1));
+            enableSogouDomain = (prop.containsKey("ENABLE_SOGOU_DOMAIN") && (Integer.parseInt(prop.getProperty("ENABLE_SOGOU_DOMAIN")) == 1));
+            enableSogouSearch = (prop.containsKey("ENABLE_SOGOU_SEARCH") && (Integer.parseInt(prop.getProperty("ENABLE_SOGOU_SEARCH")) == 1));
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
+            System.out.println("未找到設定檔config.txt，載入預設值。");
+            try {
+                saveDefaultConfig();
+            } catch (Exception ex1) {
+                //Logger.getLogger(Configure.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
         DOMAIN_FILTER_MODE = domainFilterMode;
+        ENABLE_BAIDU_DOMAIN = enableBaiduDomain;
+        ENABLE_BAIDU_SITE = enableBaiduSite;
+        ENABLE_SO360_SEARCH = enableSo360Search;
+        ENABLE_SO360_SITE = enableSo360Site;
+        ENABLE_SOGOU_DOMAIN = enableSogouDomain;
+        ENABLE_SOGOU_SEARCH = enableSogouSearch;
 
     }
 
+        static void saveDefaultConfig() throws Exception {
+
+        @Cleanup
+        OutputStream file = new FileOutputStream("config.txt");
+        @Cleanup
+        OutputStreamWriter output = new OutputStreamWriter(file, "utf-8");
+        output.write(comm);
+        Properties prop = new Properties();
+        // set the properties value
+        prop.setProperty("DOMAIN_FILTER_MODE", String.valueOf(1));
+        prop.setProperty("ENABLE_BAIDU_DOMAIN", String.valueOf(1));
+        prop.setProperty("ENABLE_BAIDU_SITE", String.valueOf(1));
+        prop.setProperty("ENABLE_SO360_SEARCH", String.valueOf(1));
+        prop.setProperty("ENABLE_SO360_SITE", String.valueOf(1));
+        prop.setProperty("ENABLE_SOGOU_DOMAIN", String.valueOf(1));
+        prop.setProperty("ENABLE_SOGOU_SEARCH", String.valueOf(1));
+        // save properties to project root folder
+        prop.store(output, null);
+            System.out.println("預設值以儲存為config.txt。");
+    }
+    
     static void saveConfig() throws Exception {
 
         @Cleanup
@@ -57,6 +128,12 @@ public class Configure {
         Properties prop = new Properties();
         // set the properties value
         prop.setProperty("DOMAIN_FILTER_MODE", String.valueOf(DOMAIN_FILTER_MODE));
+        prop.setProperty("ENABLE_BAIDU_DOMAIN", String.valueOf(ENABLE_BAIDU_DOMAIN ? 1 : 0));
+        prop.setProperty("ENABLE_BAIDU_SITE", String.valueOf(ENABLE_BAIDU_SITE ? 1 : 0));
+        prop.setProperty("ENABLE_SO360_SEARCH", String.valueOf(ENABLE_SO360_SEARCH ? 1 : 0));
+        prop.setProperty("ENABLE_SO360_SITE", String.valueOf(ENABLE_SO360_SITE ? 1 : 0));
+        prop.setProperty("ENABLE_SOGOU_DOMAIN", String.valueOf(ENABLE_SOGOU_DOMAIN ? 1 : 0));
+        prop.setProperty("ENABLE_SOGOU_SEARCH", String.valueOf(ENABLE_SOGOU_SEARCH ? 1 : 0));
         // save properties to project root folder
         prop.store(output, null);
 

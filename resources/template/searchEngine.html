@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        {% key=title content=<title>%s 違規例表 - %s</title>  %}
+        <style>
+            a:link {
+                color: #0000FF;
+            }
+
+            a:visited {
+                color: #FF0000;
+            }
+
+            th {
+                text-align: left;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        {% key=type content=<h1>過濾類型:%s</h1> %}
+        {% key=domainName content=<h1>域名例表:%s</h1> %}
+        {% key=time content=<p>建立時間:%s</p> %}
+
+        <table style="width:100%">
+            <tr>
+                <th>域名</th>
+                <th>錯誤頁面</th>
+                <th>違規頁面</th>
+                <th>關鍵字</th>
+            </tr>
+            {% key=record content=<tr><td><a href="%s" target="_blank">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr> %}
+        </table> 
+
+
+    </body>
+
+</html>

@@ -27,8 +27,27 @@ public class TemplateIndex extends Template {
         this.insertByKey("time", Tools.getFormatDate1(time));
     }
 
-    public void insertRecord(String path, String url, WebArchivePack wap, String juming, String sogo, String baidu) {
-        this.insertByKey("record", path, url, wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""), url, juming, url, sogo, url, baidu);
+    private String getLink(String[] record){
+        if(record[1].equals("未啟用")){
+            return String.format("<a>%s</a>", record[1]);
+        }
+        return String.format("<a href=\"%s\" target=\"_blank\">%s</a>", record[0], record[1]);
+    }
+    
+    public void insertRecord(String path, String url, WebArchivePack wap, String juming,
+            String[] baiduD,
+            String[] baiduS,
+            String[] So360Se,
+            String[] So360Si,
+            String[] SogouD,
+            String[] SogouS) {
+        this.insertByKey("record", path, url, wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""), url, juming,
+                getLink(baiduD),
+                getLink(baiduS),
+                getLink(So360Se),
+                getLink(So360Si),
+                getLink(SogouD),
+                getLink(SogouS));
     }
 
 }

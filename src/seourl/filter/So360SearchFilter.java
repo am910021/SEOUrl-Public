@@ -8,6 +8,7 @@ package seourl.filter;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.Iterator;
 import java.util.List;
+import seourl.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.So360SerachPack;
 
@@ -31,7 +32,7 @@ public class So360SearchFilter extends SearchEngineFilterAbstract {
         if (i > 1) {
             sPage = "&pn=" + String.valueOf(i);
         }
-        return String.format("https://www.so.com/s?q=%s%s", url, sPage);
+        return String.format(Configure.SO360_SEARCH + "%s%s", url, sPage);
     }
 
     @Override

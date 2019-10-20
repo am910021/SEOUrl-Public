@@ -5,6 +5,7 @@
  */
 package seourl.thread;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,16 +19,18 @@ import seourl.pack.SogouDomainPack;
  */
 public class SogouDomainController extends Thread {
 
+    private Date startTime;
     private List<String> urls;
     private List<String> keywords;
     @Getter
     private Map<String, SogouDomainPack> mSDP = new HashMap<>();
     private final int pid;
 
-    public SogouDomainController(int pid, List<String> urls, List<String> keywords) {
+    public SogouDomainController(int pid, Date startTime, List<String> urls, List<String> keywords) {
         this.pid = pid;
         this.urls = urls;
         this.keywords = keywords;
+        this.startTime = startTime;
     }
 
     @Override
@@ -39,6 +42,7 @@ public class SogouDomainController extends Thread {
         for (String url : urls) {
             s.doAnalysis(url);
             mSDP.put(url, s.getSSP());
+            s.getSSP().saveFile(url, startTime);
         }
         s.saveCookie();
         s.close();

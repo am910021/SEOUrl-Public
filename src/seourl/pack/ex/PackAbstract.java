@@ -5,6 +5,7 @@
  */
 package seourl.pack.ex;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,12 @@ import lombok.Setter;
  * @author yuri
  */
 public abstract class PackAbstract {
+
+    @Getter
+    @Setter
+    private long readTime = System.currentTimeMillis();
+
+    public abstract void saveFile(String url, Date startTime);
 
     public void print(String url) {
         System.out.println(url + "  " + this.toString());

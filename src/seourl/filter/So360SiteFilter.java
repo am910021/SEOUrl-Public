@@ -32,7 +32,7 @@ public class So360SiteFilter extends SearchEngineFilterAbstract {
         if (i > 1) {
             sPage = "&pn=" + String.valueOf(i);
         }
-        return String.format("https://www.so.com/s?q=site:%s%s", url, sPage);
+        return String.format(Configure.SO360_SITE + "%s%s", url, sPage);
     }
 
     @Override
