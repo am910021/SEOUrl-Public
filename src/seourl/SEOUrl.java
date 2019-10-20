@@ -419,11 +419,11 @@ public class SEOUrl {
         passT.creatFile();
         failT.creatFile();
         System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), count[0], count[1], count[2]);
-        long total = (System.currentTimeMillis() - startTime.getTime())/1000;
+        long total = (System.currentTimeMillis() - startTime.getTime());
         long s = TimeUnit.MILLISECONDS.toSeconds(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(s);
         long h = TimeUnit.MILLISECONDS.toHours(total);
-        System.out.printf("執行時間:%d小時 %d分鎕 %d秒\n", h,m,s);
+        System.out.printf("執行時間:%d小時 %d分鐘 %d秒\n", h,m,s);
     }
 
     private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {

@@ -60,6 +60,7 @@ public class JumingFilter extends FilterAbstract {
             System.out.println("登入juming中....成功。");
         } else {
             System.out.println("登入juming中....失敗。");
+            this.webClient.getCookieManager().clearCookies();
         }
         saveCookie();
         return login;
@@ -69,6 +70,12 @@ public class JumingFilter extends FilterAbstract {
         this.jp = new JumingPack();
         try {
             page = webClient.getPage(String.format("http://www.juming.com/hao/?cha_ym=%s", url));
+            if(page.asText().contains("请输入验证码")){
+                this.jp.setError(true);
+                return false;
+            }
+            
+            
             List<DomElement> table = page.getByXPath("//div[@class='orders']/div/table/tbody/tr");
             String tmp;
             String tmp2;
