@@ -125,7 +125,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         for (DomElement de : list) {
             tmp = de.asText();
             for (String keyword : lkeyWords) {
-                pageIllegal = this.doFilter(tmp, keyword, url);
+                pageIllegal = this.doFilter(tmp.toUpperCase(), keyword, url);
                 if (pageIllegal) {
                     this.sep.setKeyWord(index, keyword);
                     break;

@@ -9,14 +9,21 @@ import seourl.thread.JumingController;
 import seourl.filter.WebArchiveFilter;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -82,13 +89,12 @@ public class SEOUrl {
     private Map<Integer, So360SiteController> so360SiteCMap = new HashMap<>();
 
     public SEOUrl() {
-        if(Configure.ENABLE_BAIDU_SITE){
-            
+        if (Configure.ENABLE_BAIDU_SITE) {
+
         }
+        checkFile();
     }
 
-    
-    
     public static void main(String[] args) {
         // TODO code application logic here
 
@@ -97,7 +103,6 @@ public class SEOUrl {
 //        } catch (FileNotFoundException ex) {
 //            ex.printStackTrace();
 //        }
-
         SEOUrl s = new SEOUrl();
         //s.loadUrl();
         //s.splitUrl(MAX_THREAD);
@@ -414,6 +419,11 @@ public class SEOUrl {
         passT.creatFile();
         failT.creatFile();
         System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), count[0], count[1], count[2]);
+        long total = (System.currentTimeMillis() - startTime.getTime())/1000;
+        long s = TimeUnit.MILLISECONDS.toSeconds(total);
+        long m = TimeUnit.MILLISECONDS.toMinutes(s);
+        long h = TimeUnit.MILLISECONDS.toHours(total);
+        System.out.printf("執行時間:%d小時 %d分鎕 %d秒\n", h,m,s);
     }
 
     private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {
@@ -501,10 +511,11 @@ public class SEOUrl {
         urls = new ArrayList<String>();
         try {
             File file = new File("input.txt");
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
             String st;
             while ((st = br.readLine()) != null) {
-                if (st.equals("")) {
+                if (st.equals("") || st.contains("###")) {
                     continue;
                 }
 
@@ -519,19 +530,54 @@ public class SEOUrl {
         keywords = new ArrayList<String>();
         try {
             File file = new File("keywords.txt");
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
             String st;
             while ((st = br.readLine()) != null) {
                 st.replace(" ", "").replace("\n", "");
 
-                if (st.equals("")) {
+                if (st.equals("") || st.contains("###")) {
                     continue;
                 }
 
-                keywords.add(st);
+                keywords.add(st.toUpperCase());
             }
         } catch (IOException ex) {
             //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void checkFile() {
+        File k = new File("keywords.txt");
+        File i = new File("input.txt");
+
+        if (!k.exists()) {
+            System.out.println("未找到現有keywords.txt檔案，已建立keywords.txt");
+            List<String> comm = new ArrayList<>();
+            comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
+
+            try {
+                Files.write(Paths.get("keywords.txt"), comm, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (!i.exists()) {
+            System.out.println("未找到現有input.txt檔案，已建立input.txt");
+            List<String> comm = new ArrayList<>();
+            comm.add("###請在下方加域名，請誤刪除這行###");
+            try {
+                Files.write(Paths.get("input.txt"), comm, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (!k.exists() || !i.exists()) {
+            System.out.println("請設定好keywords.txt或input.txt在執行。");
+            System.exit(1);
+        }
+
     }
 }
