@@ -10,12 +10,10 @@ import seourl.filter.WebArchiveFilter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,11 +54,10 @@ public class SEOUrl {
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
     private static final int MAX_THREAD = 4; //多線程，聚名網 sogou 專用
+    private static final String keyWordPath = "keyword/";
 
     private Date startTime = new Date();
     private List<String> urls;
-    @Getter
-    private List<String> keywords;
     private Map<Integer, List<String>> urlSplit;
 
     //最終要輸出的資料
@@ -89,10 +86,8 @@ public class SEOUrl {
     private Map<Integer, So360SiteController> so360SiteCMap = new HashMap<>();
 
     public SEOUrl() {
-        if (Configure.ENABLE_BAIDU_SITE) {
-
-        }
         checkFile();
+        Configure.printStatus();
     }
 
     public static void main(String[] args) {
@@ -122,7 +117,7 @@ public class SEOUrl {
     private void startSo360SiteFilter(boolean show) {
         So360SiteController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), keywords);
+            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SO360_SITE.txt"));
             so360SiteCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -154,7 +149,7 @@ public class SEOUrl {
     private void startBaiduSiteFilter(boolean show) {
         BaiduSiteController bsc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), keywords);
+            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), this.loadKeyword("BAIDU_SITE.txt"));
             baiduSiteCMap.put(map.getKey(), bsc);
             bsc.start();
             Tools.sleep(100, 1000);
@@ -186,7 +181,7 @@ public class SEOUrl {
     private void startSogouSearcFilter(boolean show) {
         SogouSearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), keywords);
+            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SOGOU_SEARCH.txt"));
             sogouSearchCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -218,7 +213,7 @@ public class SEOUrl {
     private void startBaiduDomainFilter(boolean show) {
         BaiduDomainController bdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), keywords);
+            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), this.loadKeyword("BAIDU_DOMAIN.txt"));
             baiduDomainCMap.put(map.getKey(), bdc);
             bdc.start();
             Tools.sleep(100, 1000);
@@ -250,7 +245,7 @@ public class SEOUrl {
     private void startSo360SearchFIlter(boolean show) {
         So360SearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), keywords);
+            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SO360_SEARCH.txt"));
             so360SearchMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -282,7 +277,7 @@ public class SEOUrl {
     private void startSogouDomainFilter(boolean show) {
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), keywords);
+            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SOGOU_DOMAIN.txt"));
             sogoDomainCMap.put(map.getKey(), sdc);
             sdc.start();
             Tools.sleep(1000, 3000);
@@ -358,12 +353,32 @@ public class SEOUrl {
 
     public void start() {
 
+        if (Configure.ENABLE_BAIDU_DOMAIN) {
+            this.checkFile("BAIDU_DOMAIN.txt");
+        }
+        if (Configure.ENABLE_BAIDU_SITE) {
+            this.checkFile("BAIDU_SITE.txt");
+        }
+        if (Configure.ENABLE_SO360_SEARCH) {
+            this.checkFile("SO360_SEARCH.txt");
+        }
+        if (Configure.ENABLE_SO360_SITE) {
+            this.checkFile("SO360_SITE.txt");
+        }
+        if (Configure.ENABLE_SOGOU_SEARCH) {
+            this.checkFile("SOGOU_SEARCH.txt");
+        }
+        if (Configure.ENABLE_SOGOU_DOMAIN) {
+            this.checkFile("SOGOU_DOMAIN.txt");
+        }
+
         this.loadUrl();
         this.splitUrl(MAX_THREAD);
-        this.loadKeyword();
         this.startWAF(Configure.DEBUG);
-        this.startJF(Configure.DEBUG);
 
+        if (Configure.ENABLE_JUMING_FILTER) {
+            this.startJF(Configure.DEBUG);
+        }
         if (Configure.ENABLE_BAIDU_DOMAIN) {
             this.startBaiduDomainFilter(Configure.DEBUG);
         }
@@ -382,7 +397,7 @@ public class SEOUrl {
         if (Configure.ENABLE_SOGOU_DOMAIN) {
             this.startSogouDomainFilter(Configure.DEBUG);
         }
-
+        //Tools.sleep(100000);
         saveFile();
     }
 
@@ -420,16 +435,17 @@ public class SEOUrl {
         failT.creatFile();
         System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), count[0], count[1], count[2]);
         long total = (System.currentTimeMillis() - startTime.getTime());
-        long s = TimeUnit.MILLISECONDS.toSeconds(total);
-        long m = TimeUnit.MILLISECONDS.toMinutes(s);
         long h = TimeUnit.MILLISECONDS.toHours(total);
-        System.out.printf("執行時間:%d小時 %d分鐘 %d秒\n", h,m,s);
+        long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
+        long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
+        System.out.printf("執行時間:%d小時 %d分鐘 %d秒\n", h, m, s);
     }
 
     private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {
-        JumingPack jp;
+
         WebArchivePack wap;
 
+        String jgp = "未啟用";
         String[] bdpStr = {"", "未啟用"};
         String[] bspStr = {"", "未啟用"};
         String[] s3sepStr = {"", "未啟用"};
@@ -438,6 +454,12 @@ public class SEOUrl {
         String[] sspStr = {"", "未啟用"};
 
         boolean isPass = true;
+
+        if (Configure.ENABLE_JUMING_FILTER) {
+            JumingPack jp = this.jpMap.get(url);
+            isPass = isPass && jp.allPass();
+            jgp = String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", url, jp.getStatus());
+        }
 
         if (Configure.ENABLE_BAIDU_DOMAIN) {
             BaiduDomainPack bdp = this.baiduDomainPMap.get(url);
@@ -464,6 +486,7 @@ public class SEOUrl {
             s3sipStr[1] = s3sip.allPass() ? "通過" : "未通過";
         }
         if (Configure.ENABLE_SOGOU_DOMAIN) {
+            System.out.println("aaaaaaaa");
             SogouDomainPack sdp = this.sogouDomainPMap.get(url);
             isPass = isPass && sdp.allPass();
             sdpStr[0] = sdp.getSaveLocation();
@@ -475,7 +498,7 @@ public class SEOUrl {
             sspStr[0] = ssp.getSaveLocation();
             sspStr[1] = ssp.allPass() ? "通過" : "未通過";
         }
-        jp = this.jpMap.get(url);
+
         wap = this.wapMap.get(url);
 
 //        String[] bdpStr = {"", "未啟用"};
@@ -484,8 +507,8 @@ public class SEOUrl {
 //        String[] s3sipStr = {"", "未啟用"};
 //        String[] sdpStr = {"", "未啟用"};
 //        String[] sspStr = {"", "未啟用"};
-        if (wap.getTotalSize() == 0 || jp.isError() || !jp.isPass() || !isPass) {
-            failT.insertRecord(String.format("files/%s.html", url), url, wap, jp.getStatus(),
+        if (wap.getTotalSize() == 0 || !isPass) {
+            failT.insertRecord(String.format("files/%s.html", url), url, wap, jgp,
                     bdpStr,
                     bspStr,
                     s3sepStr,
@@ -493,8 +516,8 @@ public class SEOUrl {
                     sdpStr,
                     sspStr);
             count[1]++;
-        } else if (wap.getTotalSize() > 0 && !jp.isError() && jp.isPass()) {
-            passT.insertRecord(String.format("files/%s.html", url), url, wap, "通過",
+        } else if (wap.getTotalSize() > 0 && isPass) {
+            passT.insertRecord(String.format("files/%s.html", url), url, wap, jgp,
                     bdpStr,
                     bspStr,
                     s3sepStr,
@@ -526,10 +549,10 @@ public class SEOUrl {
         }
     }
 
-    private void loadKeyword() {
-        keywords = new ArrayList<String>();
+    private List<String> loadKeyword(String fileName) {
+        List<String> keywords = new ArrayList<String>();
         try {
-            File file = new File("keywords.txt");
+            File file = new File(keyWordPath + fileName);
             InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
             BufferedReader br = new BufferedReader(isr);
             String st;
@@ -545,23 +568,12 @@ public class SEOUrl {
         } catch (IOException ex) {
             //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return keywords;
     }
 
     public void checkFile() {
-        File k = new File("keywords.txt");
+
         File i = new File("input.txt");
-
-        if (!k.exists()) {
-            System.out.println("未找到現有keywords.txt檔案，已建立keywords.txt");
-            List<String> comm = new ArrayList<>();
-            comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
-
-            try {
-                Files.write(Paths.get("keywords.txt"), comm, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
 
         if (!i.exists()) {
             System.out.println("未找到現有input.txt檔案，已建立input.txt");
@@ -574,8 +586,31 @@ public class SEOUrl {
             }
         }
 
-        if (!k.exists() || !i.exists()) {
+        if (!i.exists()) {
             System.out.println("請設定好keywords.txt或input.txt在執行。");
+            System.exit(1);
+        }
+
+    }
+
+    public void checkFile(String file) {
+        Tools.checkDir(keyWordPath);
+        File k = new File(keyWordPath + file);
+
+        if (!k.exists()) {
+            System.out.println("未找到現有" + keyWordPath + file + "檔案，已建立" + keyWordPath + file);
+            List<String> comm = new ArrayList<>();
+            comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
+
+            try {
+                Files.write(Paths.get(keyWordPath + file), comm, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (!k.exists()) {
+            System.out.println("請設定好keyword資料夾設定好關鍵詞在執行。");
             System.exit(1);
         }
 

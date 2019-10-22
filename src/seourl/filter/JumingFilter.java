@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import seourl.Configure;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.*;
 
@@ -69,13 +70,12 @@ public class JumingFilter extends FilterAbstract {
     public boolean doAnalysis(String url) {
         this.jp = new JumingPack();
         try {
-            page = webClient.getPage(String.format("http://www.juming.com/hao/?cha_ym=%s", url));
-            if(page.asText().contains("请输入验证码")){
+            page = webClient.getPage(Configure.JUMING_FILTER + url);
+            if (page.asText().contains("请输入验证码")) {
                 this.jp.setError(true);
                 return false;
             }
-            
-            
+
             List<DomElement> table = page.getByXPath("//div[@class='orders']/div/table/tbody/tr");
             String tmp;
             String tmp2;

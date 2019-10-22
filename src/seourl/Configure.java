@@ -29,13 +29,17 @@ public class Configure {
     public static final String SO360_SITE = "https://www.so.com/s?q=site:";
     public static final String SOGOU_DOMAIN = "https://www.sogou.com/web?query=";
     public static final String SOGOU_SEARCH = "https://www.sogou.com/web?query=";
+    public static final String JUMING_FILTER = "http://www.juming.com/hao/?cha_ym=";
 
+    public static final int DOMAIN_FILTER_MODE;
     public static final boolean ENABLE_BAIDU_DOMAIN;
     public static final boolean ENABLE_BAIDU_SITE;
     public static final boolean ENABLE_SO360_SEARCH;
     public static final boolean ENABLE_SO360_SITE;
     public static final boolean ENABLE_SOGOU_DOMAIN;
     public static final boolean ENABLE_SOGOU_SEARCH;
+    public static final boolean ENABLE_JUMING_FILTER;
+    public static final boolean ENABLE_WEBARCHIVE;
     public static final boolean DEBUG = false;
 
     private static String comm = "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \r"
@@ -44,9 +48,10 @@ public class Configure {
             + "#ENABLE_SO360_SEARCH //360搜尋  1=啟動 0=關閉 \r"
             + "#ENABLE_SO360_SITE   //360網站  1=啟動 0=關閉 \r"
             + "#ENABLE_SOGOU_DOMAIN //搜狗域名 1=啟動 0=關閉 \r"
-            + "#ENABLE_SOGOU_SEARCH //搜狗搜尋 1=啟動 0=關閉 \r";
+            + "#ENABLE_SOGOU_SEARCH //搜狗搜尋 1=啟動 0=關閉 \r"
+            + "#ENABLE_JUMING_FILTER //聚名網過濾 1=啟動 0=關閉 \r"
+            + "#ENABLE_WEBARCHIVE    //WebArchive過濾 1=啟動 0=關閉 \r";
 
-    public static final int DOMAIN_FILTER_MODE;
     public static final int RELOAD_PAGE_TIME = 10; //網頁出錯的話，在10秒內重復讀
 
     static {
@@ -57,9 +62,9 @@ public class Configure {
         boolean enableSo360Site = true;
         boolean enableSogouDomain = true;
         boolean enableSogouSearch = true;
+        boolean enableJumingFilter = true;
+        boolean enableWebArchive = true;
 
-        
-        
         try (InputStream input = new FileInputStream("config.txt")) {
 
             Properties prop = new Properties();
@@ -77,6 +82,8 @@ public class Configure {
             enableSo360Site = (prop.containsKey("ENABLE_SO360_SITE") && (Integer.parseInt(prop.getProperty("ENABLE_SO360_SITE")) == 1));
             enableSogouDomain = (prop.containsKey("ENABLE_SOGOU_DOMAIN") && (Integer.parseInt(prop.getProperty("ENABLE_SOGOU_DOMAIN")) == 1));
             enableSogouSearch = (prop.containsKey("ENABLE_SOGOU_SEARCH") && (Integer.parseInt(prop.getProperty("ENABLE_SOGOU_SEARCH")) == 1));
+            enableJumingFilter = (prop.containsKey("ENABLE_JUMING_FILTER") && (Integer.parseInt(prop.getProperty("ENABLE_JUMING_FILTER")) == 1));
+            enableWebArchive = (prop.containsKey("ENABLE_WEBARCHIVE") && (Integer.parseInt(prop.getProperty("ENABLE_WEBARCHIVE")) == 1));
 
         } catch (IOException ex) {
             //ex.printStackTrace();
@@ -94,10 +101,34 @@ public class Configure {
         ENABLE_SO360_SITE = enableSo360Site;
         ENABLE_SOGOU_DOMAIN = enableSogouDomain;
         ENABLE_SOGOU_SEARCH = enableSogouSearch;
+        ENABLE_JUMING_FILTER = enableJumingFilter;
+        ENABLE_WEBARCHIVE = enableWebArchive;
+    }
+
+    static void printStatus() {
+//        "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \r"
+//        "#ENABLE_BAIDU_DOMAIN //百度域名 1=啟動 0=關閉 \r"
+//        "#ENABLE_BAIDU_SITE   //百度網站 1=啟動 0=關閉 \r"
+//        "#ENABLE_SO360_SEARCH //360搜尋  1=啟動 0=關閉 \r"
+//        "#ENABLE_SO360_SITE   //360網站  1=啟動 0=關閉 \r"
+//        "#ENABLE_SOGOU_DOMAIN //搜狗域名 1=啟動 0=關閉 \r"
+//        "#ENABLE_SOGOU_SEARCH //搜狗搜尋 1=啟動 0=關閉 \r"
+//        "#ENABLE_JUMING_FILTER //聚名網過濾 1=啟動 0=關閉 \r"
+//        "#ENABLE_WEBARCHIVE    //WebArchive過濾 1=啟動 0=關閉 \r";
+
+        System.out.println(ENABLE_WEBARCHIVE ? "WebArchive過濾'啟動'" : "WebArchive過濾'未啟動'");
+        System.out.println(ENABLE_JUMING_FILTER ? "聚名網過濾'啟動'" : "聚名網過濾'未啟動'");
+        System.out.println(DOMAIN_FILTER_MODE == 1 ? "域名過濾模式'嚴格'" : "域名過濾模式'寬鬆'");
+        System.out.println(ENABLE_BAIDU_DOMAIN ? "百度域名過濾'啟動'" : "百度域名過濾'未啟動'");
+        System.out.println(ENABLE_BAIDU_SITE ? "百度網站過濾'啟動'" : "百度網站過濾'未啟動'");
+        System.out.println(ENABLE_SO360_SEARCH ? "360搜尋過濾'啟動'" : "360搜尋過濾'未啟動'");
+        System.out.println(ENABLE_SO360_SITE ? "360網站過濾'啟動'" : "360網站過濾'未啟動'");
+        System.out.println(ENABLE_SOGOU_DOMAIN ? "搜狗域名過濾'啟動'" : "搜狗域名過濾'未啟動'");
+        System.out.println(ENABLE_SOGOU_SEARCH ? "搜狗搜尋過濾'啟動'" : "搜狗搜尋過濾'未啟動'");
 
     }
 
-        static void saveDefaultConfig() throws Exception {
+    static void saveDefaultConfig() throws Exception {
 
         @Cleanup
         OutputStream file = new FileOutputStream("config.txt");
@@ -113,11 +144,13 @@ public class Configure {
         prop.setProperty("ENABLE_SO360_SITE", String.valueOf(1));
         prop.setProperty("ENABLE_SOGOU_DOMAIN", String.valueOf(1));
         prop.setProperty("ENABLE_SOGOU_SEARCH", String.valueOf(1));
+        prop.setProperty("ENABLE_JUMING_FILTER", String.valueOf(1));
+        prop.setProperty("ENABLE_WEBARCHIVE", String.valueOf(1));
         // save properties to project root folder
         prop.store(output, null);
-            System.out.println("預設值以儲存為config.txt。");
+        System.out.println("預設值以儲存為config.txt。");
     }
-    
+
     static void saveConfig() throws Exception {
 
         @Cleanup
@@ -134,6 +167,9 @@ public class Configure {
         prop.setProperty("ENABLE_SO360_SITE", String.valueOf(ENABLE_SO360_SITE ? 1 : 0));
         prop.setProperty("ENABLE_SOGOU_DOMAIN", String.valueOf(ENABLE_SOGOU_DOMAIN ? 1 : 0));
         prop.setProperty("ENABLE_SOGOU_SEARCH", String.valueOf(ENABLE_SOGOU_SEARCH ? 1 : 0));
+        prop.setProperty("ENABLE_JUMING_FILTER", String.valueOf(ENABLE_JUMING_FILTER ? 1 : 0));
+        prop.setProperty("ENABLE_WEBARCHIVE", String.valueOf(ENABLE_WEBARCHIVE ? 1 : 0));
+
         // save properties to project root folder
         prop.store(output, null);
 

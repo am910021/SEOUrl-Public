@@ -9,7 +9,6 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.List;
 import seourl.Configure;
 import seourl.filter.ex.DomainFilterAbstract;
-import seourl.filter.ex.FilterAbstract;
 import seourl.pack.BaiduDomainPack;
 
 /**

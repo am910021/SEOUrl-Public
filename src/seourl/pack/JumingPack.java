@@ -39,7 +39,7 @@ public class JumingPack extends PackAbstract {
     @Setter
     boolean error = false;
 
-    public boolean isPass() {
+    public boolean allPass() {
         return !reg && !qq && !weChat && !gfw && !error;
     }
 
@@ -60,7 +60,7 @@ public class JumingPack extends PackAbstract {
         if (this.isError()) {
             tmp = "無法查詢  ";
         }
-        if (this.isPass()) {
+        if (this.allPass()) {
             tmp = "通過";
         }
         return tmp;
