@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import seourl.filter.WebArchiveFilter2;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -33,6 +34,7 @@ import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
 import seourl.pack.SogouSerachPack;
 import seourl.pack.WebArchivePack;
+import seourl.pack.WebArchivePack2;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
 import seourl.thread.BaiduSiteController;
@@ -40,6 +42,7 @@ import seourl.thread.So360SearchController;
 import seourl.thread.So360SiteController;
 import seourl.thread.SogouDomainController;
 import seourl.thread.SogouSearchController;
+import seourl.thread.WebArchiveController;
 
 /**
  *
@@ -57,10 +60,12 @@ public class SEOUrl {
     private static final String keyWordPath = "keyword/";
 
     private Date startTime = new Date();
+    @Getter
     private List<String> urls;
     private Map<Integer, List<String>> urlSplit;
 
     //最終要輸出的資料
+    private Map<String, WebArchivePack2> wap2Map = new HashMap<>();   //WebArchive資料集
     private Map<String, WebArchivePack> wapMap = new HashMap<>();   //WebArchive資料集
     private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
 
@@ -74,6 +79,7 @@ public class SEOUrl {
     private Map<String, So360SitePack> so360SitePMap = new HashMap<>();
 
     //執行中的暫存資料
+    private Map<Integer, WebArchiveController> wacMap = new HashMap<>();
     private Map<Integer, JumingController> jcMap = new HashMap<>();
 
     private Map<Integer, SogouDomainController> sogoDomainCMap = new HashMap<>();
@@ -99,12 +105,51 @@ public class SEOUrl {
 //            ex.printStackTrace();
 //        }
         SEOUrl s = new SEOUrl();
-        //s.loadUrl();
-        //s.splitUrl(MAX_THREAD);
+        s.loadUrl();
+        s.splitUrl(MAX_THREAD);
         //s.loadKeyword();
         //s.startSogouDomainFilter(true);
 
-        s.start();
+        s.startWebArchiveFilter2(true);
+        //s.start();
+        s.waitTime();
+    }
+    
+    private void waitTime()
+    {
+        while(true){
+            Tools.sleep(100);
+        }
+    }
+    private void startWebArchiveFilter2(boolean show) {
+        this.checkFile("WEBARCHIVE-TITLE.txt");
+        this.checkFile("WEBARCHIVE-CONTENT.txt");
+        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
+        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
+
+        WebArchiveController wac;
+        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
+            wac = new WebArchiveController(map.getKey(), startTime, map.getValue(), title, content);
+            wacMap.put(map.getKey(), wac);
+            wac.start();
+            Tools.sleep(100, 1000);
+        }
+        wac = null;
+
+        for (Entry<Integer, WebArchiveController> map : wacMap.entrySet()) {
+            try {
+                map.getValue().join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.wap2Map.putAll(map.getValue().getMWAP());
+        }
+        wacMap = null;
+        if (show) {
+            for (Entry<String, WebArchivePack2> map : wap2Map.entrySet()) {
+                map.getValue().print(map.getKey());
+            }
+        }
     }
 
     /**

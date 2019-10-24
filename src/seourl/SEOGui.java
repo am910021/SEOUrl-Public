@@ -5,17 +5,23 @@
  */
 package seourl;
 
+import seourl.gui.WebArchivePanel;
+
 /**
  *
- * @author yuri
+ * @author Yuri
  */
 public class SEOGui extends javax.swing.JFrame {
 
+    private WebArchivePanel webArch;
+    
     /**
      * Creates new form SEOGui
      */
     public SEOGui() {
         initComponents();
+        webArch = new WebArchivePanel();
+        mainTab.addTab("快照", webArch);
     }
 
     /**
@@ -27,44 +33,27 @@ public class SEOGui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuBar1 = new javax.swing.JMenuBar();
-        btnMenuFile = new javax.swing.JMenu();
-        btnImportDomain = new javax.swing.JMenuItem();
+        mainTab = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        btnMenuFile.setLabel("檔案");
-
-        btnImportDomain.setLabel("匯入域名");
-        btnImportDomain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImportDomainActionPerformed(evt);
-            }
-        });
-        btnMenuFile.add(btnImportDomain);
-
-        jMenuBar1.add(btnMenuFile);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(mainTab, javax.swing.GroupLayout.PREFERRED_SIZE, 728, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(mainTab, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnImportDomainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportDomainActionPerformed
-        // TODO add your handling code here:
-        System.out.println("test");
-    }//GEN-LAST:event_btnImportDomainActionPerformed
 
     /**
      * @param args the command line arguments
@@ -102,8 +91,6 @@ public class SEOGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem btnImportDomain;
-    private javax.swing.JMenu btnMenuFile;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JTabbedPane mainTab;
     // End of variables declaration//GEN-END:variables
 }

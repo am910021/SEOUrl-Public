@@ -30,7 +30,18 @@
 
         {% key=domainName content=<h1>域名例表:%s</h1> %}
         {% key=time content=<p>建立時間:%s</p> %}
-        {% key=record content=<a href="http://web.archive.org/web/%d/http://%s/" target="_blank">%d</a><br> %}
+      
+
+        <table style="width:100%">
+            <tr>
+                <th>快照</th>
+                <th>標題過濾</th>
+                <th>內容過濾</th>
+            </tr>
+
+           {% key=record content=<tr><td>%s</td><td>%s</td><td>%s</td></tr> %}
+            
+        </table>
 
     </body>
 

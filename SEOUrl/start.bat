@@ -1,5 +1,5 @@
 @echo off
 @title SeoUrl
 set CLASSPATH=.;dist\*
-java -server -Xmx6144m seourl.SEOUrl
+java -Xmx1024m seourl.SEOUrl
 pause
