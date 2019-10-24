@@ -105,7 +105,7 @@ public class WebArchivePanel extends javax.swing.JPanel {
 
     private void btnImportUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportUrlActionPerformed
         // TODO add your handling code here:
-       Tools.loadFile();
+        Tools.loadFile();
 
     }//GEN-LAST:event_btnImportUrlActionPerformed
 
@@ -121,7 +121,6 @@ public class WebArchivePanel extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_btnImportTitleActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnImportTitle;

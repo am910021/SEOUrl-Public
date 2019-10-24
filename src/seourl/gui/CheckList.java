@@ -50,7 +50,6 @@ public class CheckList extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private seourl.gui.CheckListItem checkListItem2;
     private seourl.gui.CheckListItem checkListItem3;

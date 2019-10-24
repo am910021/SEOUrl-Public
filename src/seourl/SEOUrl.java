@@ -6,7 +6,6 @@
 package seourl;
 
 import seourl.thread.JumingController;
-import seourl.filter.WebArchiveFilter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.WebArchiveFilter2;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -33,7 +31,6 @@ import seourl.pack.So360SerachPack;
 import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
 import seourl.pack.SogouSerachPack;
-import seourl.pack.WebArchivePack;
 import seourl.pack.WebArchivePack2;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;

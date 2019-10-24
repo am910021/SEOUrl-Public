@@ -7,7 +7,6 @@ package seourl.template;
 
 import java.util.Date;
 import seourl.Tools;
-import seourl.pack.WebArchivePack;
 
 /**
  *
@@ -34,7 +33,7 @@ public class TemplateIndex extends Template {
         return String.format("<a href=\"%s\" target=\"_blank\">%s</a>", record[0], record[1]);
     }
 
-    public void insertRecord(String url, 
+    public void insertRecord(String url,
             String[] wap,
             String juming,
             String[] baiduD,

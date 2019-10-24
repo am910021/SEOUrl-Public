@@ -128,7 +128,7 @@ public class SearchEnginePack extends PackAbstract {
     }
 
     public final String getSaveLocation() {
-        return getFinalPath() + domain+".html";
+        return getFinalPath() + domain + ".html";
     }
 
     @Override

@@ -14,7 +14,7 @@ import seourl.gui.WebArchivePanel;
 public class SEOGui extends javax.swing.JFrame {
 
     private WebArchivePanel webArch;
-    
+
     /**
      * Creates new form SEOGui
      */

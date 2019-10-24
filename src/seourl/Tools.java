@@ -170,7 +170,7 @@ public class Tools {
                     return sb.toString();
             }
         } catch (Exception ex) {
-           // Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "";
 

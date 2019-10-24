@@ -17,8 +17,8 @@ import seourl.pack.SogouDomainPack;
  */
 public class SogouDomainFilter extends DomainFilterAbstract {
 
-    private int count=0;
-    
+    private int count = 0;
+
     public SogouDomainFilter(List<String> lkeyWords) {
         super("Sogou-domain", lkeyWords);
     }
@@ -29,11 +29,11 @@ public class SogouDomainFilter extends DomainFilterAbstract {
 
     @Override
     final protected String getPageUrl(String url, int i) {
-        if(count > 10){
+        if (count > 10) {
             this.webClient.getCookieManager().clearCookies();
-            count=0;
+            count = 0;
         }
-        
+
         String sPage = "";
         if (i > 1) {
             sPage = "&page=" + String.valueOf(i);

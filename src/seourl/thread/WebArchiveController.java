@@ -22,7 +22,7 @@ import seourl.pack.WebArchivePack2;
  * @author Yuri
  */
 public class WebArchiveController extends Thread {
-
+    
     private Date startTime;
     private List<String> urls;
     private List<String> titleKeywords;
@@ -31,7 +31,6 @@ public class WebArchiveController extends Thread {
     private Map<String, WebArchivePack2> mWAP = new HashMap<>();
     private final int pid;
     
-    
     public WebArchiveController(int pid, Date startTime, List<String> urls, List<String> titleKeywords, List<String> contentKeywords) {
         this.pid = pid;
         this.urls = urls;
@@ -39,7 +38,7 @@ public class WebArchiveController extends Thread {
         this.contentKeywords = contentKeywords;
         this.startTime = startTime;
     }
-
+    
     @Override
     public void run() {
         WebArchiveFilter2 waf2 = new WebArchiveFilter2(titleKeywords, contentKeywords);
