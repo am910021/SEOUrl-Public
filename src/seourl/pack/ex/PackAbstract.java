@@ -15,6 +15,12 @@ import lombok.Setter;
  */
 public abstract class PackAbstract {
 
+    protected final String path;
+
+    public PackAbstract(String path) {
+        this.path = path;
+    }
+    
     @Getter
     @Setter
     private long readTime = System.currentTimeMillis();

@@ -38,10 +38,51 @@ public class WebArchivePack2 extends PackAbstract {
     @Setter
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
+    private String domain = "";
+
     private Long readTime = System.currentTimeMillis();
+
+    public WebArchivePack2() {
+        super("files/WebArchive/");
+    }
+
+    public boolean allPass() {
+        return snapshots.size() > 0 && this.titleKeyword.size() == 0 && this.contentKeyword.size() == 0 && !error;
+    }
+
+    public String getReason() {
+        String tmp = "";
+        if (snapshots.size() == 0) {
+            tmp += "無快照 ";
+        }
+        if (this.titleKeyword.size() > 0) {
+            tmp += "標題 ";
+        }
+        if (this.contentKeyword.size() > 0) {
+            tmp += "內容 ";
+        }
+        if (error) {
+            tmp += "錯誤 ";
+        }
+        return tmp;
+
+    }
+
+    private final String getFinalPath() {
+        if (allPass()) {
+            return this.path + "pass/";
+        } else {
+            return this.path + "fail/";
+        }
+    }
+
+    public final String getSaveLocation() {
+        return getFinalPath() + domain + ".html";
+    }
 
     @Override
     public void saveFile(String url, Date startTime) {
+        this.domain = url;
         TemplateWebArch tWebArch = new TemplateWebArch(startTime);
         if (titleKeyword.size() > 0 || contentKeyword.size() > 0) {
             tWebArch.setSavePath("files/WebArchive/fail/");
@@ -56,16 +97,16 @@ public class WebArchivePack2 extends PackAbstract {
         String content;
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
-                title = this.titleKeyword.get(snapshot);
-                content = this.contentKeyword.get(snapshot);
-                if(titleKeyword.size() > 0 || contentKeyword.size() > 0){
-                    tWebArch.insertRecord(0, url, title, content);
-                }else{
-                    title = (Configure.WEBARCHIVE_MODE ==1 && Configure.WEBARCHIVE_TITLE_FILTER) ? "通過" : "未啟用";
-                    content = (Configure.WEBARCHIVE_MODE ==1 && Configure.WEBARCHIVE_CONTENT_FILTER) ? "通過" : "未啟用";
-                    tWebArch.insertRecord(0, url, title, content);
+                title = this.titleKeyword.containsKey(snapshot) ? this.titleKeyword.get(snapshot) : "";
+                content = this.contentKeyword.containsKey(snapshot) ? this.contentKeyword.get(snapshot) : "";
+                if (titleKeyword.size() > 0 || contentKeyword.size() > 0) {
+                    tWebArch.insertRecord(snapshot, url, title, content);
+                } else {
+                    title = (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_TITLE_FILTER) ? "通過" : "未啟用";
+                    content = (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_CONTENT_FILTER) ? "通過" : "未啟用";
+                    tWebArch.insertRecord(snapshot, url, title, content);
                 }
-              
+
             }
         }
         tWebArch.creatFile();

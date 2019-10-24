@@ -34,7 +34,8 @@ public class TemplateIndex extends Template {
         return String.format("<a href=\"%s\" target=\"_blank\">%s</a>", record[0], record[1]);
     }
 
-    public void insertRecord(String path, String url, WebArchivePack wap,
+    public void insertRecord(String url, 
+            String[] wap,
             String juming,
             String[] baiduD,
             String[] baiduS,
@@ -42,8 +43,8 @@ public class TemplateIndex extends Template {
             String[] So360Si,
             String[] SogouD,
             String[] SogouS) {
-        this.insertByKey("record", path, url,
-                wap.getTotalSize(), (wap.isError() ? "查詢錯誤" : ""),
+        this.insertByKey("record", url,
+                getLink(wap),
                 juming,
                 getLink(baiduD),
                 getLink(baiduS),

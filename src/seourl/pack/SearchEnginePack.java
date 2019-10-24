@@ -19,7 +19,6 @@ import seourl.template.TemplateSearchEngine;
 @ToString
 public class SearchEnginePack extends PackAbstract {
 
-    protected String path;
     protected String type;
     protected String url;
     protected String domain;
@@ -35,7 +34,7 @@ public class SearchEnginePack extends PackAbstract {
     private String keyword[] = {"", "", ""};
 
     public SearchEnginePack(String path, String type) {
-        this.path = path;
+        super(path);
         this.type = type;
     }
 

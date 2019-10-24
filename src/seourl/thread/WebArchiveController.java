@@ -47,7 +47,7 @@ public class WebArchiveController extends Thread {
             waf2.doAnalysis(url);
             waf2.getWap().print(url);
             mWAP.put(url, waf2.getWap());
-            
+            waf2.getWap().saveFile(url, startTime);
         }
         waf2.close();
     }

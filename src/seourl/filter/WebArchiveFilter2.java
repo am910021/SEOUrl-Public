@@ -93,6 +93,7 @@ public class WebArchiveFilter2 extends FilterAbstract {
                 return false;
             }
             Collections.sort(item.getValue());
+            Collections.reverse(item.getValue());
         }
 
         if (Configure.WEBARCHIVE_MODE == 0) {
@@ -120,8 +121,8 @@ public class WebArchiveFilter2 extends FilterAbstract {
 
     private boolean[] doFilter(Long snapshot) {
         boolean status[] = {true, true};
-        String title = page.getTitleText();
-        String content = page.asText();
+        String title = page.getTitleText().toUpperCase();
+        String content = page.asText().toUpperCase();
         if (Configure.WEBARCHIVE_TITLE_FILTER) {
             for (String s : listTitle) {
                 if (title.contains(s)) {

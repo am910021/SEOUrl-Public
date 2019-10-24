@@ -34,6 +34,10 @@ public class WebArchivePack extends PackAbstract {
     @Setter
     private boolean error = false;
 
+    public WebArchivePack() {
+        super("");
+    }
+
     public void addTotalSize(int i) {
         this.totalSize += i;
     }

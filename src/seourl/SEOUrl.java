@@ -66,7 +66,6 @@ public class SEOUrl {
 
     //最終要輸出的資料
     private Map<String, WebArchivePack2> wap2Map = new HashMap<>();   //WebArchive資料集
-    private Map<String, WebArchivePack> wapMap = new HashMap<>();   //WebArchive資料集
     private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
 
     private Map<String, SogouDomainPack> sogouDomainPMap = new HashMap<>();       //搜狗域名資料集
@@ -112,7 +111,7 @@ public class SEOUrl {
 
         //s.startWebArchiveFilter2(true);
         s.start();
-        s.waitTime();
+        //s.waitTime();
     }
 
     private void waitTime() {
@@ -473,8 +472,7 @@ public class SEOUrl {
 
     private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {
 
-        WebArchivePack wap;
-
+        String[] wapStr = {"", "未啟用"};
         String jgp = "未啟用";
         String[] bdpStr = {"", "未啟用"};
         String[] bspStr = {"", "未啟用"};
@@ -484,6 +482,15 @@ public class SEOUrl {
         String[] sspStr = {"", "未啟用"};
 
         boolean isPass = true;
+
+        if (Configure.ENABLE_WEBARCHIVE) {
+
+            WebArchivePack2 wap2 = this.wap2Map.get(url);
+            isPass = isPass && wap2.allPass();
+            wapStr[0] = wap2.getSaveLocation();
+            wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
+
+        }
 
         if (Configure.ENABLE_JUMING_FILTER) {
             JumingPack jp = this.jpMap.get(url);
@@ -529,16 +536,14 @@ public class SEOUrl {
             sspStr[1] = ssp.allPass() ? "通過" : "未通過";
         }
 
-        wap = this.wapMap.get(url);
-
 //        String[] bdpStr = {"", "未啟用"};
 //        String[] bspStr = {"", "未啟用"};
 //        String[] s3sepStr = {"", "未啟用"};
 //        String[] s3sipStr = {"", "未啟用"};
 //        String[] sdpStr = {"", "未啟用"};
 //        String[] sspStr = {"", "未啟用"};
-        if (wap.getTotalSize() == 0 || !isPass) {
-            failT.insertRecord(String.format("files/%s.html", url), url, wap, jgp,
+        if (!isPass) {
+            failT.insertRecord(url, wapStr, jgp,
                     bdpStr,
                     bspStr,
                     s3sepStr,
@@ -546,8 +551,8 @@ public class SEOUrl {
                     sdpStr,
                     sspStr);
             count[1]++;
-        } else if (wap.getTotalSize() > 0 && isPass) {
-            passT.insertRecord(String.format("files/%s.html", url), url, wap, jgp,
+        } else {
+            passT.insertRecord(url, wapStr, jgp,
                     bdpStr,
                     bspStr,
                     s3sepStr,
@@ -555,8 +560,6 @@ public class SEOUrl {
                     sdpStr,
                     sspStr);
             count[0]++;
-        } else {
-            count[2]++;
         }
     }
 

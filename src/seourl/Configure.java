@@ -54,7 +54,7 @@ public class Configure {
     private static String comm
             = "#WebArchive過濾 1=啟動 0=關閉\r"
             + "ENABLE_WEBARCHIVE          = 1\r\r"
-            + "#WebArchive輸出模式 0=只輸出列表(全部快照)  1=完整模式(配合過濾Title、Content)\r"
+            + "#WebArchive輸出模式 0=只輸出列表(全部快照)  1=過濾模式(配合過濾Title、Content)\r"
             + "WEBARCHIVE_MODE            = 1 \r\r"
             + "#WebArchive過濾Title 1=啟動 0=關閉\r"
             + "WEBARCHIVE_TITLE_FILTER    = 1\r\r"

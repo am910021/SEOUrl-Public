@@ -39,6 +39,10 @@ public class JumingPack extends PackAbstract {
     @Setter
     boolean error = false;
 
+    public JumingPack() {
+        super("");
+    }
+
     public boolean allPass() {
         return !reg && !qq && !weChat && !gfw && !error;
     }
