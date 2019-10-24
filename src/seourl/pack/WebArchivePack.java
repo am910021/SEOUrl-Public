@@ -51,7 +51,7 @@ public class WebArchivePack extends PackAbstract {
         tWebArch.insertTime(readTime);
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
-                tWebArch.insertRecord(snapshot, url);
+                //tWebArch.insertRecord(snapshot, url);
             }
         }
         tWebArch.creatFile();

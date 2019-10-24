@@ -64,10 +64,10 @@ public class WebArchiveFilter2 extends FilterAbstract {
                     }
                 }
                 status = true;
-                System.out.printf("取得 %s %d 快照成功。", url, s);
+                System.out.printf("取得 %s %d 快照成功。 \r\n", url, s);
             } catch (Exception ex) {
                 //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("取得 %s %d 快照失敗。", url, s);
+                System.out.printf("取得 %s %d 快照失敗。\r\n", url, s);
                 Tools.sleep(20, 200);
             }
             count++;
@@ -236,7 +236,7 @@ public class WebArchiveFilter2 extends FilterAbstract {
                 }
             }
         } catch (Exception e) {
-            System.out.printf("%s %d 年快照參數無法分析。 \n", url, year);
+            System.out.printf("%s %d 年快照參數無法分析。 \r\n", url, year);
         }
         if (map.size() > 0) {
             tmp.addAll(map.values());

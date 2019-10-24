@@ -110,20 +110,19 @@ public class SEOUrl {
         //s.loadKeyword();
         //s.startSogouDomainFilter(true);
 
-        s.startWebArchiveFilter2(true);
-        //s.start();
+        //s.startWebArchiveFilter2(true);
+        s.start();
         s.waitTime();
     }
-    
-    private void waitTime()
-    {
-        while(true){
+
+    private void waitTime() {
+        while (true) {
             Tools.sleep(100);
         }
     }
+
     private void startWebArchiveFilter2(boolean show) {
-        this.checkFile("WEBARCHIVE-TITLE.txt");
-        this.checkFile("WEBARCHIVE-CONTENT.txt");
+
         List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
         List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
 
@@ -377,27 +376,11 @@ public class SEOUrl {
         }
     }
 
-    /**
-     * WebArchive快照過濾 <br>
-     * 必需執行：無 <br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    private void startWAF(boolean show) {
-        for (String url : urls) {
-            WebArchiveFilter wf = new WebArchiveFilter(url);
-            wf.doStart();
-            wf.getWap().saveFile(url, startTime);
-            wapMap.put(url, wf.getWap());
-            if (show) {
-                wf.getWap().print(url);
-            }
-        }
-    }
-
     public void start() {
-
+        if (Configure.ENABLE_WEBARCHIVE) {
+            this.checkFile("WEBARCHIVE-TITLE.txt");
+            this.checkFile("WEBARCHIVE-CONTENT.txt");
+        }
         if (Configure.ENABLE_BAIDU_DOMAIN) {
             this.checkFile("BAIDU_DOMAIN.txt");
         }
@@ -419,8 +402,10 @@ public class SEOUrl {
 
         this.loadUrl();
         this.splitUrl(MAX_THREAD);
-        this.startWAF(Configure.DEBUG);
 
+        if (Configure.ENABLE_WEBARCHIVE) {
+            this.startWebArchiveFilter2(Configure.DEBUG);
+        }
         if (Configure.ENABLE_JUMING_FILTER) {
             this.startJF(Configure.DEBUG);
         }

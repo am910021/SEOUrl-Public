@@ -6,6 +6,7 @@
 package seourl.template;
 
 import java.util.Date;
+import seourl.Configure;
 import seourl.Tools;
 
 /**
@@ -30,7 +31,13 @@ public class TemplateWebArch extends Template {
         this.insertByKey("time", Tools.getFormatDate1(mi));
     }
 
-    public void insertRecord(long snapshot, String url) {
-        this.insertByKey("record", snapshot, url, snapshot);
+    String html = "<tr><td><a href=\"%s\" target=\"_blank\">%d</a></td><td>%s</td><td>%s</td></tr>";
+
+    private String getUrl(long snapshot, String url) {
+        return String.format(Configure.WEBARCHIVE, snapshot, url);
+    }
+
+    public void insertRecord(long snapshot, String url, String title, String content) {
+        this.insertByKey("record", String.format(html, getUrl(snapshot, url), snapshot, title, content));
     }
 }

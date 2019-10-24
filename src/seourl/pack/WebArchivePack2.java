@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import seourl.Configure;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateWebArch;
 
@@ -51,9 +52,20 @@ public class WebArchivePack2 extends PackAbstract {
         tWebArch.insertTitle(url);
         tWebArch.insertDomain(url);
         tWebArch.insertTime(readTime);
+        String title;
+        String content;
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
-                tWebArch.insertRecord(snapshot, url);
+                title = this.titleKeyword.get(snapshot);
+                content = this.contentKeyword.get(snapshot);
+                if(titleKeyword.size() > 0 || contentKeyword.size() > 0){
+                    tWebArch.insertRecord(0, url, title, content);
+                }else{
+                    title = (Configure.WEBARCHIVE_MODE ==1 && Configure.WEBARCHIVE_TITLE_FILTER) ? "通過" : "未啟用";
+                    content = (Configure.WEBARCHIVE_MODE ==1 && Configure.WEBARCHIVE_CONTENT_FILTER) ? "通過" : "未啟用";
+                    tWebArch.insertRecord(0, url, title, content);
+                }
+              
             }
         }
         tWebArch.creatFile();
