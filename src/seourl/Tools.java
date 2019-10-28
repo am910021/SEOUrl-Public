@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +22,8 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -153,6 +154,8 @@ public class Tools {
             c.setAllowUserInteraction(false);
             c.setConnectTimeout(timeout);
             c.setReadTimeout(timeout);
+            c.setRequestProperty("Accept-Charset", "utf-8");
+            c.setRequestProperty("contentType", "utf-8");
             c.setRequestProperty("User-Agent", Device.getById(Tools.getRandomNumberInRange(0, 7)).getType());
             c.connect();
             int status = c.getResponseCode();
@@ -196,6 +199,20 @@ public class Tools {
             //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return keywords;
+    }
+
+    public static Document getConnect(String url, int timeout) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).timeout(timeout)
+                    .userAgent(Device.getById(Tools.getRandomNumberInRange(0, 7)).getType())
+                    .followRedirects(true)
+                    .get();
+        } catch (Exception ex) {
+            //Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return doc;
     }
 
 }

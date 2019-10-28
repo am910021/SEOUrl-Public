@@ -23,7 +23,7 @@ import seourl.template.TemplateWebArch;
  * @author yuri
  */
 @ToString
-public class WebArchivePack2 extends PackAbstract {
+public class WebArchivePack extends PackAbstract {
 
     @Getter
     @Setter
@@ -42,7 +42,7 @@ public class WebArchivePack2 extends PackAbstract {
 
     private Long readTime = System.currentTimeMillis();
 
-    public WebArchivePack2() {
+    public WebArchivePack() {
         super("files/WebArchive/");
     }
 

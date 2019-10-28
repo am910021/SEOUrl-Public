@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import seourl.filter.WebArchiveFilter2;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -31,7 +32,7 @@ import seourl.pack.So360SerachPack;
 import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
 import seourl.pack.SogouSerachPack;
-import seourl.pack.WebArchivePack2;
+import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
 import seourl.thread.BaiduSiteController;
@@ -62,7 +63,7 @@ public class SEOUrl {
     private Map<Integer, List<String>> urlSplit;
 
     //最終要輸出的資料
-    private Map<String, WebArchivePack2> wap2Map = new HashMap<>();   //WebArchive資料集
+    private Map<String, WebArchivePack> wap2Map = new HashMap<>();   //WebArchive資料集
     private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
 
     private Map<String, SogouDomainPack> sogouDomainPMap = new HashMap<>();       //搜狗域名資料集
@@ -100,14 +101,25 @@ public class SEOUrl {
 //        } catch (FileNotFoundException ex) {
 //            ex.printStackTrace();
 //        }
+
         SEOUrl s = new SEOUrl();
         s.loadUrl();
         s.splitUrl(MAX_THREAD);
+        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
+        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
+        WebArchiveFilter2 waf2 = new WebArchiveFilter2(title, content);
+        waf2.doAnalysis("yahoo.com.tw");
+        waf2.getWap().print("yahoo.com.tw");
+
+//
+//        SEOUrl s = new SEOUrl();
+//        s.loadUrl();
+//        s.splitUrl(MAX_THREAD);
         //s.loadKeyword();
         //s.startSogouDomainFilter(true);
 
         //s.startWebArchiveFilter2(true);
-        s.start();
+        //s.start();
         //s.waitTime();
     }
 
@@ -141,7 +153,7 @@ public class SEOUrl {
         }
         wacMap = null;
         if (show) {
-            for (Entry<String, WebArchivePack2> map : wap2Map.entrySet()) {
+            for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
                 map.getValue().print(map.getKey());
             }
         }
@@ -482,7 +494,7 @@ public class SEOUrl {
 
         if (Configure.ENABLE_WEBARCHIVE) {
 
-            WebArchivePack2 wap2 = this.wap2Map.get(url);
+            WebArchivePack wap2 = this.wap2Map.get(url);
             isPass = isPass && wap2.allPass();
             wapStr[0] = wap2.getSaveLocation();
             wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
