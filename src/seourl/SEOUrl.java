@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.WebArchiveFilter2;
+import seourl.filter.WebArchiveFilter;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -103,13 +103,13 @@ public class SEOUrl {
 //        }
 
         SEOUrl s = new SEOUrl();
-        s.loadUrl();
-        s.splitUrl(MAX_THREAD);
-        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
-        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
-        WebArchiveFilter2 waf2 = new WebArchiveFilter2(title, content);
-        waf2.doAnalysis("yahoo.com.tw");
-        waf2.getWap().print("yahoo.com.tw");
+//        s.loadUrl();
+//        s.splitUrl(MAX_THREAD);
+//        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
+//        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
+//        WebArchiveFilter waf2 = new WebArchiveFilter(title, content);
+//        waf2.doAnalysis("yahoo.com.tw");
+//        waf2.getWap().print("yahoo.com.tw");
 
 //
 //        SEOUrl s = new SEOUrl();
@@ -119,7 +119,7 @@ public class SEOUrl {
         //s.startSogouDomainFilter(true);
 
         //s.startWebArchiveFilter2(true);
-        //s.start();
+        s.start();
         //s.waitTime();
     }
 

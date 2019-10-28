@@ -5,6 +5,7 @@
  */
 package seourl.filter;
 
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,19 +16,16 @@ import java.util.TreeMap;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import seourl.Configure;
 import seourl.Tools;
-import seourl.filter.ex.FilterInterface;
+import seourl.filter.ex.FilterAbstract;
 import seourl.pack.WebArchivePack;
 
 /**
  *
  * @author Yuri
  */
-public class WebArchiveFilter2 implements FilterInterface {
+public class WebArchiveFilter1 extends FilterAbstract {
 
     @Getter
     private WebArchivePack wap;
@@ -35,13 +33,17 @@ public class WebArchiveFilter2 implements FilterInterface {
     private List<String> listTitle;
     private List<String> listContent;
 
-    Document doc;
-
-    public WebArchiveFilter2(List<String> listTitle, List<String> listContent) {
+    public WebArchiveFilter1(List<String> listTitle, List<String> listContent) {
+        super();
         this.listTitle = listTitle;
         this.listContent = listContent;
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        webClient.getOptions().setTimeout(10000);
     }
 
+    // @Override
     protected void createNewSearchEnginePack() {
         this.wap = new WebArchivePack();
     }
@@ -49,22 +51,14 @@ public class WebArchiveFilter2 implements FilterInterface {
     public boolean getPage(String url, long s) {
         boolean status = false;
         int count = 0;
-        final int baseTimeout = 30*1000;
-        int timeout = 0;
-        String tmpUrl = String.format(Configure.WEBARCHIVE, s, url);
         while ((!status && count < Configure.WEBARCH_TRY_REDECT_TIMES)) {
-            timeout+=baseTimeout;
             try {
-                doc = Tools.getConnect(tmpUrl, timeout);
-                Element element = doc.select("p[class=impatient] > a").first();
-                if (element != null) {
-                    tmpUrl = element.absUrl("href");
-                    doc = null;
-                    doc = Tools.getConnect(tmpUrl, timeout);
-                }
-                
-                if (doc == null) {
-                    throw new Exception("doc is null");
+                page = webClient.getPage(String.format(Configure.WEBARCHIVE, s, url));
+                if (page.asText().contains("Redirecting")) {
+                    List<DomElement> l = page.getByXPath("//p[@class='impatient']/a");
+                    if (l.size() > 0) {
+                        page = l.get(0).click();
+                    }
                 }
                 status = true;
                 System.out.printf("取得 %s %d 快照成功。 \r\n", url, s);
@@ -78,14 +72,17 @@ public class WebArchiveFilter2 implements FilterInterface {
         return status;
     }
 
+    @Override
     public boolean doAnalysis(String url) {
         createNewSearchEnginePack();
 
         boolean status = !getYears(url); //讀取快照有的年份
+
         if (status) {
             wap.setError(status);
             return false;
         }
+
         for (Map.Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
             status = !getSnapshotsPerYear(url, item.getKey());
             if (status) {
@@ -94,6 +91,10 @@ public class WebArchiveFilter2 implements FilterInterface {
             }
             Collections.sort(item.getValue());
             Collections.reverse(item.getValue());
+        }
+
+        if (Configure.WEBARCHIVE_MODE == 0) {
+            return true;
         }
 
         for (Map.Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
@@ -105,26 +106,20 @@ public class WebArchiveFilter2 implements FilterInterface {
                 if (wap.getContentKeyword().size() > 3 || wap.getTitleKeyword().size() > 3) {
                     break;
                 }
-                if(this.getPage(url, snapshot)){
-                    boolean filter[] = doFilter(snapshot);
-                }else{
-                    wap.setError(true);
-                    return false;
-                }
-                
+                status = this.getPage(url, snapshot);
+                boolean filter[] = doFilter(snapshot);
                 Tools.sleep(100, 2000);
             }
 
         }
         return true;
-
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private boolean[] doFilter(Long snapshot) {
         boolean status[] = {true, true};
-        String title = doc.title();
-        String content = doc.body().text();
-        
+        String title = page.getTitleText().toUpperCase();
+        String content = page.asText().toUpperCase();
         if (Configure.WEBARCHIVE_TITLE_FILTER) {
             for (String s : listTitle) {
                 if (title.contains(s)) {
@@ -144,6 +139,62 @@ public class WebArchiveFilter2 implements FilterInterface {
             }
         }
         return status;
+    }
+
+    private int timeConvert(Long t) {
+        String tmp = t.toString();
+        int year = Integer.parseInt(tmp.substring(0, 4));
+        int month = Integer.parseInt(tmp.substring(4, 6));
+        int day = Integer.parseInt(tmp.substring(6, 8));
+        int hours = Integer.parseInt(tmp.substring(8, 10));
+        int minute = Integer.parseInt(tmp.substring(10, 12));
+        int second = Integer.parseInt(tmp.substring(12));
+        return Integer.parseInt(String.format("%d%02d", year, month));
+    }
+
+    private boolean getYears(String url) {
+        String s = "";
+        boolean status = false;
+        int count = 0;
+        while (!status && count < 15) {
+            count++;
+            try {
+                s = Tools.getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s", url), 9000);
+                if (s.equals("")) {
+                    System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
+                    continue;
+                }
+
+                status = true;
+                System.out.printf("取讀 %s 年代參數．．．．．成功。\r\n", url);
+            } catch (Exception ex) {
+                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
+                Tools.sleep(200, 1000);
+            }
+        }
+        if (count >= 15 && s.equals("")) {
+            return false;
+        }
+
+        try {
+            JSONObject jsonO = new JSONObject(s);
+            if (!jsonO.has("years")) {
+                return false;
+            }
+            JSONObject jsonYears = jsonO.getJSONObject("years");
+            Iterator<String> keys = jsonYears.keys();
+            while (keys.hasNext()) {
+                wap.getSnapshots().put(Integer.parseInt(keys.next()), new ArrayList<Long>());
+            }
+            Thread.sleep(1, 200);
+        } catch (Exception ex) {
+            //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     private boolean getSnapshotsPerYear(String url, int year) {
@@ -216,62 +267,6 @@ public class WebArchiveFilter2 implements FilterInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private int timeConvert(Long t) {
-        String tmp = t.toString();
-        int year = Integer.parseInt(tmp.substring(0, 4));
-        int month = Integer.parseInt(tmp.substring(4, 6));
-        int day = Integer.parseInt(tmp.substring(6, 8));
-        int hours = Integer.parseInt(tmp.substring(8, 10));
-        int minute = Integer.parseInt(tmp.substring(10, 12));
-        int second = Integer.parseInt(tmp.substring(12));
-        return Integer.parseInt(String.format("%d%02d", year, month));
-    }
-
-    private boolean getYears(String url) {
-        String s = "";
-        boolean status = false;
-        int count = 0;
-        while (!status && count < 15) {
-            count++;
-            try {
-                s = Tools.getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s", url), 9000);
-                if (s.equals("")) {
-                    System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
-                    continue;
-                }
-
-                status = true;
-                System.out.printf("取讀 %s 年代參數．．．．．成功。\r\n", url);
-            } catch (Exception ex) {
-                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
-                Tools.sleep(200, 1000);
-            }
-        }
-        if (count >= 15 && s.equals("")) {
-            return false;
-        }
-
-        try {
-            JSONObject jsonO = new JSONObject(s);
-            if (!jsonO.has("years")) {
-                return false;
-            }
-            JSONObject jsonYears = jsonO.getJSONObject("years");
-            Iterator<String> keys = jsonYears.keys();
-            while (keys.hasNext()) {
-                wap.getSnapshots().put(Integer.parseInt(keys.next()), new ArrayList<Long>());
-            }
-            Thread.sleep(1, 200);
-        } catch (Exception ex) {
-            //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-            //ex.printStackTrace();
-            return false;
-        }
-
-        return true;
     }
 
 }
