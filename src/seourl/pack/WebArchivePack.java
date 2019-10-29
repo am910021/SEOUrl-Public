@@ -26,6 +26,8 @@ import seourl.template.TemplateWebArch;
 public class WebArchivePack extends PackAbstract {
 
     @Getter
+    final String url;
+    @Getter
     @Setter
     boolean error = false;
     @Getter
@@ -42,8 +44,9 @@ public class WebArchivePack extends PackAbstract {
 
     private Long readTime = System.currentTimeMillis();
 
-    public WebArchivePack() {
+    public WebArchivePack(String url) {
         super("files/WebArchive/");
+        this.url = url;
     }
 
     public boolean allPass() {

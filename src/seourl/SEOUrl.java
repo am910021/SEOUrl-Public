@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.WebArchiveFilter;
+import seourl.filter.WebArchiveSnapsHot;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -41,6 +41,7 @@ import seourl.thread.So360SiteController;
 import seourl.thread.SogouDomainController;
 import seourl.thread.SogouSearchController;
 import seourl.thread.WebArchiveController;
+import seourl.thread.WebArchiveSnapsHotsController;
 
 /**
  *
@@ -76,6 +77,7 @@ public class SEOUrl {
     private Map<String, So360SitePack> so360SitePMap = new HashMap<>();
 
     //執行中的暫存資料
+    private Map<Integer, WebArchiveSnapsHotsController> washcMap = new HashMap<>();
     private Map<Integer, WebArchiveController> wacMap = new HashMap<>();
     private Map<Integer, JumingController> jcMap = new HashMap<>();
 
@@ -101,7 +103,6 @@ public class SEOUrl {
 //        } catch (FileNotFoundException ex) {
 //            ex.printStackTrace();
 //        }
-
         SEOUrl s = new SEOUrl();
 //        s.loadUrl();
 //        s.splitUrl(MAX_THREAD);
@@ -117,7 +118,6 @@ public class SEOUrl {
 //        s.splitUrl(MAX_THREAD);
         //s.loadKeyword();
         //s.startSogouDomainFilter(true);
-
         //s.startWebArchiveFilter2(true);
         s.start();
         //s.waitTime();
@@ -129,7 +129,34 @@ public class SEOUrl {
         }
     }
 
-    private void startWebArchiveFilter2(boolean show) {
+    private void startWebArchiveFilter(boolean show) {
+
+        WebArchiveSnapsHotsController washc;
+        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
+            washc = new WebArchiveSnapsHotsController(map.getKey(), startTime, map.getValue());
+            washcMap.put(map.getKey(), washc);
+            washc.start();
+            Tools.sleep(100, 1000);
+        }
+        washc = null;
+        for (Entry<Integer, WebArchiveSnapsHotsController> map : washcMap.entrySet()) {
+            try {
+                map.getValue().join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.wap2Map.putAll(map.getValue().getMWAP());
+        }
+        washcMap = null;
+        if (show) {
+            for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
+                map.getValue().print(map.getKey());
+            }
+        }
+
+        if (Configure.WEBARCHIVE_MODE != 1) {
+            return;
+        }
 
         List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
         List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
@@ -412,7 +439,7 @@ public class SEOUrl {
         this.splitUrl(MAX_THREAD);
 
         if (Configure.ENABLE_WEBARCHIVE) {
-            this.startWebArchiveFilter2(Configure.DEBUG);
+            this.startWebArchiveFilter(Configure.DEBUG);
         }
         if (Configure.ENABLE_JUMING_FILTER) {
             this.startJF(Configure.DEBUG);

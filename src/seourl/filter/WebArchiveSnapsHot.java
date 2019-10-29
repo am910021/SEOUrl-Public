@@ -5,8 +5,6 @@
  */
 package seourl.filter;
 
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -18,63 +16,29 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import seourl.Configure;
 import seourl.Tools;
-import seourl.filter.ex.FilterAbstract;
+import seourl.filter.ex.FilterInterface;
 import seourl.pack.WebArchivePack;
 
 /**
  *
  * @author Yuri
  */
-public class WebArchiveFilter1 extends FilterAbstract {
+public class WebArchiveSnapsHot implements FilterInterface {
 
     @Getter
     private WebArchivePack wap;
 
-    private List<String> listTitle;
-    private List<String> listContent;
-
-    public WebArchiveFilter1(List<String> listTitle, List<String> listContent) {
+    public WebArchiveSnapsHot() {
         super();
-        this.listTitle = listTitle;
-        this.listContent = listContent;
-        webClient.getOptions().setJavaScriptEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        webClient.getOptions().setTimeout(10000);
     }
 
     // @Override
-    protected void createNewSearchEnginePack() {
-        this.wap = new WebArchivePack();
+    protected void createNewSearchEnginePack(String url) {
+        this.wap = new WebArchivePack(url);
     }
 
-    public boolean getPage(String url, long s) {
-        boolean status = false;
-        int count = 0;
-        while ((!status && count < Configure.WEBARCH_TRY_REDECT_TIMES)) {
-            try {
-                page = webClient.getPage(String.format(Configure.WEBARCHIVE, s, url));
-                if (page.asText().contains("Redirecting")) {
-                    List<DomElement> l = page.getByXPath("//p[@class='impatient']/a");
-                    if (l.size() > 0) {
-                        page = l.get(0).click();
-                    }
-                }
-                status = true;
-                System.out.printf("取得 %s %d 快照成功。 \r\n", url, s);
-            } catch (Exception ex) {
-                //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("取得 %s %d 快照失敗。\r\n", url, s);
-                Tools.sleep(20, 200);
-            }
-            count++;
-        }
-        return status;
-    }
-
-    @Override
     public boolean doAnalysis(String url) {
-        createNewSearchEnginePack();
+        createNewSearchEnginePack(url);
 
         boolean status = !getYears(url); //讀取快照有的年份
 
@@ -91,54 +55,10 @@ public class WebArchiveFilter1 extends FilterAbstract {
             }
             Collections.sort(item.getValue());
             Collections.reverse(item.getValue());
-        }
-
-        if (Configure.WEBARCHIVE_MODE == 0) {
-            return true;
-        }
-
-        for (Map.Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
-            if (wap.getContentKeyword().size() > 3 || wap.getTitleKeyword().size() > 3) {
-                break;
-            }
-
-            for (Long snapshot : item.getValue()) {
-                if (wap.getContentKeyword().size() > 3 || wap.getTitleKeyword().size() > 3) {
-                    break;
-                }
-                status = this.getPage(url, snapshot);
-                boolean filter[] = doFilter(snapshot);
-                Tools.sleep(100, 2000);
-            }
-
+            Tools.sleep(3000, 10000);
         }
         return true;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private boolean[] doFilter(Long snapshot) {
-        boolean status[] = {true, true};
-        String title = page.getTitleText().toUpperCase();
-        String content = page.asText().toUpperCase();
-        if (Configure.WEBARCHIVE_TITLE_FILTER) {
-            for (String s : listTitle) {
-                if (title.contains(s)) {
-                    status[0] = false;
-                    wap.getTitleKeyword().put(snapshot, s);
-                    break;
-                }
-            }
-        }
-        if (Configure.WEBARCHIVE_CONTENT_FILTER) {
-            for (String s : listContent) {
-                if (content.contains(s)) {
-                    status[1] = false;
-                    wap.getContentKeyword().put(snapshot, s);
-                    break;
-                }
-            }
-        }
-        return status;
     }
 
     private int timeConvert(Long t) {
@@ -159,9 +79,10 @@ public class WebArchiveFilter1 extends FilterAbstract {
         while (!status && count < 15) {
             count++;
             try {
-                s = Tools.getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s", url), 9000);
+                s = Tools.getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s", url), 15000);
                 if (s.equals("")) {
                     System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
+                    Tools.sleep(10 * 1000, 20 * 1000);
                     continue;
                 }
 
@@ -170,7 +91,7 @@ public class WebArchiveFilter1 extends FilterAbstract {
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
-                Tools.sleep(200, 1000);
+                Tools.sleep(10 * 1000, 20 * 1000);
             }
         }
         if (count >= 15 && s.equals("")) {
@@ -193,7 +114,6 @@ public class WebArchiveFilter1 extends FilterAbstract {
             //ex.printStackTrace();
             return false;
         }
-
         return true;
     }
 
@@ -205,9 +125,10 @@ public class WebArchiveFilter1 extends FilterAbstract {
         while (!status && count < 15) {
             count++;
             try {
-                s = Tools.getJSON(String.format("http://web.archive.org/__wb/calendarcaptures?url=%s&selected_year=%d", url, year), 9000);
+                s = Tools.getJSON(String.format("http://web.archive.org/__wb/calendarcaptures?url=%s&selected_year=%d", url, year), 15000);
                 if (s.equals("")) {
                     System.out.printf("取得 %s %d 年快照參數．．．．．失敗。\r\n", url, year);
+                    Tools.sleep(10 * 1000, 20 * 1000);
                     continue;
                 }
 
@@ -216,7 +137,7 @@ public class WebArchiveFilter1 extends FilterAbstract {
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.printf("取得 %s %d 年快照參數．．．．．失敗。\r\n", url, year);
-                Tools.sleep(200, 1000);
+                Tools.sleep(10 * 1000, 20 * 1000);
             }
         }
 
@@ -252,14 +173,10 @@ public class WebArchiveFilter1 extends FilterAbstract {
                 if (jsonO.has("ts")) {
                     JSONArray ts = jsonO.getJSONArray("ts");
                     for (int j = 0; j < ts.length(); j++) {
-                        if (Configure.WEBARCHIVE_MODE == 0) {
-                            map.put(map.size() + 1, ts.getLong(j));
-                        } else {
-                            long snapshot = ts.getLong(j);
-                            int key = this.timeConvert(snapshot);
-                            if (!map.containsKey(key)) {
-                                map.put(key, snapshot);
-                            }
+                        long snapshot = ts.getLong(j);
+                        int key = this.timeConvert(snapshot);
+                        if (!map.containsKey(key)) {
+                            map.put(key, snapshot);
                         }
                     }
                 }

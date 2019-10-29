@@ -27,7 +27,7 @@ import seourl.pack.WebArchivePack;
  *
  * @author Yuri
  */
-public class WebArchiveFilter implements FilterInterface {
+public class WebArchiveFilter2 implements FilterInterface {
 
     @Getter
     private WebArchivePack wap;
@@ -37,7 +37,7 @@ public class WebArchiveFilter implements FilterInterface {
 
     Document doc;
 
-    public WebArchiveFilter(List<String> listTitle, List<String> listContent) {
+    public WebArchiveFilter2(List<String> listTitle, List<String> listContent) {
         this.listTitle = listTitle;
         this.listContent = listContent;
     }
