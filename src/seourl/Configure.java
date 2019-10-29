@@ -49,7 +49,7 @@ public class Configure {
     public static final boolean ENABLE_SO360_SITE;
     public static final boolean ENABLE_SOGOU_DOMAIN;
     public static final boolean ENABLE_SOGOU_SEARCH;
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private static String comm
             = "#WebArchive過濾 1=啟動 0=關閉\r"

@@ -10,7 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import seourl.filter.WebArchiveFilter;
+import seourl.DataSet;
+import seourl.TPair;
+import seourl.Tools;
+import seourl.filter.WebArchiveFilter3;
 import seourl.pack.WebArchivePack;
 
 /**
@@ -20,29 +23,39 @@ import seourl.pack.WebArchivePack;
 public class WebArchiveController extends Thread {
 
     private Date startTime;
-    private List<String> urls;
     private List<String> titleKeywords;
     private List<String> contentKeywords;
     @Getter
     private Map<String, WebArchivePack> mWAP = new HashMap<>();
     private final int pid;
 
-    public WebArchiveController(int pid, Date startTime, List<String> urls, List<String> titleKeywords, List<String> contentKeywords) {
+    final DataSet dataSet;
+
+    public WebArchiveController(int pid, Date startTime, Map<String, WebArchivePack> mWAP, DataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
         this.pid = pid;
-        this.urls = urls;
         this.titleKeywords = titleKeywords;
         this.contentKeywords = contentKeywords;
+        this.dataSet = dataSet;
+        this.mWAP = mWAP;
         this.startTime = startTime;
     }
 
     @Override
     public void run() {
-        WebArchiveFilter waf2 = new WebArchiveFilter(titleKeywords, contentKeywords);
-        for (String url : urls) {
-            waf2.doAnalysis(url);
-            mWAP.put(url, waf2.getWap());
-            waf2.getWap().saveFile(url, startTime);
+        WebArchiveFilter3 waf3 = new WebArchiveFilter3(pid, titleKeywords, contentKeywords);
+        TPair<String, Integer, Long> tp;
+        WebArchivePack wap;
+        String url;
+        while (dataSet.hasNextWASH()) {
+            tp = dataSet.getNextWASH();
+            url = tp.getLeft();
+            wap = mWAP.get(url);
+            waf3.setWap(wap);
+            waf3.doAnalysis(url, tp.getRight());
+            //wap.saveFile(url, startTime);
+            Tools.sleep(2 * 1000, 7 * 1000);
         }
+
         //waf2.close();
     }
 }

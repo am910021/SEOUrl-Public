@@ -35,10 +35,13 @@ public class WebArchiveSnapsHotsController extends Thread {
     
     @Override
     public void run() {
-        WebArchiveSnapsHot wash = new WebArchiveSnapsHot();
+        WebArchiveSnapsHot wash = new WebArchiveSnapsHot(pid);
         for (String url : urls) {
             wash.doAnalysis(url);
             mWAP.put(url, wash.getWap());
+            if(Configure.WEBARCHIVE_MODE != 1){
+                wash.getWap().saveFile(url, startTime);
+            }
         }
     }
 }

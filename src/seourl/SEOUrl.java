@@ -20,11 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.WebArchiveSnapsHot;
+import seourl.filter.WebArchiveFilter3;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -55,7 +56,7 @@ public class SEOUrl {
      * @param args the command line arguments
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
-    private static final int MAX_THREAD = 4; //多線程，聚名網 sogou 專用
+    private static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
     private static final String keyWordPath = "keyword/";
 
     private Date startTime = new Date();
@@ -64,17 +65,17 @@ public class SEOUrl {
     private Map<Integer, List<String>> urlSplit;
 
     //最終要輸出的資料
-    private Map<String, WebArchivePack> wap2Map = new HashMap<>();   //WebArchive資料集
-    private Map<String, JumingPack> jpMap = new HashMap<>();        //聚名網資料集
+    private Map<String, WebArchivePack> wap2Map = new TreeMap<>();   //WebArchive資料集
+    private Map<String, JumingPack> jpMap = new TreeMap<>();        //聚名網資料集
 
-    private Map<String, SogouDomainPack> sogouDomainPMap = new HashMap<>();       //搜狗域名資料集
-    private Map<String, BaiduDomainPack> baiduDomainPMap = new HashMap<>();       //百度域名資料集
+    private Map<String, SogouDomainPack> sogouDomainPMap = new TreeMap<>();       //搜狗域名資料集
+    private Map<String, BaiduDomainPack> baiduDomainPMap = new TreeMap<>();       //百度域名資料集
 
-    private Map<String, So360SerachPack> so360SearchPMap = new HashMap<>();       //360搜資料集
-    private Map<String, SogouSerachPack> sogoSearchPMap = new HashMap<>();       //百度網站資料集
+    private Map<String, So360SerachPack> so360SearchPMap = new TreeMap<>();       //360搜資料集
+    private Map<String, SogouSerachPack> sogoSearchPMap = new TreeMap<>();       //百度網站資料集
 
-    private Map<String, BaiduSitePack> baiduSitePMap = new HashMap<>();
-    private Map<String, So360SitePack> so360SitePMap = new HashMap<>();
+    private Map<String, BaiduSitePack> baiduSitePMap = new TreeMap<>();
+    private Map<String, So360SitePack> so360SitePMap = new TreeMap<>();
 
     //執行中的暫存資料
     private Map<Integer, WebArchiveSnapsHotsController> washcMap = new HashMap<>();
@@ -90,6 +91,8 @@ public class SEOUrl {
     private Map<Integer, BaiduSiteController> baiduSiteCMap = new HashMap<>();
     private Map<Integer, So360SiteController> so360SiteCMap = new HashMap<>();
 
+    private int totalSnapsHotsSize = 0;
+
     public SEOUrl() {
         checkFile();
         Configure.printStatus();
@@ -104,21 +107,11 @@ public class SEOUrl {
 //            ex.printStackTrace();
 //        }
         SEOUrl s = new SEOUrl();
-//        s.loadUrl();
-//        s.splitUrl(MAX_THREAD);
+
 //        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
 //        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
-//        WebArchiveFilter waf2 = new WebArchiveFilter(title, content);
-//        waf2.doAnalysis("yahoo.com.tw");
-//        waf2.getWap().print("yahoo.com.tw");
-
-//
-//        SEOUrl s = new SEOUrl();
-//        s.loadUrl();
-//        s.splitUrl(MAX_THREAD);
-        //s.loadKeyword();
-        //s.startSogouDomainFilter(true);
-        //s.startWebArchiveFilter2(true);
+//        WebArchiveFilter3 waf3 = new WebArchiveFilter3(0, title, content);
+//        waf3.doAnalysis("1banchina.com", 20180805032156L);
         s.start();
         //s.waitTime();
     }
@@ -154,20 +147,31 @@ public class SEOUrl {
             }
         }
 
+        long total = (System.currentTimeMillis() - startTime.getTime());
+        long h = TimeUnit.MILLISECONDS.toHours(total);
+        long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
+        long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
+        System.out.printf("快照列表讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
+
         if (Configure.WEBARCHIVE_MODE != 1) {
             return;
         }
 
+        DataSet dataSet = new DataSet();
+        dataSet.setLtp(getSplitSnapsHots());
+        totalSnapsHotsSize = dataSet.ltp.size();
         List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
         List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
-
+        System.out.printf("URL數量:%d  預計讀取快照量:%d\n", urls.size(), totalSnapsHotsSize);
         WebArchiveController wac;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            wac = new WebArchiveController(map.getKey(), startTime, map.getValue(), title, content);
-            wacMap.put(map.getKey(), wac);
+
+        for (int i = 0; i < MAX_THREAD; i++) {
+            wac = new WebArchiveController(i, startTime, wap2Map, dataSet, title, content);
+            wacMap.put(i, wac);
             wac.start();
             Tools.sleep(100, 1000);
         }
+
         wac = null;
 
         for (Entry<Integer, WebArchiveController> map : wacMap.entrySet()) {
@@ -176,14 +180,33 @@ public class SEOUrl {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.wap2Map.putAll(map.getValue().getMWAP());
         }
         wacMap = null;
         if (show) {
             for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
                 map.getValue().print(map.getKey());
+                map.getValue().saveFile(map.getKey(), startTime);
             }
         }
+        total = (System.currentTimeMillis() - startTime.getTime());
+        h = TimeUnit.MILLISECONDS.toHours(total);
+        m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
+        s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
+        System.out.printf("快照讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
+    }
+
+    private List<TPair<String, Integer, Long>> getSplitSnapsHots() {
+        List<TPair<String, Integer, Long>> ltp = new ArrayList<>();
+        TPair<String, Integer, Long> tp;
+        for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
+            for (Entry<Integer, List<Long>> snapshot : map.getValue().getSnapshots().entrySet()) {
+                for (Long l : snapshot.getValue()) {
+                    tp = new TPair(map.getKey(), snapshot.getKey(), l);
+                    ltp.add(tp);
+                }
+            }
+        }
+        return ltp;
     }
 
     /**
@@ -498,12 +521,12 @@ public class SEOUrl {
         }
         passT.creatFile();
         failT.creatFile();
-        System.out.printf("total:%d  pass:%d fail:%d  unknow:%d \n", urls.size(), count[0], count[1], count[2]);
+        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urls.size(), count[0], count[1], count[2], totalSnapsHotsSize);
         long total = (System.currentTimeMillis() - startTime.getTime());
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
         long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
-        System.out.printf("執行時間:%d小時 %d分鐘 %d秒\n", h, m, s);
+        System.out.printf("總執行時間:%d小時 %d分鐘 %d秒\n", h, m, s);
     }
 
     private void insertRecord(TemplateIndex passT, TemplateIndex failT, String url, int[] count) {

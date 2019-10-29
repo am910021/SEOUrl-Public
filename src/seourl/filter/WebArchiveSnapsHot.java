@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import seourl.Configure;
 import seourl.Tools;
 import seourl.filter.ex.FilterInterface;
 import seourl.pack.WebArchivePack;
@@ -27,9 +26,11 @@ public class WebArchiveSnapsHot implements FilterInterface {
 
     @Getter
     private WebArchivePack wap;
+    private final int pid;
 
-    public WebArchiveSnapsHot() {
+    public WebArchiveSnapsHot(int pid) {
         super();
+        this.pid = pid;
     }
 
     // @Override
@@ -43,14 +44,14 @@ public class WebArchiveSnapsHot implements FilterInterface {
         boolean status = !getYears(url); //讀取快照有的年份
 
         if (status) {
-            wap.setError(status);
+            wap.setUrlErrpr(status);
             return false;
         }
 
         for (Map.Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
             status = !getSnapshotsPerYear(url, item.getKey());
             if (status) {
-                wap.setError(status);
+                wap.getYearError().put(item.getKey(), status);
                 return false;
             }
             Collections.sort(item.getValue());
@@ -81,16 +82,16 @@ public class WebArchiveSnapsHot implements FilterInterface {
             try {
                 s = Tools.getJSON(String.format("https://web.archive.org/__wb/sparkline?url=%s", url), 15000);
                 if (s.equals("")) {
-                    System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
+                    System.out.printf("線程-%d 取讀 %s 年代參數．．．．．失敗。\r\n", pid, url);
                     Tools.sleep(10 * 1000, 20 * 1000);
                     continue;
                 }
 
                 status = true;
-                System.out.printf("取讀 %s 年代參數．．．．．成功。\r\n", url);
+                System.out.printf("線程-%d 取讀 %s 年代參數．．．．．成功。\r\n", pid, url);
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("取讀 %s 年代參數．．．．．失敗。\r\n", url);
+                System.out.printf("線程-%d 取讀 %s 年代參數．．．．．失敗。\r\n", pid, url);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
         }
@@ -127,16 +128,16 @@ public class WebArchiveSnapsHot implements FilterInterface {
             try {
                 s = Tools.getJSON(String.format("http://web.archive.org/__wb/calendarcaptures?url=%s&selected_year=%d", url, year), 15000);
                 if (s.equals("")) {
-                    System.out.printf("取得 %s %d 年快照參數．．．．．失敗。\r\n", url, year);
+                    System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．失敗。\r\n", pid, url, year);
                     Tools.sleep(10 * 1000, 20 * 1000);
                     continue;
                 }
 
                 status = true;
-                System.out.printf("取得 %s %d 年快照參數．．．．．成功。\r\n", url, year);
+                System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．成功。\r\n", pid, url, year);
             } catch (Exception ex) {
                 //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-                System.out.printf("取得 %s %d 年快照參數．．．．．失敗。\r\n", url, year);
+                System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．失敗。\r\n", pid, url, year);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
         }
@@ -155,7 +156,7 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 }
             }
         } catch (Exception e) {
-            System.out.printf("%s %d 年快照參數無法分析。 \r\n", url, year);
+            System.out.printf("線程-%d %s %d 年快照參數無法分析。 \r\n", pid, url, year);
         }
         if (map.size() > 0) {
             tmp.addAll(map.values());

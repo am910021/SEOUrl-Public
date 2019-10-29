@@ -83,13 +83,13 @@ public class WebArchiveFilter implements FilterInterface {
 
         boolean status = !getYears(url); //讀取快照有的年份
         if (status) {
-            wap.setError(status);
+            wap.setUrlErrpr(status);
             return false;
         }
         for (Map.Entry<Integer, List<Long>> item : wap.getSnapshots().entrySet()) {
             status = !getSnapshotsPerYear(url, item.getKey());
             if (status) {
-                wap.setError(status);
+                wap.getYearError().put(item.getKey(), status);
                 return false;
             }
             Collections.sort(item.getValue());
@@ -108,7 +108,7 @@ public class WebArchiveFilter implements FilterInterface {
                 if(this.getPage(url, snapshot)){
                     boolean filter[] = doFilter(snapshot);
                 }else{
-                    wap.setError(true);
+                    wap.getError().put(snapshot, true);
                     return false;
                 }
                 

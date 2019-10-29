@@ -29,15 +29,16 @@ public class WebArchivePack extends PackAbstract {
     final String url;
     @Getter
     @Setter
-    boolean error = false;
+    private boolean urlErrpr = false;
     @Getter
-    @Setter
+    private Map<Integer, Boolean> yearError = new TreeMap<>(Collections.reverseOrder());
+    @Getter
+    private Map<Long, Boolean> error = new TreeMap<>(Collections.reverseOrder());
+    @Getter
     private Map<Integer, List<Long>> snapshots = new TreeMap<>(Collections.reverseOrder());
     @Getter
-    @Setter
     private Map<Long, String> titleKeyword = new TreeMap<>(Collections.reverseOrder());
     @Getter
-    @Setter
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
     private String domain = "";
@@ -50,7 +51,7 @@ public class WebArchivePack extends PackAbstract {
     }
 
     public boolean allPass() {
-        return snapshots.size() > 0 && this.titleKeyword.size() == 0 && this.contentKeyword.size() == 0 && !error;
+        return snapshots.size() > 0 && this.titleKeyword.size() == 0 && this.contentKeyword.size() == 0 && !urlErrpr && yearError.size() == 0 && error.size() == 0;
     }
 
     public String getReason() {
@@ -64,7 +65,7 @@ public class WebArchivePack extends PackAbstract {
         if (this.contentKeyword.size() > 0) {
             tmp += "內容 ";
         }
-        if (error) {
+        if (urlErrpr && yearError.size() >= 0 && error.size() >= 0) {
             tmp += "錯誤 ";
         }
         return tmp;
@@ -87,29 +88,40 @@ public class WebArchivePack extends PackAbstract {
     public void saveFile(String url, Date startTime) {
         this.domain = url;
         TemplateWebArch tWebArch = new TemplateWebArch(startTime);
-        if (titleKeyword.size() > 0 || contentKeyword.size() > 0) {
-            tWebArch.setSavePath("files/WebArchive/fail/");
-        } else {
-            tWebArch.setSavePath("files/WebArchive/pass/");
-        }
+        tWebArch.setSavePath(getFinalPath());
         tWebArch.setSaveName(url);
         tWebArch.insertTitle(url);
         tWebArch.insertDomain(url);
         tWebArch.insertTime(readTime);
-        String title;
-        String content;
+        String title = "通過";
+        String content = "通過";
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
-                title = this.titleKeyword.containsKey(snapshot) ? this.titleKeyword.get(snapshot) : "";
-                content = this.contentKeyword.containsKey(snapshot) ? this.contentKeyword.get(snapshot) : "";
-                if (titleKeyword.size() > 0 || contentKeyword.size() > 0) {
+
+                if (allPass()) {
                     tWebArch.insertRecord(snapshot, url, title, content);
                 } else {
-                    title = (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_TITLE_FILTER) ? "通過" : "未啟用";
-                    content = (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_CONTENT_FILTER) ? "通過" : "未啟用";
+                    if (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_TITLE_FILTER) {
+                        if (this.titleKeyword.containsKey(snapshot)) {
+                            title = "<snap style=\"color:red\">" + this.titleKeyword.get(snapshot) + "</snap>";
+                        } else {
+                            title = "通過";
+                        }
+                    } else {
+                        title = "未啟用";
+                    }
+
+                    if (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_CONTENT_FILTER) {
+                        if (this.contentKeyword.containsKey(snapshot)) {
+                            content = "<snap style=\"color:red\">" + this.contentKeyword.get(snapshot) + "</snap>";
+                        } else {
+                            content = "通過";
+                        }
+                    } else {
+                        title = "未啟用";
+                    }
                     tWebArch.insertRecord(snapshot, url, title, content);
                 }
-
             }
         }
         tWebArch.creatFile();

@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.jsoup.Connection;
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -207,12 +209,28 @@ public class Tools {
             doc = Jsoup.connect(url).timeout(timeout)
                     .userAgent(Device.getById(Tools.getRandomNumberInRange(0, 7)).getType())
                     .followRedirects(true)
+                    .ignoreHttpErrors(true)
                     .get();
         } catch (Exception ex) {
             //Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return doc;
+    }
+    
+    public static Response getResponse(String url, int timeout) {
+        Connection.Response response = null;
+        try {
+            response = Jsoup.connect(url)
+                    .timeout(timeout)
+                    .userAgent(Device.getById(Tools.getRandomNumberInRange(0, 7)).getType())
+                    .followRedirects(true)
+                    .ignoreHttpErrors(true)
+                    .execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 
 }
