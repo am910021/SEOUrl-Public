@@ -35,7 +35,7 @@ import seourl.filter.JumingFilter;
  *
  * @author yuri
  */
-public abstract class FilterAbstract implements FilterInterface {
+public abstract class FilterAbstract extends BasicFilterAbstract {
 
     protected HtmlPage page;
     protected WebClient webClient;
@@ -49,7 +49,8 @@ public abstract class FilterAbstract implements FilterInterface {
     @Getter
     private String cookiePath = "cache/";
 
-    protected FilterAbstract() {
+    protected FilterAbstract(String filterType) {
+        super(filterType);
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);
         java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
@@ -99,6 +100,7 @@ public abstract class FilterAbstract implements FilterInterface {
                 }
                 return true;
             } catch (Exception e) {
+                Tools.printError(filterType, e);
                 System.out.printf("取得%s頁面中....失敗。\n", url);
                 Tools.sleep(100);
             }
@@ -121,6 +123,7 @@ public abstract class FilterAbstract implements FilterInterface {
                 return;
             }
             in = new ObjectInputStream(new FileInputStream(file));
+            @SuppressWarnings("unchecked")
             Set<Cookie> cookies = (Set<Cookie>) in.readObject();
             Iterator<Cookie> i = cookies.iterator();
             while (i.hasNext()) {
@@ -128,7 +131,7 @@ public abstract class FilterAbstract implements FilterInterface {
             }
             in.close();
         } catch (Exception ex) {
-            Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
+            Tools.printError(filterType, ex);
         }
         webClient.getCookieManager().clearExpired(new Date());
     }
@@ -139,7 +142,7 @@ public abstract class FilterAbstract implements FilterInterface {
             out.writeObject(webClient.getCookieManager().getCookies());
             out.close();
         } catch (IOException ex) {
-            Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
+            Tools.printError(filterType, ex);
         }
     }
 }

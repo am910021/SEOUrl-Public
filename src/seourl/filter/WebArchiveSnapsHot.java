@@ -15,6 +15,7 @@ import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import seourl.Tools;
+import seourl.filter.ex.BasicFilterAbstract;
 import seourl.filter.ex.FilterInterface;
 import seourl.pack.WebArchivePack;
 
@@ -22,14 +23,14 @@ import seourl.pack.WebArchivePack;
  *
  * @author Yuri
  */
-public class WebArchiveSnapsHot implements FilterInterface {
+public class WebArchiveSnapsHot extends BasicFilterAbstract {
 
     @Getter
     private WebArchivePack wap;
     private final int pid;
 
     public WebArchiveSnapsHot(int pid) {
-        super();
+        super("WebArchiveList");
         this.pid = pid;
     }
 
@@ -90,7 +91,7 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 status = true;
                 System.out.printf("線程-%d 取讀 %s 年代參數．．．．．成功。\r\n", pid, url);
             } catch (Exception ex) {
-                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+                Tools.printError(filterType, ex);
                 System.out.printf("線程-%d 取讀 %s 年代參數．．．．．失敗。\r\n", pid, url);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
@@ -105,14 +106,15 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 return false;
             }
             JSONObject jsonYears = jsonO.getJSONObject("years");
+            
+            @SuppressWarnings("unchecked")
             Iterator<String> keys = jsonYears.keys();
             while (keys.hasNext()) {
                 wap.getSnapshots().put(Integer.parseInt(keys.next()), new ArrayList<Long>());
             }
             Thread.sleep(1, 200);
         } catch (Exception ex) {
-            //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
-            //ex.printStackTrace();
+            Tools.printError(filterType, ex);
             return false;
         }
         return true;
@@ -136,7 +138,7 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 status = true;
                 System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．成功。\r\n", pid, url, year);
             } catch (Exception ex) {
-                //Logger.getLogger(WebArchiveFilter.class.getName()).log(Level.SEVERE, null, ex);
+                Tools.printError(filterType, ex);
                 System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．失敗。\r\n", pid, url, year);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
@@ -156,6 +158,7 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 }
             }
         } catch (Exception e) {
+            Tools.printError(filterType, e);
             System.out.printf("線程-%d %s %d 年快照參數無法分析。 \r\n", pid, url, year);
         }
         if (map.size() > 0) {
@@ -183,7 +186,7 @@ public class WebArchiveSnapsHot implements FilterInterface {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Tools.printError(filterType, e);
         }
     }
 

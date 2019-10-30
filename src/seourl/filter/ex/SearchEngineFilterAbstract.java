@@ -23,17 +23,14 @@ import seourl.pack.SearchEnginePack;
  */
 public abstract class SearchEngineFilterAbstract extends FilterAbstract {
 
-    private final String filterType;
     @Setter
     protected List<String> lkeyWords = new ArrayList<>();
     @Getter(AccessLevel.PROTECTED)
     protected SearchEnginePack sep;
 
     public SearchEngineFilterAbstract(String filterType, List<String> lkeyWords) {
-        super();
-        this.filterType = filterType;
+        super(filterType);
         this.lkeyWords = lkeyWords;
-        System.out.printf("建立 %s 過濾器\n", filterType);
     }
 
     protected abstract String getPageUrl(String url, int i);
@@ -107,7 +104,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
                 status = true;
                 System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);
             } catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                Tools.printError(filterType, ex);
                 System.out.printf("%s %s 第%d頁 資料讀取失敗，重新讀取中。 \n", filterType, url, i);
                 Tools.sleep(20, 200);
             }

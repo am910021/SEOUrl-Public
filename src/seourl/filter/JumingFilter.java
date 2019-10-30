@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import seourl.Configure;
+import seourl.Tools;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.*;
 
@@ -29,7 +30,7 @@ public class JumingFilter extends FilterAbstract {
     private JumingPack jp = new JumingPack();
 
     public JumingFilter() {
-        super();
+        super("Juming");
         System.out.println("建立聚名網過濾器。");
     }
 
@@ -55,7 +56,7 @@ public class JumingFilter extends FilterAbstract {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
+            Tools.printError(filterType, ex);
         }
         if (login) {
             System.out.println("登入juming中....成功。");
@@ -108,7 +109,7 @@ public class JumingFilter extends FilterAbstract {
             System.out.printf("取得juming中的 %s 訊息....成功。\n", url);
             return true;
         } catch (Exception ex) {
-            //Logger.getLogger(JumingFilter.class.getName()).log(Level.SEVERE, null, ex);
+            Tools.printError(filterType, ex);
             System.out.printf("取得juming中的 %s 訊息....失敗。\n", url);
             this.jp.setError(true);
         }

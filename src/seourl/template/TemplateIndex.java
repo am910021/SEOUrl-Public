@@ -14,6 +14,8 @@ import seourl.Tools;
  */
 public class TemplateIndex extends Template {
 
+    
+    
     public TemplateIndex(Date startTime) {
         super("index", startTime);
     }
@@ -42,7 +44,8 @@ public class TemplateIndex extends Template {
             String[] So360Si,
             String[] SogouD,
             String[] SogouS) {
-        this.insertByKey("record", url,
+        line++;
+        this.insertByKey("record", line, url,
                 getLink(wap),
                 juming,
                 getLink(baiduD),

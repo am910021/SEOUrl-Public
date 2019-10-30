@@ -70,9 +70,6 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnImportUrl">
-          <Properties>
-            <Property name="label" type="java.lang.String" value="&#x532f;&#x5165;&#x57df;&#x540d;"/>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnImportUrlActionPerformed"/>
           </Events>

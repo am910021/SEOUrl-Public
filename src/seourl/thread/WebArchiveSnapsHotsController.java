@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import seourl.Configure;
-import seourl.filter.WebArchiveFilter;
 import seourl.filter.WebArchiveSnapsHot;
 import seourl.pack.WebArchivePack;
 

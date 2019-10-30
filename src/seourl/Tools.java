@@ -8,17 +8,19 @@ package seourl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -34,6 +36,9 @@ import org.jsoup.nodes.Document;
 public class Tools {
 
     private static Random ran = new Random();
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    private static final String FILE_PATH = "logs/" + sdf.format(Calendar.getInstance().getTime()) + "/";// + sdf.format(Calendar.getInstance().getTime()) + "/"
+    private static final String ERROR = "error/";
 
     public static int getRandomNumberInRange(int min, int max) {
         if (min >= max) {
@@ -217,7 +222,7 @@ public class Tools {
 
         return doc;
     }
-    
+
     public static Response getResponse(String url, int timeout) {
         Connection.Response response = null;
         try {
@@ -233,4 +238,59 @@ public class Tools {
         return response;
     }
 
+    /**
+     * 輸出例外(exception)到 error資料夾
+     * 
+     * @param fileName
+     * @param t(exception)
+     */
+    public static void printError(final String fileName, final Throwable t) {
+        if(Configure.DEBUG){
+            t.printStackTrace();
+        }
+        
+        
+        FileOutputStream out = null;
+        final String file = FILE_PATH + ERROR + fileName + ".log";
+        try {
+            File outputFile = new File(file);
+            if (outputFile.getParentFile() != null) {
+                outputFile.getParentFile().mkdirs();
+            }
+            out = new FileOutputStream(file, true);
+            out.write(getString(t).getBytes());
+            out.write("\n---------------------------------\r\n".getBytes());
+        } catch (IOException ess) {
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ignore) {
+            }
+        }
+    }
+
+    private static String getString(final Throwable e) {
+        String retValue = null;
+        StringWriter sw = null;
+        PrintWriter pw = null;
+        try {
+            sw = new StringWriter();
+            pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            retValue = sw.toString();
+        } finally {
+            try {
+                if (pw != null) {
+                    pw.close();
+                }
+                if (sw != null) {
+                    sw.close();
+                }
+            } catch (IOException ignore) {
+            }
+        }
+        return retValue;
+    }
 }

@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.filter.WebArchiveFilter3;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -57,7 +56,7 @@ public class SEOUrl {
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
     private static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
-    private static final String keyWordPath = "keyword/";
+    
 
     private Date startTime = new Date();
     @Getter
@@ -201,7 +200,7 @@ public class SEOUrl {
         for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
             for (Entry<Integer, List<Long>> snapshot : map.getValue().getSnapshots().entrySet()) {
                 for (Long l : snapshot.getValue()) {
-                    tp = new TPair(map.getKey(), snapshot.getKey(), l);
+                    tp = new TPair<>(map.getKey(), snapshot.getKey(), l);
                     ltp.add(tp);
                 }
             }
@@ -219,7 +218,7 @@ public class SEOUrl {
     private void startSo360SiteFilter(boolean show) {
         So360SiteController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SO360_SITE.txt"));
+            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SO360_SITE.txt"));
             so360SiteCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -251,7 +250,7 @@ public class SEOUrl {
     private void startBaiduSiteFilter(boolean show) {
         BaiduSiteController bsc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), this.loadKeyword("BAIDU_SITE.txt"));
+            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("BAIDU_SITE.txt"));
             baiduSiteCMap.put(map.getKey(), bsc);
             bsc.start();
             Tools.sleep(100, 1000);
@@ -283,7 +282,7 @@ public class SEOUrl {
     private void startSogouSearcFilter(boolean show) {
         SogouSearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SOGOU_SEARCH.txt"));
+            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SOGOU_SEARCH.txt"));
             sogouSearchCMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -315,7 +314,7 @@ public class SEOUrl {
     private void startBaiduDomainFilter(boolean show) {
         BaiduDomainController bdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), this.loadKeyword("BAIDU_DOMAIN.txt"));
+            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("BAIDU_DOMAIN.txt"));
             baiduDomainCMap.put(map.getKey(), bdc);
             bdc.start();
             Tools.sleep(100, 1000);
@@ -347,7 +346,7 @@ public class SEOUrl {
     private void startSo360SearchFIlter(boolean show) {
         So360SearchController ssc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SO360_SEARCH.txt"));
+            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SO360_SEARCH.txt"));
             so360SearchMap.put(map.getKey(), ssc);
             ssc.start();
             Tools.sleep(100, 1000);
@@ -379,7 +378,7 @@ public class SEOUrl {
     private void startSogouDomainFilter(boolean show) {
         SogouDomainController sdc;
         for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), this.loadKeyword("SOGOU_DOMAIN.txt"));
+            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SOGOU_DOMAIN.txt"));
             sogoDomainCMap.put(map.getKey(), sdc);
             sdc.start();
             Tools.sleep(1000, 3000);
@@ -436,26 +435,26 @@ public class SEOUrl {
 
     public void start() {
         if (Configure.ENABLE_WEBARCHIVE) {
-            this.checkFile("WEBARCHIVE-TITLE.txt");
-            this.checkFile("WEBARCHIVE-CONTENT.txt");
+            this.checkKeyWordFile("WEBARCHIVE-TITLE.txt");
+            this.checkKeyWordFile("WEBARCHIVE-CONTENT.txt");
         }
         if (Configure.ENABLE_BAIDU_DOMAIN) {
-            this.checkFile("BAIDU_DOMAIN.txt");
+            this.checkKeyWordFile("BAIDU_DOMAIN.txt");
         }
         if (Configure.ENABLE_BAIDU_SITE) {
-            this.checkFile("BAIDU_SITE.txt");
+            this.checkKeyWordFile("BAIDU_SITE.txt");
         }
         if (Configure.ENABLE_SO360_SEARCH) {
-            this.checkFile("SO360_SEARCH.txt");
+            this.checkKeyWordFile("SO360_SEARCH.txt");
         }
         if (Configure.ENABLE_SO360_SITE) {
-            this.checkFile("SO360_SITE.txt");
+            this.checkKeyWordFile("SO360_SITE.txt");
         }
         if (Configure.ENABLE_SOGOU_SEARCH) {
-            this.checkFile("SOGOU_SEARCH.txt");
+            this.checkKeyWordFile("SOGOU_SEARCH.txt");
         }
         if (Configure.ENABLE_SOGOU_DOMAIN) {
-            this.checkFile("SOGOU_DOMAIN.txt");
+            this.checkKeyWordFile("SOGOU_DOMAIN.txt");
         }
 
         this.loadUrl();
@@ -641,28 +640,6 @@ public class SEOUrl {
         }
     }
 
-    private List<String> loadKeyword(String fileName) {
-        List<String> keywords = new ArrayList<String>();
-        try {
-            File file = new File(keyWordPath + fileName);
-            InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
-            BufferedReader br = new BufferedReader(isr);
-            String st;
-            while ((st = br.readLine()) != null) {
-                st.replace(" ", "").replace("\n", "");
-
-                if (st.equals("") || st.contains("###")) {
-                    continue;
-                }
-
-                keywords.add(st.toUpperCase());
-            }
-        } catch (IOException ex) {
-            //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return keywords;
-    }
-
     public void checkFile() {
 
         File i = new File("input.txt");
@@ -685,17 +662,17 @@ public class SEOUrl {
 
     }
 
-    public void checkFile(String file) {
-        Tools.checkDir(keyWordPath);
-        File k = new File(keyWordPath + file);
+    public void checkKeyWordFile(String file) {
+        Tools.checkDir(Configure.KEY_WORD_PATH);
+        File k = new File(Configure.KEY_WORD_PATH + file);
 
         if (!k.exists()) {
-            System.out.println("未找到現有" + keyWordPath + file + "檔案，已建立" + keyWordPath + file);
+            System.out.println("未找到現有" + Configure.KEY_WORD_PATH + file + "檔案，已建立" + Configure.KEY_WORD_PATH + file);
             List<String> comm = new ArrayList<>();
             comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
 
             try {
-                Files.write(Paths.get(keyWordPath + file), comm, StandardCharsets.UTF_8);
+                Files.write(Paths.get(Configure.KEY_WORD_PATH + file), comm, StandardCharsets.UTF_8);
             } catch (IOException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }

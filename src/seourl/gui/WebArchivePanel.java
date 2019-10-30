@@ -41,7 +41,6 @@ public class WebArchivePanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         checkList1 = new seourl.gui.CheckList();
 
-        btnImportUrl.setLabel("匯入域名");
         btnImportUrl.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImportUrlActionPerformed(evt);

@@ -12,14 +12,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import seourl.Configure;
 import seourl.Tools;
-import seourl.filter.ex.FilterInterface;
+import seourl.filter.ex.BasicFilterAbstract;
 import seourl.pack.WebArchivePack;
 
 /**
  *
  * @author Yuri
  */
-public class WebArchiveFilter3 implements FilterInterface {
+public class WebArchiveFilter3 extends BasicFilterAbstract {
 
     @Getter
     @Setter
@@ -32,6 +32,7 @@ public class WebArchiveFilter3 implements FilterInterface {
     final int pid;
 
     public WebArchiveFilter3(int pid, List<String> listTitle, List<String> listContent) {
+        super("WebArchive");
         this.listTitle = listTitle;
         this.listContent = listContent;
         this.pid = pid;
@@ -64,7 +65,7 @@ public class WebArchiveFilter3 implements FilterInterface {
                 status = true;
                 System.out.printf("線程-%d 取得 %s %d 快照成功。 \r\n",pid, url, s);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Tools.printError(filterType, ex);
                 System.out.printf("線程-%d 取得 %s %d 快照失敗。\r\n",pid, url, s);
                 Tools.sleep(1*1000, 5*1000);
             }
