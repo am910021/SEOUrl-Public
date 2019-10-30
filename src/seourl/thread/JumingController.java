@@ -6,9 +6,10 @@
 package seourl.thread;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import seourl.data.UrlDataSet;
+import seourl.data.ex.DataSetAbstract;
 import seourl.filter.JumingFilter;
 import seourl.pack.JumingPack;
 
@@ -18,14 +19,14 @@ import seourl.pack.JumingPack;
  */
 public class JumingController extends Thread {
 
-    private List<String> urls;
+    private UrlDataSet dataSet;
     @Getter
     private Map<String, JumingPack> mJP = new HashMap<>();
     private final int pid;
 
-    public JumingController(int pid, List<String> urls) {
+    public JumingController(int pid, UrlDataSet dataSet) {
         this.pid = pid;
-        this.urls = urls;
+        this.dataSet = dataSet;
     }
 
     @Override
@@ -37,7 +38,9 @@ public class JumingController extends Thread {
         j.loadWeb("http://www.juming.com");
         j.login();
         j.saveCookie();
-        for (String url : urls) {
+        String url;
+        while (dataSet.hasNextUrl()) {
+            url = dataSet.getNextUrl();
             j.doAnalysis(url);
             mJP.put(url, j.getJp());
         }

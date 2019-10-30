@@ -23,13 +23,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.logging.LogFactory;
 import seourl.Device;
 import seourl.Tools;
-import seourl.filter.JumingFilter;
 
 /**
  *
@@ -143,6 +141,18 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
             out.close();
         } catch (IOException ex) {
             Tools.printError(filterType, ex);
+        }
+    }
+    
+    protected final void cleanMemory(){
+        if(page != null){
+            page.cleanUp();
+        }
+    }
+    
+    protected final void cleanMenory(HtmlPage p){
+        if(p!=null){
+            p.cleanUp();
         }
     }
 }

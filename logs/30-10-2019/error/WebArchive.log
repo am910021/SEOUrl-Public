@@ -1,0 +1,408 @@
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+
+---------------------------------
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:63)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------
+java.lang.Exception: doc is null
+	at seourl.filter.WebArchiveFilter3.getPage(WebArchiveFilter3.java:53)
+	at seourl.filter.WebArchiveFilter3.doAnalysis(WebArchiveFilter3.java:78)
+	at seourl.thread.WebArchiveController.run(WebArchiveController.java:54)
+
+---------------------------------

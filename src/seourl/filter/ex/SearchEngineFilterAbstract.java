@@ -8,8 +8,6 @@ package seourl.filter.ex;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,6 +45,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
 
     @Override
     public boolean doAnalysis(String url) {
+        cleanMemory();
         this.createNewSearchEnginePack();
         boolean pageError = false;
         //如果讀取第一頁錯誤，取消該網域的分析 並回傳false表示未完成分析
@@ -100,6 +99,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
                 if (Configure.DEBUG) {
                     System.out.println(tUrl);
                 }
+                this.cleanMemory();
                 page = webClient.getPage(tUrl);
                 status = true;
                 System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);

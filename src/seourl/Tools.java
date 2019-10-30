@@ -238,6 +238,26 @@ public class Tools {
         return response;
     }
 
+        public static List<String> loadUrl() {
+        List<String> urls = new ArrayList<String>();
+        try {
+            File file = new File("input.txt");
+            InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
+            String st;
+            while ((st = br.readLine()) != null) {
+                if (st.equals("") || st.contains("###")) {
+                    continue;
+                }
+
+                urls.add(st);
+            }
+        } catch (IOException ex) {
+            //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return urls;
+    }
+    
     /**
      * 輸出例外(exception)到 error資料夾
      * 

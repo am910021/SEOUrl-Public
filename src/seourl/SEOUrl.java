@@ -6,11 +6,8 @@
 package seourl;
 
 import seourl.thread.JumingController;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import seourl.data.SnapsHotsDataSet;
+import seourl.data.UrlDataSet;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -55,13 +54,9 @@ public class SEOUrl {
      * @param args the command line arguments
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
-    private static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
-    
 
     private Date startTime = new Date();
-    @Getter
-    private List<String> urls;
-    private Map<Integer, List<String>> urlSplit;
+    private final UrlDataSet urlDataSet = new UrlDataSet();
 
     //最終要輸出的資料
     private Map<String, WebArchivePack> wap2Map = new TreeMap<>();   //WebArchive資料集
@@ -95,6 +90,7 @@ public class SEOUrl {
     public SEOUrl() {
         checkFile();
         Configure.printStatus();
+        this.urlDataSet.setUrls(Tools.loadUrl());
     }
 
     public static void main(String[] args) {
@@ -124,12 +120,15 @@ public class SEOUrl {
     private void startWebArchiveFilter(boolean show) {
 
         WebArchiveSnapsHotsController washc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            washc = new WebArchiveSnapsHotsController(map.getKey(), startTime, map.getValue());
-            washcMap.put(map.getKey(), washc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.WEBARCHIVE_MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            washc = new WebArchiveSnapsHotsController(i, startTime, tmp);
+            washcMap.put(i, washc);
             washc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
+
         washc = null;
         for (Entry<Integer, WebArchiveSnapsHotsController> map : washcMap.entrySet()) {
             try {
@@ -156,19 +155,19 @@ public class SEOUrl {
             return;
         }
 
-        DataSet dataSet = new DataSet();
-        dataSet.setLtp(getSplitSnapsHots());
-        totalSnapsHotsSize = dataSet.ltp.size();
+        SnapsHotsDataSet snapsHotsDataSet = new SnapsHotsDataSet();
+        snapsHotsDataSet.setWash(getSplitSnapsHots());
+        totalSnapsHotsSize = snapsHotsDataSet.getWashSize();
         List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
         List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
-        System.out.printf("URL數量:%d  預計讀取快照量:%d\n", urls.size(), totalSnapsHotsSize);
+        System.out.printf("URL數量:%d  預計讀取快照量:%d\n", urlDataSet.getUrlSize(), totalSnapsHotsSize);
         WebArchiveController wac;
 
-        for (int i = 0; i < MAX_THREAD; i++) {
-            wac = new WebArchiveController(i, startTime, wap2Map, dataSet, title, content);
+        for (int i = 0; i < Configure.WEBARCHIVE_MAX_THREAD; i++) {
+            wac = new WebArchiveController(i, startTime, wap2Map, snapsHotsDataSet, title, content);
             wacMap.put(i, wac);
             wac.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
 
         wac = null;
@@ -217,12 +216,15 @@ public class SEOUrl {
      */
     private void startSo360SiteFilter(boolean show) {
         So360SiteController ssc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SiteController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SO360_SITE.txt"));
-            so360SiteCMap.put(map.getKey(), ssc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            ssc = new So360SiteController(i, startTime, tmp, Tools.loadKeyword("SO360_SITE.txt"));
+            so360SiteCMap.put(i, ssc);
             ssc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
+
         ssc = null;
         for (Entry<Integer, So360SiteController> map : so360SiteCMap.entrySet()) {
             try {
@@ -249,11 +251,13 @@ public class SEOUrl {
      */
     private void startBaiduSiteFilter(boolean show) {
         BaiduSiteController bsc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bsc = new BaiduSiteController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("BAIDU_SITE.txt"));
-            baiduSiteCMap.put(map.getKey(), bsc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            bsc = new BaiduSiteController(i, startTime, tmp, Tools.loadKeyword("BAIDU_SITE.txt"));
+            baiduSiteCMap.put(i, bsc);
             bsc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         bsc = null;
         for (Entry<Integer, BaiduSiteController> map : baiduSiteCMap.entrySet()) {
@@ -281,11 +285,13 @@ public class SEOUrl {
      */
     private void startSogouSearcFilter(boolean show) {
         SogouSearchController ssc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new SogouSearchController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SOGOU_SEARCH.txt"));
-            sogouSearchCMap.put(map.getKey(), ssc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            ssc = new SogouSearchController(i, startTime, tmp, Tools.loadKeyword("SOGOU_SEARCH.txt"));
+            sogouSearchCMap.put(i, ssc);
             ssc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         ssc = null;
         for (Entry<Integer, SogouSearchController> map : sogouSearchCMap.entrySet()) {
@@ -313,11 +319,13 @@ public class SEOUrl {
      */
     private void startBaiduDomainFilter(boolean show) {
         BaiduDomainController bdc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            bdc = new BaiduDomainController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("BAIDU_DOMAIN.txt"));
-            baiduDomainCMap.put(map.getKey(), bdc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            bdc = new BaiduDomainController(i, startTime, tmp, Tools.loadKeyword("BAIDU_DOMAIN.txt"));
+            baiduDomainCMap.put(i, bdc);
             bdc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         bdc = null;
         for (Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
@@ -345,11 +353,13 @@ public class SEOUrl {
      */
     private void startSo360SearchFIlter(boolean show) {
         So360SearchController ssc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            ssc = new So360SearchController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SO360_SEARCH.txt"));
-            so360SearchMap.put(map.getKey(), ssc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            ssc = new So360SearchController(i, startTime, tmp, Tools.loadKeyword("SO360_SEARCH.txt"));
+            so360SearchMap.put(i, ssc);
             ssc.start();
-            Tools.sleep(100, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         ssc = null;
         for (Entry<Integer, So360SearchController> map : so360SearchMap.entrySet()) {
@@ -377,11 +387,13 @@ public class SEOUrl {
      */
     private void startSogouDomainFilter(boolean show) {
         SogouDomainController sdc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            sdc = new SogouDomainController(map.getKey(), startTime, map.getValue(), Tools.loadKeyword("SOGOU_DOMAIN.txt"));
-            sogoDomainCMap.put(map.getKey(), sdc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            sdc = new SogouDomainController(i, startTime, tmp, Tools.loadKeyword("SOGOU_DOMAIN.txt"));
+            sogoDomainCMap.put(i, sdc);
             sdc.start();
-            Tools.sleep(1000, 3000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         sdc = null;
 
@@ -410,11 +422,13 @@ public class SEOUrl {
      */
     private void startJF(boolean show) {
         JumingController tc;
-        for (Entry<Integer, List<String>> map : urlSplit.entrySet()) {
-            tc = new JumingController(map.getKey(), map.getValue());
-            jcMap.put(map.getKey(), tc);
+        UrlDataSet tmp = urlDataSet.getClone();
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        for (int i = 0; i < maxThread; i++) {
+            tc = new JumingController(i, tmp);
+            jcMap.put(i, tc);
             tc.start();
-            Tools.sleep(300, 1000);
+            Tools.sleep(1 * 1000, 5 * 1000);
         }
         tc = null;
         for (Entry<Integer, JumingController> map : jcMap.entrySet()) {
@@ -457,9 +471,6 @@ public class SEOUrl {
             this.checkKeyWordFile("SOGOU_DOMAIN.txt");
         }
 
-        this.loadUrl();
-        this.splitUrl(MAX_THREAD);
-
         if (Configure.ENABLE_WEBARCHIVE) {
             this.startWebArchiveFilter(Configure.DEBUG);
         }
@@ -488,21 +499,6 @@ public class SEOUrl {
         saveFile();
     }
 
-    private void splitUrl(int max) {
-        urlSplit = new HashMap<>();
-        int count = 0;
-        for (int i = 0; i < urls.size(); i++) {
-            if (!urlSplit.containsKey(count)) {
-                urlSplit.put(count, (new ArrayList<>()));
-            }
-            urlSplit.get(count).add(urls.get(i));
-            count++;
-            if (count >= max) {
-                count = 0;
-            }
-        }
-    }
-
     private void saveFile() {
 
         int[] count = {0, 0, 0};
@@ -515,12 +511,12 @@ public class SEOUrl {
         failT.insertTime(startTime);
         failT.setSaveName("index_f");
 
-        for (String url : urls) {
+        for (String url : urlDataSet.getUrlsCopy()) {
             this.insertRecord(passT, failT, url, count);
         }
         passT.creatFile();
         failT.creatFile();
-        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urls.size(), count[0], count[1], count[2], totalSnapsHotsSize);
+        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urlDataSet.getUrlSize(), count[0], count[1], count[2], totalSnapsHotsSize);
         long total = (System.currentTimeMillis() - startTime.getTime());
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
@@ -581,7 +577,6 @@ public class SEOUrl {
             s3sipStr[1] = s3sip.allPass() ? "通過" : "未通過";
         }
         if (Configure.ENABLE_SOGOU_DOMAIN) {
-            System.out.println("aaaaaaaa");
             SogouDomainPack sdp = this.sogouDomainPMap.get(url);
             isPass = isPass && sdp.allPass();
             sdpStr[0] = sdp.getSaveLocation();
@@ -618,25 +613,6 @@ public class SEOUrl {
                     sdpStr,
                     sspStr);
             count[0]++;
-        }
-    }
-
-    private void loadUrl() {
-        urls = new ArrayList<String>();
-        try {
-            File file = new File("input.txt");
-            InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
-            BufferedReader br = new BufferedReader(isr);
-            String st;
-            while ((st = br.readLine()) != null) {
-                if (st.equals("") || st.contains("###")) {
-                    continue;
-                }
-
-                urls.add(st);
-            }
-        } catch (IOException ex) {
-            //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

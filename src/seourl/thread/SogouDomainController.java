@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import seourl.data.UrlDataSet;
+import seourl.data.ex.DataSetAbstract;
 import seourl.filter.SogouDomainFilter;
 import seourl.pack.SogouDomainPack;
 
@@ -20,15 +22,15 @@ import seourl.pack.SogouDomainPack;
 public class SogouDomainController extends Thread {
 
     private Date startTime;
-    private List<String> urls;
+    private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, SogouDomainPack> mSDP = new HashMap<>();
     private final int pid;
 
-    public SogouDomainController(int pid, Date startTime, List<String> urls, List<String> keywords) {
+    public SogouDomainController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
         this.pid = pid;
-        this.urls = urls;
+        this.dataSet = dataSet;
         this.keywords = keywords;
         this.startTime = startTime;
     }
@@ -39,7 +41,9 @@ public class SogouDomainController extends Thread {
         s.setCookiePath("cache/SogouDomain/");
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
-        for (String url : urls) {
+        String url;
+        while (dataSet.hasNextUrl()) {
+            url = dataSet.getNextUrl();
             s.doAnalysis(url);
             mSDP.put(url, s.getSSP());
             s.getSSP().saveFile(url, startTime);

@@ -24,6 +24,8 @@ import lombok.Cleanup;
 public class Configure {
 
     public static final String KEY_WORD_PATH = "keyword/";
+    public static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
+    public static final int WEBARCHIVE_MAX_THREAD = 5; //多線程，聚名網 sogou 專用
 
     public static final String JUMING_FILTER = "http://www.juming.com/hao/?cha_ym=";
     public static final String WEBARCHIVE = "http://web.archive.org/web/%d/http://%s/";
@@ -163,8 +165,10 @@ public class Configure {
 //        "#ENABLE_WEBARCHIVE    //WebArchive過濾 1=啟動 0=關閉 \r";
 
         System.out.println(ENABLE_WEBARCHIVE ? "WebArchive過濾'啟動'" : "WebArchive過濾'未啟動'");
-        System.out.println(WEBARCHIVE_MODE == 0 ? "WebArchive模式'只輸出列表'" : "WebArchive模式'完整模式'");
-        if (WEBARCHIVE_MODE == 1) {
+        if (ENABLE_WEBARCHIVE) {
+            System.out.println(WEBARCHIVE_MODE == 0 ? "WebArchive模式'只輸出列表'" : "WebArchive模式'完整模式'");
+        }
+        if (ENABLE_WEBARCHIVE && WEBARCHIVE_MODE == 1) {
             System.out.println(WEBARCHIVE_TITLE_FILTER ? "WebArchive過濾Title'啟動'" : "WebArchive過濾Title'未啟動'");
             System.out.println(WEBARCHIVE_CONTENT_FILTER ? "WebArchive過濾Content'啟動'" : "WebArchive過濾Content'未啟動'");
         }

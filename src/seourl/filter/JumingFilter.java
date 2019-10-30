@@ -12,8 +12,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.event.Event;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Getter;
 import seourl.Configure;
 import seourl.Tools;
@@ -47,6 +45,7 @@ public class JumingFilter extends FilterAbstract {
             form.fireEvent(Event.TYPE_SUBMIT);
             Page p = page.refresh();
             if (p.isHtmlPage()) {
+                this.cleanMemory();
                 page = ((HtmlPage) p);
 
                 DomElement d = page.getElementById("jm-topbar");
@@ -71,6 +70,7 @@ public class JumingFilter extends FilterAbstract {
     public boolean doAnalysis(String url) {
         this.jp = new JumingPack();
         try {
+            this.cleanMemory();
             page = webClient.getPage(Configure.JUMING_FILTER + url);
             if (page.asText().contains("请输入验证码")) {
                 this.jp.setError(true);
