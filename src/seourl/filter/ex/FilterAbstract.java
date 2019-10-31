@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.logging.LogFactory;
-import seourl.Device;
+import seourl.type.Device;
 import seourl.Tools;
 
 /**
@@ -40,7 +40,8 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
     protected BrowserVersion browser;
 
     public abstract boolean doAnalysis(String url);
-
+    protected abstract void createNewSearchEnginePack(String url);
+    
     @Getter
     @Setter
     private String cookie = "cookie.bin";

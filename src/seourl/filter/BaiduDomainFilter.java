@@ -54,8 +54,8 @@ public class BaiduDomainFilter extends DomainFilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack() {
-        this.sep = new BaiduDomainPack();
+    protected void createNewSearchEnginePack(String url) {
+        this.sep = new BaiduDomainPack(url);
     }
 
     @Override

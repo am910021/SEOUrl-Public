@@ -15,7 +15,7 @@ import seourl.Configure;
 public abstract class DomainFilterAbstract extends SearchEngineFilterAbstract {
 
     @Override
-    protected abstract void createNewSearchEnginePack();
+    protected abstract void createNewSearchEnginePack(String url);
 
     @Override
     protected abstract boolean hasPageError();

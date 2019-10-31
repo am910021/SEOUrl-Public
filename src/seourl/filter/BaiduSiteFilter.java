@@ -64,8 +64,8 @@ public class BaiduSiteFilter extends SearchEngineFilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack() {
-        this.sep = new BaiduSitePack();
+    protected void createNewSearchEnginePack(String url) {
+        this.sep = new BaiduSitePack(url);
     }
 
     @Override

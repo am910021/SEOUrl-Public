@@ -7,7 +7,6 @@ package seourl.pack;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,8 +25,6 @@ import seourl.template.TemplateWebArch;
 public class WebArchivePack extends PackAbstract {
 
     @Getter
-    final String url;
-    @Getter
     @Setter
     private boolean urlErrpr = false;
     @Getter
@@ -42,18 +39,20 @@ public class WebArchivePack extends PackAbstract {
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
     private String domain = "";
-
     private Long readTime = System.currentTimeMillis();
+    private final static String green = "<snap style=\"color:green\">%s</snap>";
+    private final static String red = "<snap style=\"color:red\">%s</snap>";
 
     public WebArchivePack(String url) {
-        super("files/WebArchive/");
-        this.url = url;
+        super("files/WebArchive/", url);
     }
 
+    @Override
     public boolean allPass() {
         return snapshots.size() > 0 && this.titleKeyword.size() == 0 && this.contentKeyword.size() == 0 && !urlErrpr && yearError.size() == 0 && error.size() == 0;
     }
 
+    @Override
     public String getReason() {
         String tmp = "";
         if (snapshots.size() == 0) {
@@ -72,55 +71,38 @@ public class WebArchivePack extends PackAbstract {
 
     }
 
-    private final String getFinalPath() {
-        if (allPass()) {
-            return this.path + "pass/";
-        } else {
-            return this.path + "fail/";
-        }
-    }
-
-    public final String getSaveLocation() {
-        return getFinalPath() + domain + ".html";
-    }
-
     @Override
-    public void saveFile(String url, Date startTime) {
-        this.domain = url;
-        TemplateWebArch tWebArch = new TemplateWebArch(startTime);
+    public void saveFile() {
+        TemplateWebArch tWebArch = new TemplateWebArch(Configure.startTime);
         tWebArch.setSavePath(getFinalPath());
-        tWebArch.setSaveName(url);
-        tWebArch.insertTitle(url);
-        tWebArch.insertDomain(url);
+        tWebArch.setSaveName(domain);
+        tWebArch.insertTitle(domain);
+        tWebArch.insertDomain(domain);
         tWebArch.insertTime(readTime);
-        String title = "通過";
-        String content = "通過";
+        String title = "未啟用";
+        String content = "未啟用";
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
 
                 if (allPass()) {
-                    tWebArch.insertRecord(snapshot, url, title, content);
+                    tWebArch.insertRecord(snapshot, domain, title, content);
                 } else {
-                    if (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_TITLE_FILTER) {
+                    if (Configure.WEBARCHIVE_TITLE_FILTER) {
                         if (this.titleKeyword.containsKey(snapshot)) {
-                            title = "<snap style=\"color:red\">" + this.titleKeyword.get(snapshot) + "</snap>";
+                            title = String.format(red, this.titleKeyword.get(snapshot));
                         } else {
-                            title = "通過";
+                            title = String.format(green, "通過");
                         }
-                    } else {
-                        title = "未啟用";
                     }
 
-                    if (Configure.WEBARCHIVE_MODE == 1 && Configure.WEBARCHIVE_CONTENT_FILTER) {
+                    if (Configure.WEBARCHIVE_CONTENT_FILTER) {
                         if (this.contentKeyword.containsKey(snapshot)) {
-                            content = "<snap style=\"color:red\">" + this.contentKeyword.get(snapshot) + "</snap>";
+                            title = String.format(red, this.contentKeyword.get(snapshot));
                         } else {
-                            content = "通過";
+                            title = String.format(green, "通過");
                         }
-                    } else {
-                        title = "未啟用";
                     }
-                    tWebArch.insertRecord(snapshot, url, title, content);
+                    tWebArch.insertRecord(snapshot, domain, title, content);
                 }
             }
         }

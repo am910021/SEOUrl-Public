@@ -5,6 +5,7 @@
  */
 package seourl.pack;
 
+import seourl.pack.ex.SearchEnginePack;
 import java.util.Date;
 import seourl.Configure;
 import seourl.template.TemplateSearchEngine;
@@ -15,15 +16,14 @@ import seourl.template.TemplateSearchEngine;
  */
 public class SogouDomainPack extends SearchEnginePack {
 
-    public SogouDomainPack() {
-        super("files/SogouDomain/", "搜狗域名");
+    public SogouDomainPack(String url) {
+        super("files/SogouDomain/", "搜狗域名", url);
         this.url = Configure.SOGOU_DOMAIN + "%22";
     }
 
     @Override
-    public void saveFile(String domain, Date startTime) {
-        this.domain = domain;
-        TemplateSearchEngine tse = new TemplateSearchEngine(startTime);
+    public void saveFile() {
+        TemplateSearchEngine tse = new TemplateSearchEngine(Configure.startTime);
         tse.setSavePath(this.getFinalPath());
         tse.setSaveName(domain);
         tse.insertTitle(this.type, domain);

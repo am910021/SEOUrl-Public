@@ -5,6 +5,7 @@
  */
 package seourl;
 
+import seourl.type.Device;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,12 +16,17 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -238,7 +244,7 @@ public class Tools {
         return response;
     }
 
-        public static List<String> loadUrl() {
+    public static List<String> loadUrl() {
         List<String> urls = new ArrayList<String>();
         try {
             File file = new File("input.txt");
@@ -257,19 +263,18 @@ public class Tools {
         }
         return urls;
     }
-    
+
     /**
      * 輸出例外(exception)到 error資料夾
-     * 
+     *
      * @param fileName
      * @param t(exception)
      */
     public static void printError(final String fileName, final Throwable t) {
-        if(Configure.DEBUG){
+        if (Configure.DEBUG) {
             t.printStackTrace();
         }
-        
-        
+
         FileOutputStream out = null;
         final String file = FILE_PATH + ERROR + fileName + ".log";
         try {
@@ -278,6 +283,7 @@ public class Tools {
                 outputFile.getParentFile().mkdirs();
             }
             out = new FileOutputStream(file, true);
+            out.write("---------------------------------\r\n".getBytes());
             out.write(getString(t).getBytes());
             out.write("\n---------------------------------\r\n".getBytes());
         } catch (IOException ess) {
@@ -312,5 +318,28 @@ public class Tools {
             }
         }
         return retValue;
+    }
+
+    public static void checkKeyWordFile(String file) {
+        Tools.checkDir(Configure.KEY_WORD_PATH);
+        File k = new File(Configure.KEY_WORD_PATH + file);
+
+        if (!k.exists()) {
+            System.out.println("未找到現有" + Configure.KEY_WORD_PATH + file + "檔案，已建立" + Configure.KEY_WORD_PATH + file);
+            List<String> comm = new ArrayList<>();
+            comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
+
+            try {
+                Files.write(Paths.get(Configure.KEY_WORD_PATH + file), comm, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                Tools.printError(Tools.class.getName(), ex);
+            }
+        }
+
+        if (!k.exists()) {
+            System.out.println("請設定好keyword資料夾設定好關鍵詞在執行。");
+            System.exit(1);
+        }
+
     }
 }

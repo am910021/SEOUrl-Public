@@ -25,7 +25,7 @@ import seourl.pack.*;
 public class JumingFilter extends FilterAbstract {
 
     @Getter
-    private JumingPack jp = new JumingPack();
+    private JumingPack jp;
 
     public JumingFilter() {
         super("Juming");
@@ -68,7 +68,7 @@ public class JumingFilter extends FilterAbstract {
     }
 
     public boolean doAnalysis(String url) {
-        this.jp = new JumingPack();
+        createNewSearchEnginePack(url);
         try {
             this.cleanMemory();
             page = webClient.getPage(Configure.JUMING_FILTER + url);
@@ -114,5 +114,10 @@ public class JumingFilter extends FilterAbstract {
             this.jp.setError(true);
         }
         return false;
+    }
+
+    @Override
+    protected void createNewSearchEnginePack(String url) {
+        jp = new JumingPack(url);
     }
 }

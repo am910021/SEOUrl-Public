@@ -6,12 +6,11 @@
 package seourl.thread;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import seourl.data.UrlDataSet;
-import seourl.data.ex.DataSetAbstract;
 import seourl.filter.So360SiteFilter;
 import seourl.pack.So360SitePack;
 
@@ -25,7 +24,7 @@ public class So360SiteController extends Thread {
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
-    private Map<String, So360SitePack> mSDP = new HashMap<>();
+    private Map<String, So360SitePack> mSDP = new TreeMap<>();
     private final int pid;
 
     public So360SiteController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
@@ -42,11 +41,11 @@ public class So360SiteController extends Thread {
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         String url;
-        while (dataSet.hasNextUrl()) {
-            url = dataSet.getNextUrl();
+        while (dataSet.hasNext()) {
+            url = dataSet.getNext();
             s.doAnalysis(url);
             mSDP.put(url, s.getSSP());
-            s.getSSP().saveFile(url, startTime);
+            s.getSSP().saveFile();
         }
         s.saveCookie();
         s.close();

@@ -23,31 +23,37 @@ public class SnapsHotsDataSet extends DataSetAbstract {
     private int nextWASH = 0;
     private final Object readLock = new Object();
 
-    public void setWash(List<TPair<String, Integer, Long>> ltp) {
+    @Override
+    public void setData(Object list) {
+        List<TPair<String, Integer, Long>> tmp = (List<TPair<String, Integer, Long>>) list;
         if (this.wash == null || this.wash.size() > 0) {
             return;
         }
-        this.wash = ltp;
+        this.wash = tmp;
     }
 
-    public List<TPair<String, Integer, Long>> getWashCopy() {
+    @Override
+    public List<TPair<String, Integer, Long>> getListCopy() {
         List<TPair<String, Integer, Long>> dest = new ArrayList<>(wash);
         return dest;
     }
 
-    public int getWashSize() {
+    @Override
+    public int getSize() {
         return wash.size();
     }
 
     @Synchronized("readLock")
-    public TPair<String, Integer, Long> getNextWASH() {
+    @Override
+    public TPair<String, Integer, Long> getNext() {
         TPair<String, Integer, Long> t = wash.get(nextWASH);
         nextWASH++;
         return t;
     }
 
     @Synchronized("readLock")
-    public boolean hasNextWASH() {
+    @Override
+    public boolean hasNext() {
         if (nextWASH >= wash.size()) {
             return false;
         }
@@ -57,7 +63,7 @@ public class SnapsHotsDataSet extends DataSetAbstract {
     @Override
     public SnapsHotsDataSet getClone() {
         try {
-            return (SnapsHotsDataSet)this.clone();
+            return (SnapsHotsDataSet) this.clone();
         } catch (CloneNotSupportedException ex) {
             Tools.printError(this.getClass().getName(), ex);
         }

@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl.pack;
+package seourl.pack.ex;
 
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import seourl.Configure;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateSearchEngine;
 
@@ -33,8 +34,8 @@ public class SearchEnginePack extends PackAbstract {
 
     private String keyword[] = {"", "", ""};
 
-    public SearchEnginePack(String path, String type) {
-        super(path);
+    public SearchEnginePack(String path, String type, String url) {
+        super(path, url);
         this.type = type;
     }
 
@@ -119,22 +120,9 @@ public class SearchEnginePack extends PackAbstract {
         return !this.isError() && !this.isIllegal();
     }
 
-    public final String getFinalPath() {
-        if (this.isError() || this.isIllegal()) {
-            return this.path + "fail/";
-        } else {
-            return this.path + "pass/";
-        }
-    }
-
-    public final String getSaveLocation() {
-        return getFinalPath() + domain + ".html";
-    }
-
     @Override
-    public void saveFile(String domain, Date startTime) {
-        this.domain = domain;
-        TemplateSearchEngine tse = new TemplateSearchEngine(startTime);
+    public void saveFile() {
+        TemplateSearchEngine tse = new TemplateSearchEngine(Configure.startTime);
         tse.setSavePath(this.getFinalPath());
         tse.setSaveName(domain);
         tse.insertTitle(this.type, domain);

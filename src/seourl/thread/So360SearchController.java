@@ -6,9 +6,9 @@
 package seourl.thread;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import seourl.data.UrlDataSet;
 import seourl.filter.So360SearchFilter;
@@ -24,7 +24,7 @@ public class So360SearchController extends Thread {
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
-    private Map<String, So360SerachPack> mSDP = new HashMap<>();
+    private Map<String, So360SerachPack> mSDP = new TreeMap<>();
     private final int pid;
 
     public So360SearchController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
@@ -41,11 +41,11 @@ public class So360SearchController extends Thread {
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         String url;
-        while (dataSet.hasNextUrl()) {
-            url = dataSet.getNextUrl();
+        while (dataSet.hasNext()) {
+            url = dataSet.getNext();
             s.doAnalysis(url);
             mSDP.put(url, s.getSSP());
-            s.getSSP().saveFile(url, startTime);
+            s.getSSP().saveFile();
         }
         s.saveCookie();
         s.close();

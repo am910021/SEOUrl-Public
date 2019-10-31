@@ -22,8 +22,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import seourl.data.SnapsHotsDataSet;
 import seourl.data.UrlDataSet;
+import seourl.enabler.JumingFilterEnabler;
+import seourl.enabler.WebArchiveFilterEnabler;
+import seourl.enabler.ex.EnablerAbstract;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
 import seourl.pack.JumingPack;
@@ -31,7 +33,6 @@ import seourl.pack.So360SerachPack;
 import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
 import seourl.pack.SogouSerachPack;
-import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
 import seourl.thread.BaiduSiteController;
@@ -39,8 +40,6 @@ import seourl.thread.So360SearchController;
 import seourl.thread.So360SiteController;
 import seourl.thread.SogouDomainController;
 import seourl.thread.SogouSearchController;
-import seourl.thread.WebArchiveController;
-import seourl.thread.WebArchiveSnapsHotsController;
 
 /**
  *
@@ -55,13 +54,17 @@ public class SEOUrl {
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
 
-    private Date startTime = new Date();
+    private final List<EnablerAbstract> enablerAbstractList = new ArrayList<EnablerAbstract>();
+
+    /**
+     * Get the value of enablerAbstractList
+     *
+     * @return the value of enablerAbstractList
+     */
+    private final Date startTime = new Date();
     private final UrlDataSet urlDataSet = new UrlDataSet();
 
     //最終要輸出的資料
-    private Map<String, WebArchivePack> wap2Map = new TreeMap<>();   //WebArchive資料集
-    private Map<String, JumingPack> jpMap = new TreeMap<>();        //聚名網資料集
-
     private Map<String, SogouDomainPack> sogouDomainPMap = new TreeMap<>();       //搜狗域名資料集
     private Map<String, BaiduDomainPack> baiduDomainPMap = new TreeMap<>();       //百度域名資料集
 
@@ -72,10 +75,6 @@ public class SEOUrl {
     private Map<String, So360SitePack> so360SitePMap = new TreeMap<>();
 
     //執行中的暫存資料
-    private Map<Integer, WebArchiveSnapsHotsController> washcMap = new HashMap<>();
-    private Map<Integer, WebArchiveController> wacMap = new HashMap<>();
-    private Map<Integer, JumingController> jcMap = new HashMap<>();
-
     private Map<Integer, SogouDomainController> sogoDomainCMap = new HashMap<>();
     private Map<Integer, BaiduDomainController> baiduDomainCMap = new HashMap<>();
 
@@ -88,9 +87,9 @@ public class SEOUrl {
     private int totalSnapsHotsSize = 0;
 
     public SEOUrl() {
-        checkFile();
         Configure.printStatus();
-        this.urlDataSet.setUrls(Tools.loadUrl());
+        checkFile();
+        this.urlDataSet.setData(Tools.loadUrl());
     }
 
     public static void main(String[] args) {
@@ -109,102 +108,13 @@ public class SEOUrl {
 //        waf3.doAnalysis("1banchina.com", 20180805032156L);
         s.start();
         //s.waitTime();
+
     }
 
     private void waitTime() {
         while (true) {
             Tools.sleep(100);
         }
-    }
-
-    private void startWebArchiveFilter(boolean show) {
-
-        WebArchiveSnapsHotsController washc;
-        UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.WEBARCHIVE_MAX_THREAD, tmp.getUrlSize());
-        for (int i = 0; i < maxThread; i++) {
-            washc = new WebArchiveSnapsHotsController(i, startTime, tmp);
-            washcMap.put(i, washc);
-            washc.start();
-            Tools.sleep(1 * 1000, 5 * 1000);
-        }
-
-        washc = null;
-        for (Entry<Integer, WebArchiveSnapsHotsController> map : washcMap.entrySet()) {
-            try {
-                map.getValue().join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.wap2Map.putAll(map.getValue().getMWAP());
-        }
-        washcMap = null;
-        if (show) {
-            for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
-                map.getValue().print(map.getKey());
-            }
-        }
-
-        long total = (System.currentTimeMillis() - startTime.getTime());
-        long h = TimeUnit.MILLISECONDS.toHours(total);
-        long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
-        long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
-        System.out.printf("快照列表讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
-
-        if (Configure.WEBARCHIVE_MODE != 1) {
-            return;
-        }
-
-        SnapsHotsDataSet snapsHotsDataSet = new SnapsHotsDataSet();
-        snapsHotsDataSet.setWash(getSplitSnapsHots());
-        totalSnapsHotsSize = snapsHotsDataSet.getWashSize();
-        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
-        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
-        System.out.printf("URL數量:%d  預計讀取快照量:%d\n", urlDataSet.getUrlSize(), totalSnapsHotsSize);
-        WebArchiveController wac;
-
-        for (int i = 0; i < Configure.WEBARCHIVE_MAX_THREAD; i++) {
-            wac = new WebArchiveController(i, startTime, wap2Map, snapsHotsDataSet, title, content);
-            wacMap.put(i, wac);
-            wac.start();
-            Tools.sleep(1 * 1000, 5 * 1000);
-        }
-
-        wac = null;
-
-        for (Entry<Integer, WebArchiveController> map : wacMap.entrySet()) {
-            try {
-                map.getValue().join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        wacMap = null;
-        if (show) {
-            for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
-                map.getValue().print(map.getKey());
-                map.getValue().saveFile(map.getKey(), startTime);
-            }
-        }
-        total = (System.currentTimeMillis() - startTime.getTime());
-        h = TimeUnit.MILLISECONDS.toHours(total);
-        m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
-        s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
-        System.out.printf("快照讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
-    }
-
-    private List<TPair<String, Integer, Long>> getSplitSnapsHots() {
-        List<TPair<String, Integer, Long>> ltp = new ArrayList<>();
-        TPair<String, Integer, Long> tp;
-        for (Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
-            for (Entry<Integer, List<Long>> snapshot : map.getValue().getSnapshots().entrySet()) {
-                for (Long l : snapshot.getValue()) {
-                    tp = new TPair<>(map.getKey(), snapshot.getKey(), l);
-                    ltp.add(tp);
-                }
-            }
-        }
-        return ltp;
     }
 
     /**
@@ -217,7 +127,7 @@ public class SEOUrl {
     private void startSo360SiteFilter(boolean show) {
         So360SiteController ssc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             ssc = new So360SiteController(i, startTime, tmp, Tools.loadKeyword("SO360_SITE.txt"));
             so360SiteCMap.put(i, ssc);
@@ -252,7 +162,7 @@ public class SEOUrl {
     private void startBaiduSiteFilter(boolean show) {
         BaiduSiteController bsc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             bsc = new BaiduSiteController(i, startTime, tmp, Tools.loadKeyword("BAIDU_SITE.txt"));
             baiduSiteCMap.put(i, bsc);
@@ -286,7 +196,7 @@ public class SEOUrl {
     private void startSogouSearcFilter(boolean show) {
         SogouSearchController ssc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             ssc = new SogouSearchController(i, startTime, tmp, Tools.loadKeyword("SOGOU_SEARCH.txt"));
             sogouSearchCMap.put(i, ssc);
@@ -320,7 +230,7 @@ public class SEOUrl {
     private void startBaiduDomainFilter(boolean show) {
         BaiduDomainController bdc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             bdc = new BaiduDomainController(i, startTime, tmp, Tools.loadKeyword("BAIDU_DOMAIN.txt"));
             baiduDomainCMap.put(i, bdc);
@@ -354,7 +264,7 @@ public class SEOUrl {
     private void startSo360SearchFIlter(boolean show) {
         So360SearchController ssc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             ssc = new So360SearchController(i, startTime, tmp, Tools.loadKeyword("SO360_SEARCH.txt"));
             so360SearchMap.put(i, ssc);
@@ -388,7 +298,7 @@ public class SEOUrl {
     private void startSogouDomainFilter(boolean show) {
         SogouDomainController sdc;
         UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
+        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getSize());
         for (int i = 0; i < maxThread; i++) {
             sdc = new SogouDomainController(i, startTime, tmp, Tools.loadKeyword("SOGOU_DOMAIN.txt"));
             sogoDomainCMap.put(i, sdc);
@@ -421,59 +331,42 @@ public class SEOUrl {
      * @param show 是否印出除錯訊息
      */
     private void startJF(boolean show) {
-        JumingController tc;
-        UrlDataSet tmp = urlDataSet.getClone();
-        int maxThread = Math.min(Configure.MAX_THREAD, tmp.getUrlSize());
-        for (int i = 0; i < maxThread; i++) {
-            tc = new JumingController(i, tmp);
-            jcMap.put(i, tc);
-            tc.start();
-            Tools.sleep(1 * 1000, 5 * 1000);
-        }
-        tc = null;
-        for (Entry<Integer, JumingController> map : jcMap.entrySet()) {
-            try {
-                map.getValue().join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.jpMap.putAll(map.getValue().getMJP());
-        }
-        jcMap = null;
-        if (show) {
-            for (Entry<String, JumingPack> map : jpMap.entrySet()) {
-                map.getValue().print(map.getKey());
-            }
-        }
+
     }
 
     public void start() {
         if (Configure.ENABLE_WEBARCHIVE) {
-            this.checkKeyWordFile("WEBARCHIVE-TITLE.txt");
-            this.checkKeyWordFile("WEBARCHIVE-CONTENT.txt");
-        }
-        if (Configure.ENABLE_BAIDU_DOMAIN) {
-            this.checkKeyWordFile("BAIDU_DOMAIN.txt");
-        }
-        if (Configure.ENABLE_BAIDU_SITE) {
-            this.checkKeyWordFile("BAIDU_SITE.txt");
-        }
-        if (Configure.ENABLE_SO360_SEARCH) {
-            this.checkKeyWordFile("SO360_SEARCH.txt");
-        }
-        if (Configure.ENABLE_SO360_SITE) {
-            this.checkKeyWordFile("SO360_SITE.txt");
-        }
-        if (Configure.ENABLE_SOGOU_SEARCH) {
-            this.checkKeyWordFile("SOGOU_SEARCH.txt");
-        }
-        if (Configure.ENABLE_SOGOU_DOMAIN) {
-            this.checkKeyWordFile("SOGOU_DOMAIN.txt");
+            enablerAbstractList.add(WebArchiveFilterEnabler.getInstance());
+            WebArchiveFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
         }
 
-        if (Configure.ENABLE_WEBARCHIVE) {
-            this.startWebArchiveFilter(Configure.DEBUG);
+        if (Configure.ENABLE_JUMING_FILTER) {
+            enablerAbstractList.add(JumingFilterEnabler.getInstance());
+            JumingFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
         }
+
+        if (Configure.ENABLE_BAIDU_DOMAIN) {
+            Tools.checkKeyWordFile("BAIDU_DOMAIN.txt");
+        }
+        if (Configure.ENABLE_BAIDU_SITE) {
+            Tools.checkKeyWordFile("BAIDU_SITE.txt");
+        }
+        if (Configure.ENABLE_SO360_SEARCH) {
+            Tools.checkKeyWordFile("SO360_SEARCH.txt");
+        }
+        if (Configure.ENABLE_SO360_SITE) {
+            Tools.checkKeyWordFile("SO360_SITE.txt");
+        }
+        if (Configure.ENABLE_SOGOU_SEARCH) {
+            Tools.checkKeyWordFile("SOGOU_SEARCH.txt");
+        }
+        if (Configure.ENABLE_SOGOU_DOMAIN) {
+            Tools.checkKeyWordFile("SOGOU_DOMAIN.txt");
+        }
+
+        WebArchiveFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
+        WebArchiveFilterEnabler.getInstance().start();
+
         if (Configure.ENABLE_JUMING_FILTER) {
             this.startJF(Configure.DEBUG);
         }
@@ -496,6 +389,12 @@ public class SEOUrl {
             this.startSogouDomainFilter(Configure.DEBUG);
         }
         //Tools.sleep(100000);
+        try {
+            WebArchiveFilterEnabler.getInstance().join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         saveFile();
     }
 
@@ -511,12 +410,12 @@ public class SEOUrl {
         failT.insertTime(startTime);
         failT.setSaveName("index_f");
 
-        for (String url : urlDataSet.getUrlsCopy()) {
+        for (String url : urlDataSet.getListCopy()) {
             this.insertRecord(passT, failT, url, count);
         }
         passT.creatFile();
         failT.creatFile();
-        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urlDataSet.getUrlSize(), count[0], count[1], count[2], totalSnapsHotsSize);
+        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urlDataSet.getSize(), count[0], count[1], count[2], totalSnapsHotsSize);
         long total = (System.currentTimeMillis() - startTime.getTime());
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
@@ -537,20 +436,19 @@ public class SEOUrl {
 
         boolean isPass = true;
 
-        if (Configure.ENABLE_WEBARCHIVE) {
-
-            WebArchivePack wap2 = this.wap2Map.get(url);
-            isPass = isPass && wap2.allPass();
-            wapStr[0] = wap2.getSaveLocation();
-            wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
-
-        }
-
-        if (Configure.ENABLE_JUMING_FILTER) {
-            JumingPack jp = this.jpMap.get(url);
-            isPass = isPass && jp.allPass();
-            jgp = String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", url, jp.getStatus());
-        }
+//        if (Configure.ENABLE_WEBARCHIVE) {
+//
+//            WebArchivePack wap2 = this.wap2Map.get(url);
+//            isPass = isPass && wap2.allPass();
+//            wapStr[0] = wap2.getSaveLocation();
+//            wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
+//
+//        }
+//        if (Configure.ENABLE_JUMING_FILTER) {
+//            JumingPack jp = this.jpMap.get(url);
+//            isPass = isPass && jp.allPass();
+//            jgp = String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", url, jp.getStatus());
+//        }
 
         if (Configure.ENABLE_BAIDU_DOMAIN) {
             BaiduDomainPack bdp = this.baiduDomainPMap.get(url);
@@ -638,26 +536,4 @@ public class SEOUrl {
 
     }
 
-    public void checkKeyWordFile(String file) {
-        Tools.checkDir(Configure.KEY_WORD_PATH);
-        File k = new File(Configure.KEY_WORD_PATH + file);
-
-        if (!k.exists()) {
-            System.out.println("未找到現有" + Configure.KEY_WORD_PATH + file + "檔案，已建立" + Configure.KEY_WORD_PATH + file);
-            List<String> comm = new ArrayList<>();
-            comm.add("###請在下方加入關鍵詞，請誤刪除這行###");
-
-            try {
-                Files.write(Paths.get(Configure.KEY_WORD_PATH + file), comm, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        if (!k.exists()) {
-            System.out.println("請設定好keyword資料夾設定好關鍵詞在執行。");
-            System.exit(1);
-        }
-
-    }
 }

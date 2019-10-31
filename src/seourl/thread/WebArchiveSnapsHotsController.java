@@ -5,47 +5,43 @@
  */
 package seourl.thread;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import seourl.Configure;
 import seourl.data.UrlDataSet;
-import seourl.data.ex.DataSetAbstract;
 import seourl.filter.WebArchiveSnapsHot;
 import seourl.pack.WebArchivePack;
+import seourl.thread.ex.ControllerAbstract;
+import seourl.type.Filter;
 
 /**
  *
  * @author Yuri
  */
-public class WebArchiveSnapsHotsController extends Thread {
+public class WebArchiveSnapsHotsController extends ControllerAbstract {
 
-    private Date startTime;
     @Getter
-    private Map<String, WebArchivePack> mWAP = new HashMap<>();
-    private UrlDataSet dataSet;
+    private Map<String, WebArchivePack> mWAP = new TreeMap<>();
     private final int pid;
 
-    public WebArchiveSnapsHotsController(int pid, Date startTime, UrlDataSet dataSet) {
+    public WebArchiveSnapsHotsController(int pid, UrlDataSet dataSet) {
+        super(Filter.WEB_ARCHIVE_LIST, dataSet);
         this.pid = pid;
-        this.startTime = startTime;
-        this.dataSet = dataSet;
     }
 
     @Override
     public void run() {
         WebArchiveSnapsHot wash = new WebArchiveSnapsHot(pid);
         String url;
-        while (dataSet.hasNextUrl()) {
-            url = dataSet.getNextUrl();
+        while (dsa.hasNext()) {
+            url = ((UrlDataSet) dsa).getNext();
             wash.doAnalysis(url);
             mWAP.put(url, wash.getWap());
-            if (Configure.WEBARCHIVE_MODE != 1) {
-                wash.getWap().saveFile(url, startTime);
+            if (!Configure.WEBARCHIVE_TITLE_FILTER && !Configure.WEBARCHIVE_CONTENT_FILTER) {
+                wash.getWap().saveFile();
+                this.printProgress();
             }
-
         }
     }
 }

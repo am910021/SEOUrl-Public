@@ -16,8 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import seourl.Tools;
 import seourl.filter.ex.BasicFilterAbstract;
-import seourl.filter.ex.FilterInterface;
 import seourl.pack.WebArchivePack;
+import seourl.type.Filter;
 
 /**
  *
@@ -30,7 +30,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
     private final int pid;
 
     public WebArchiveSnapsHot(int pid) {
-        super("WebArchiveList");
+        super(Filter.WEB_ARCHIVE.getType()+"List");
         this.pid = pid;
     }
 
@@ -63,17 +63,16 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private int timeConvert(Long t) {
-        String tmp = t.toString();
-        int year = Integer.parseInt(tmp.substring(0, 4));
-        int month = Integer.parseInt(tmp.substring(4, 6));
-        int day = Integer.parseInt(tmp.substring(6, 8));
-        int hours = Integer.parseInt(tmp.substring(8, 10));
-        int minute = Integer.parseInt(tmp.substring(10, 12));
-        int second = Integer.parseInt(tmp.substring(12));
-        return Integer.parseInt(String.format("%d%02d", year, month));
-    }
-
+//    private int timeConvert(Long t) {
+//        String tmp = t.toString();
+//        int year = Integer.parseInt(tmp.substring(0, 4));
+//        int month = Integer.parseInt(tmp.substring(4, 6));
+//        int day = Integer.parseInt(tmp.substring(6, 8));
+//        int hours = Integer.parseInt(tmp.substring(8, 10));
+//        int minute = Integer.parseInt(tmp.substring(10, 12));
+//        int second = Integer.parseInt(tmp.substring(12));
+//        return Integer.parseInt(String.format("%d%02d", year, month));
+//    }
     private boolean getYears(String url) {
         String s = "";
         boolean status = false;
@@ -106,7 +105,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                 return false;
             }
             JSONObject jsonYears = jsonO.getJSONObject("years");
-            
+
             @SuppressWarnings("unchecked")
             Iterator<String> keys = jsonYears.keys();
             while (keys.hasNext()) {
@@ -154,20 +153,17 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
             for (int i = 0; i < jsonarray.length(); i++) {
                 JSONArray secArray = jsonarray.getJSONArray(i);
                 for (int j = 0; j < secArray.length(); j++) {
-                    analysisJson(secArray.getJSONArray(j), map);
+                    analysisJson(secArray.getJSONArray(j), tmp);
                 }
             }
         } catch (Exception e) {
             Tools.printError(filterType, e);
             System.out.printf("線程-%d %s %d 年快照參數無法分析。 \r\n", pid, url, year);
         }
-        if (map.size() > 0) {
-            tmp.addAll(map.values());
-        }
         return true;
     }
 
-    private void analysisJson(JSONArray jsonA, Map<Integer, Long> map) {
+    private void analysisJson(JSONArray jsonA, List<Long> list) {
         try {
             for (int i = 0; i < jsonA.length(); i++) {
                 if (jsonA.isNull(i)) {
@@ -178,10 +174,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                     JSONArray ts = jsonO.getJSONArray("ts");
                     for (int j = 0; j < ts.length(); j++) {
                         long snapshot = ts.getLong(j);
-                        int key = this.timeConvert(snapshot);
-                        if (!map.containsKey(key)) {
-                            map.put(key, snapshot);
-                        }
+                        list.add(snapshot);
                     }
                 }
             }

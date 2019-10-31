@@ -68,8 +68,8 @@ public class So360SearchFilter extends SearchEngineFilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack() {
-        this.sep = new So360SerachPack();
+    protected void createNewSearchEnginePack(String url) {
+        this.sep = new So360SerachPack(url);
     }
 
     @Override

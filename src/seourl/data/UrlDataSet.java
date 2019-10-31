@@ -17,45 +17,49 @@ import seourl.data.ex.DataSetAbstract;
  * @author Yuri
  */
 public class UrlDataSet extends DataSetAbstract {
-    
+
     private List<String> urls = new ArrayList<>();
     private int nextUrl = 0;
     private final Object readUrlLock = new Object();
-    
-    public void setUrls(List<String> urls) {
+
+    @Override
+    public void setData(Object list) {
+        List<String> tmp = (List<String>)list;
         if (this.urls == null || this.urls.size() > 0) {
             return;
         }
-        this.urls = urls;
+        this.urls = tmp;
     }
-    
-    public List<String> getUrlsCopy() {
+
+    @Override
+    public List<String> getListCopy() {
         List<String> dest = new ArrayList<>(urls);
         return dest;
     }
-    
-    public int getUrlSize() {
+
+    @Override
+    public int getSize() {
         return urls.size();
     }
     
     @Synchronized("readUrlLock")
-    public String getNextUrl() {
+    @Override
+    public String getNext() {
         String tmp = urls.get(nextUrl);
         nextUrl++;
         return tmp;
     }
-    
+
     @Synchronized("readUrlLock")
-    public boolean hasNextUrl() {
+    public boolean hasNext() {
         if (nextUrl >= urls.size()) {
             return false;
         }
         return true;
     }
-    
+
     @Override
     public UrlDataSet getClone() {
-        
         try {
             return (UrlDataSet) this.clone();
         } catch (CloneNotSupportedException ex) {
@@ -63,5 +67,5 @@ public class UrlDataSet extends DataSetAbstract {
         }
         return new UrlDataSet();
     }
-    
+
 }

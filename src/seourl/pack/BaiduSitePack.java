@@ -5,6 +5,7 @@
  */
 package seourl.pack;
 
+import seourl.pack.ex.SearchEnginePack;
 import seourl.Configure;
 
 /**
@@ -13,8 +14,8 @@ import seourl.Configure;
  */
 public class BaiduSitePack extends SearchEnginePack {
 
-    public BaiduSitePack() {
-        super("files/BaiduSite/", "百度搜尋");
+    public BaiduSitePack(String url) {
+        super("files/BaiduSite/", "百度搜尋",url);
         this.url = Configure.BAIDU_SITE;
     }
 

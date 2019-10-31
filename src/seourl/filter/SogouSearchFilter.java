@@ -63,8 +63,8 @@ public class SogouSearchFilter extends SearchEngineFilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack() {
-        this.sep = new SogouSerachPack();
+    protected void createNewSearchEnginePack(String url) {
+        this.sep = new SogouSerachPack(url);
     }
 
     @Override

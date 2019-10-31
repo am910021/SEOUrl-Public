@@ -39,10 +39,11 @@ public class JumingPack extends PackAbstract {
     @Setter
     boolean error = false;
 
-    public JumingPack() {
-        super("");
+    public JumingPack(String url) {
+        super("",url);
     }
 
+    @Override
     public boolean allPass() {
         return !reg && !qq && !weChat && !gfw && !error;
     }
@@ -71,7 +72,7 @@ public class JumingPack extends PackAbstract {
     }
 
     @Override
-    public void saveFile(String domain, Date startTime) {
+    public void saveFile() {
 //        TemplateSearchEngine tse = new TemplateSearchEngine(startTime);
 //        tse.setSavePath("files/Juming");
 //        tse.setSaveName(domain);

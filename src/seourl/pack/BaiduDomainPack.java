@@ -5,6 +5,7 @@
  */
 package seourl.pack;
 
+import seourl.pack.ex.SearchEnginePack;
 import seourl.Configure;
 
 /**
@@ -13,8 +14,8 @@ import seourl.Configure;
  */
 public class BaiduDomainPack extends SearchEnginePack {
 
-    public BaiduDomainPack() {
-        super("files/BaiduDomain/", "百度域名");
+    public BaiduDomainPack(String url) {
+        super("files/BaiduDomain/", "百度域名", url);
         this.url = Configure.BAIDU_DOMAIN;
     }
 

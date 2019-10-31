@@ -19,7 +19,7 @@ import seourl.pack.WebArchivePack;
  *
  * @author Yuri
  */
-public class WebArchiveFilter3 extends BasicFilterAbstract {
+public class WebArchiveFilter extends BasicFilterAbstract {
 
     @Getter
     @Setter
@@ -31,7 +31,7 @@ public class WebArchiveFilter3 extends BasicFilterAbstract {
     Document doc;
     final int pid;
 
-    public WebArchiveFilter3(int pid, List<String> listTitle, List<String> listContent) {
+    public WebArchiveFilter(int pid, List<String> listTitle, List<String> listContent) {
         super("WebArchive");
         this.listTitle = listTitle;
         this.listContent = listContent;

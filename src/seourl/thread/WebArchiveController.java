@@ -5,66 +5,54 @@
  */
 package seourl.thread;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import seourl.TPair;
 import seourl.Tools;
 import seourl.data.SnapsHotsDataSet;
-import seourl.filter.WebArchiveFilter3;
+import seourl.filter.WebArchiveFilter;
 import seourl.pack.WebArchivePack;
+import seourl.thread.ex.ControllerAbstract;
+import seourl.type.Filter;
 
 /**
  *
  * @author Yuri
  */
-public class WebArchiveController extends Thread {
+public class WebArchiveController extends ControllerAbstract {
 
-    private Date startTime;
-    private List<String> titleKeywords;
-    private List<String> contentKeywords;
+    private final List<String> titleKeywords;
+    private final List<String> contentKeywords;
     @Getter
-    private Map<String, WebArchivePack> mWAP = new HashMap<>();
+    private Map<String, WebArchivePack> mWAP = new TreeMap<>();
     private final int pid;
 
-    final SnapsHotsDataSet dataSet;
-
-    public WebArchiveController(int pid, Date startTime, Map<String, WebArchivePack> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
+    public WebArchiveController(int pid, Map<String, WebArchivePack> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
+        super(Filter.WEB_ARCHIVE, dataSet);
         this.pid = pid;
         this.titleKeywords = titleKeywords;
         this.contentKeywords = contentKeywords;
-        this.dataSet = dataSet;
         this.mWAP = mWAP;
-        this.startTime = startTime;
     }
 
     @Override
     public void run() {
-        WebArchiveFilter3 waf3 = new WebArchiveFilter3(pid, titleKeywords, contentKeywords);
+        WebArchiveFilter waf3 = new WebArchiveFilter(pid, titleKeywords, contentKeywords);
         TPair<String, Integer, Long> tp;
         WebArchivePack wap;
         String url;
-        while (dataSet.hasNextWASH()) {
-            tp = dataSet.getNextWASH();
+
+        while (dsa.hasNext()) {
+            tp = ((SnapsHotsDataSet) dsa).getNext();
             url = tp.getLeft();
             wap = mWAP.get(url);
             waf3.setWap(wap);
             waf3.doAnalysis(url, tp.getRight());
-            printProgress();
             //wap.saveFile(url, startTime);
             Tools.sleep(2 * 1000, 7 * 1000);
         }
+    }
 
-        //waf2.close();
-    }
-    
-    
-    private void printProgress(){
-        dataSet.addProgress();
-        if(dataSet.isNeedPrintProgress()){
-            System.out.printf("WebArchive執行進度 %d / %d \r\n", dataSet.getProgress(), dataSet.getWashSize());
-        }
-    }
 }

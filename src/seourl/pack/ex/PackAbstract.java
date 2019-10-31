@@ -16,16 +16,36 @@ import lombok.Setter;
 public abstract class PackAbstract {
 
     protected final String path;
+    protected final String domain;
 
-    public PackAbstract(String path) {
+    public PackAbstract(String path, String domain) {
         this.path = path;
+        this.domain = domain;
     }
 
     @Getter
     @Setter
     private long readTime = System.currentTimeMillis();
 
-    public abstract void saveFile(String url, Date startTime);
+    public abstract boolean allPass();
+
+    public abstract void saveFile();
+
+    public String getReason() {
+        return "";
+    }
+
+    public final String getSaveLocation() {
+        return getFinalPath() + domain + ".html";
+    }
+
+    protected final String getFinalPath() {
+        if (allPass()) {
+            return this.path + "pass/";
+        } else {
+            return this.path + "fail/";
+        }
+    }
 
     public void print(String url) {
         System.out.println(url + "  " + this.toString());

@@ -6,22 +6,23 @@
 package seourl;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Cleanup;
+import seourl.type.Filter;
 
 /**
  *
  * @author yuri
  */
 public class Configure {
+
+    public static final Date startTime = new Date();
 
     public static final String KEY_WORD_PATH = "keyword/";
     public static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
@@ -39,7 +40,7 @@ public class Configure {
     public static final int WEBARCH_TRY_REDECT_TIMES = 3;
 
     public static final boolean ENABLE_WEBARCHIVE;
-    public static final int WEBARCHIVE_MODE;
+    //public static final int WEBARCHIVE_MODE;
     public static final boolean WEBARCHIVE_TITLE_FILTER;
     public static final boolean WEBARCHIVE_CONTENT_FILTER;
 
@@ -56,8 +57,6 @@ public class Configure {
     private static String comm
             = "#WebArchive過濾 1=啟動 0=關閉\r"
             + "ENABLE_WEBARCHIVE          = 1\r\r"
-            + "#WebArchive輸出模式 0=只輸出列表(全部快照)  1=過濾模式(配合過濾Title、Content)\r"
-            + "WEBARCHIVE_MODE            = 1 \r\r"
             + "#WebArchive過濾Title 1=啟動 0=關閉\r"
             + "WEBARCHIVE_TITLE_FILTER    = 1\r\r"
             + "#WebArchive過濾Content 1=啟動 0=關閉\r"
@@ -134,19 +133,33 @@ public class Configure {
                 //Logger.getLogger(Configure.class.getName()).log(Level.SEVERE, null, ex1);
             }
         }
-        ENABLE_WEBARCHIVE = enableWebArchive;
-        WEBARCHIVE_MODE = webArchiveMode;
+        DOMAIN_FILTER_MODE = domainFilterMode;
         WEBARCHIVE_TITLE_FILTER = webArchiveTitleFilter;
         WEBARCHIVE_CONTENT_FILTER = webArchiveContentFilter;
-        ENABLE_JUMING_FILTER = enableJumingFilter;
-        DOMAIN_FILTER_MODE = domainFilterMode;
-        ENABLE_BAIDU_DOMAIN = enableBaiduDomain;
-        ENABLE_BAIDU_SITE = enableBaiduSite;
-        ENABLE_SO360_SEARCH = enableSo360Search;
-        ENABLE_SO360_SITE = enableSo360Site;
-        ENABLE_SOGOU_DOMAIN = enableSogouDomain;
-        ENABLE_SOGOU_SEARCH = enableSogouSearch;
 
+        ENABLE_WEBARCHIVE = enableWebArchive;
+        Filter.WEB_ARCHIVE.setEnable(enableWebArchive);
+
+        ENABLE_JUMING_FILTER = enableJumingFilter;
+        Filter.JUMING.setEnable(enableJumingFilter);
+
+        ENABLE_BAIDU_DOMAIN = enableBaiduDomain;
+        Filter.BAIDU_DOMAIN.setEnable(enableBaiduDomain);
+
+        ENABLE_BAIDU_SITE = enableBaiduSite;
+        Filter.BAIDU_SITE.setEnable(enableBaiduSite);
+
+        ENABLE_SO360_SEARCH = enableSo360Search;
+        Filter.SO360_SEARCH.setEnable(enableSo360Search);
+
+        ENABLE_SO360_SITE = enableSo360Site;
+        Filter.SO360_SITE.setEnable(enableSo360Site);
+
+        ENABLE_SOGOU_DOMAIN = enableSogouDomain;
+        Filter.SOGOU_DOMAIN.setEnable(enableSogouDomain);
+
+        ENABLE_SOGOU_SEARCH = enableSogouSearch;
+        Filter.SOGOU_SEARCH.setEnable(enableSogouSearch);
     }
 
     static int readInt(String s) {
@@ -154,21 +167,8 @@ public class Configure {
     }
 
     static void printStatus() {
-//        "#DOMAIN_FILTER_MODE  1=嚴格  2=寬鬆 \r"
-//        "#ENABLE_BAIDU_DOMAIN //百度域名 1=啟動 0=關閉 \r"
-//        "#ENABLE_BAIDU_SITE   //百度網站 1=啟動 0=關閉 \r"
-//        "#ENABLE_SO360_SEARCH //360搜尋  1=啟動 0=關閉 \r"
-//        "#ENABLE_SO360_SITE   //360網站  1=啟動 0=關閉 \r"
-//        "#ENABLE_SOGOU_DOMAIN //搜狗域名 1=啟動 0=關閉 \r"
-//        "#ENABLE_SOGOU_SEARCH //搜狗搜尋 1=啟動 0=關閉 \r"
-//        "#ENABLE_JUMING_FILTER //聚名網過濾 1=啟動 0=關閉 \r"
-//        "#ENABLE_WEBARCHIVE    //WebArchive過濾 1=啟動 0=關閉 \r";
-
         System.out.println(ENABLE_WEBARCHIVE ? "WebArchive過濾'啟動'" : "WebArchive過濾'未啟動'");
         if (ENABLE_WEBARCHIVE) {
-            System.out.println(WEBARCHIVE_MODE == 0 ? "WebArchive模式'只輸出列表'" : "WebArchive模式'完整模式'");
-        }
-        if (ENABLE_WEBARCHIVE && WEBARCHIVE_MODE == 1) {
             System.out.println(WEBARCHIVE_TITLE_FILTER ? "WebArchive過濾Title'啟動'" : "WebArchive過濾Title'未啟動'");
             System.out.println(WEBARCHIVE_CONTENT_FILTER ? "WebArchive過濾Content'啟動'" : "WebArchive過濾Content'未啟動'");
         }

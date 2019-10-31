@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import seourl.Configure;
 import seourl.Tools;
-import seourl.pack.SearchEnginePack;
+import seourl.pack.ex.SearchEnginePack;
 
 /**
  *
@@ -39,14 +39,15 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
 
     protected abstract boolean doFilter(String tmp, String keyword, String url);
 
-    protected abstract void createNewSearchEnginePack();
+    @Override
+    protected abstract void createNewSearchEnginePack(String url);
 
     protected abstract boolean hasPageError();
 
     @Override
     public boolean doAnalysis(String url) {
         cleanMemory();
-        this.createNewSearchEnginePack();
+        this.createNewSearchEnginePack(url);
         boolean pageError = false;
         //如果讀取第一頁錯誤，取消該網域的分析 並回傳false表示未完成分析
 

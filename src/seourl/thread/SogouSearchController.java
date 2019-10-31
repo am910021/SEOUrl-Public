@@ -6,12 +6,11 @@
 package seourl.thread;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import seourl.data.UrlDataSet;
-import seourl.data.ex.DataSetAbstract;
 import seourl.filter.SogouSearchFilter;
 import seourl.pack.SogouSerachPack;
 
@@ -25,7 +24,7 @@ public class SogouSearchController extends Thread {
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
-    private Map<String, SogouSerachPack> mSDP = new HashMap<>();
+    private Map<String, SogouSerachPack> mSDP = new TreeMap<>();
     private final int pid;
 
     public SogouSearchController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
@@ -42,11 +41,11 @@ public class SogouSearchController extends Thread {
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         String url;
-        while (dataSet.hasNextUrl()) {
-            url = dataSet.getNextUrl();
+        while (dataSet.hasNext()) {
+            url = dataSet.getNext();
             s.doAnalysis(url);
             mSDP.put(url, s.getSSP());
-            s.getSSP().saveFile(url, startTime);
+            s.getSSP().saveFile();
         }
         s.saveCookie();
         s.close();
