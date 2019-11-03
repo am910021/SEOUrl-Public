@@ -8,7 +8,7 @@ package seourl.gui;
 import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
-import seourl.Tools;
+import seourl.other.Tools;
 
 /**
  *

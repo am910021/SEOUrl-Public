@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
-import seourl.TPair;
-import seourl.Tools;
+import seourl.other.TPair;
+import seourl.other.Tools;
 import seourl.data.SnapsHotsDataSet;
 import seourl.filter.WebArchiveFilter;
 import seourl.pack.WebArchivePack;
@@ -50,6 +50,7 @@ public class WebArchiveController extends ControllerAbstract {
             wap = mWAP.get(url);
             waf3.setWap(wap);
             waf3.doAnalysis(url, tp.getRight());
+            this.printProgress();
             //wap.saveFile(url, startTime);
             Tools.sleep(2 * 1000, 7 * 1000);
         }

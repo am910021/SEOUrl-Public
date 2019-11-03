@@ -9,7 +9,7 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import seourl.Configure;
+import seourl.other.Configure;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateSearchEngine;
 

@@ -11,8 +11,8 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import seourl.Configure;
-import seourl.Tools;
+import seourl.other.Configure;
+import seourl.other.Tools;
 import seourl.pack.ex.SearchEnginePack;
 
 /**

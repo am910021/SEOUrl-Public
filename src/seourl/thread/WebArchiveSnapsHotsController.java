@@ -8,7 +8,7 @@ package seourl.thread;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
-import seourl.Configure;
+import seourl.other.Configure;
 import seourl.data.UrlDataSet;
 import seourl.filter.WebArchiveSnapsHot;
 import seourl.pack.WebArchivePack;
@@ -38,9 +38,9 @@ public class WebArchiveSnapsHotsController extends ControllerAbstract {
             url = ((UrlDataSet) dsa).getNext();
             wash.doAnalysis(url);
             mWAP.put(url, wash.getWap());
+            this.printProgress();
             if (!Configure.WEBARCHIVE_TITLE_FILTER && !Configure.WEBARCHIVE_CONTENT_FILTER) {
                 wash.getWap().saveFile();
-                this.printProgress();
             }
         }
     }

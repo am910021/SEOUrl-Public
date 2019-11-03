@@ -5,7 +5,8 @@
  */
 package seourl;
 
-import seourl.thread.JumingController;
+import seourl.other.Configure;
+import seourl.other.Tools;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,11 +29,11 @@ import seourl.enabler.WebArchiveFilterEnabler;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.pack.BaiduDomainPack;
 import seourl.pack.BaiduSitePack;
-import seourl.pack.JumingPack;
 import seourl.pack.So360SerachPack;
 import seourl.pack.So360SitePack;
 import seourl.pack.SogouDomainPack;
 import seourl.pack.SogouSerachPack;
+import seourl.pack.WebArchivePack;
 import seourl.template.TemplateIndex;
 import seourl.thread.BaiduDomainController;
 import seourl.thread.BaiduSiteController;
@@ -364,9 +365,6 @@ public class SEOUrl {
             Tools.checkKeyWordFile("SOGOU_DOMAIN.txt");
         }
 
-        WebArchiveFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
-        WebArchiveFilterEnabler.getInstance().start();
-
         if (Configure.ENABLE_JUMING_FILTER) {
             this.startJF(Configure.DEBUG);
         }
@@ -389,10 +387,17 @@ public class SEOUrl {
             this.startSogouDomainFilter(Configure.DEBUG);
         }
         //Tools.sleep(100000);
+        for (EnablerAbstract ea : enablerAbstractList) {
+            ea.start();
+        }
         try {
             WebArchiveFilterEnabler.getInstance().join();
         } catch (InterruptedException ex) {
             Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (Configure.ENABLE_WEBARCHIVE) {
+            totalSnapsHotsSize = WebArchiveFilterEnabler.getInstance().getDsa().getSize();
+            System.out.printf("URL數量:%d  總快照量:%d\r\n", urlDataSet.getSize(), totalSnapsHotsSize);
         }
 
         saveFile();
@@ -415,7 +420,7 @@ public class SEOUrl {
         }
         passT.creatFile();
         failT.creatFile();
-        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  總快照量:%d\n", urlDataSet.getSize(), count[0], count[1], count[2], totalSnapsHotsSize);
+        System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  \r\n", urlDataSet.getSize(), count[0], count[1], count[2]);
         long total = (System.currentTimeMillis() - startTime.getTime());
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
@@ -436,20 +441,19 @@ public class SEOUrl {
 
         boolean isPass = true;
 
-//        if (Configure.ENABLE_WEBARCHIVE) {
-//
-//            WebArchivePack wap2 = this.wap2Map.get(url);
-//            isPass = isPass && wap2.allPass();
-//            wapStr[0] = wap2.getSaveLocation();
-//            wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
-//
-//        }
+        if (Configure.ENABLE_WEBARCHIVE) {
+
+            WebArchivePack wap2 = WebArchiveFilterEnabler.getInstance().getWap2Map().get(url);
+            isPass = isPass && wap2.allPass();
+            wapStr[0] = wap2.getSaveLocation();
+            wapStr[1] = wap2.allPass() ? "通過" : "未通過 " + wap2.getReason();
+
+        }
 //        if (Configure.ENABLE_JUMING_FILTER) {
 //            JumingPack jp = this.jpMap.get(url);
 //            isPass = isPass && jp.allPass();
 //            jgp = String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", url, jp.getStatus());
 //        }
-
         if (Configure.ENABLE_BAIDU_DOMAIN) {
             BaiduDomainPack bdp = this.baiduDomainPMap.get(url);
             isPass = isPass && bdp.allPass();

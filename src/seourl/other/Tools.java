@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl;
+package seourl.other;
 
 import seourl.type.Device;
 import java.io.BufferedReader;
@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,8 +31,16 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.jsoup.Connection;
-import org.jsoup.Connection.Response;
+import lombok.Cleanup;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -158,40 +167,6 @@ public class Tools {
         return list;
     }
 
-    public static String getJSON(String url, int timeout) {
-        try {
-            URL u = new URL(url);
-            HttpURLConnection c = (HttpURLConnection) u.openConnection();
-            c.setRequestMethod("GET");
-            c.setUseCaches(false);
-            c.setAllowUserInteraction(false);
-            c.setConnectTimeout(timeout);
-            c.setReadTimeout(timeout);
-            c.setRequestProperty("Accept-Charset", "utf-8");
-            c.setRequestProperty("contentType", "utf-8");
-            c.setRequestProperty("User-Agent", Device.getById(Tools.getRandomNumberInRange(0, 7)).getType());
-            c.connect();
-            int status = c.getResponseCode();
-            //System.out.println(status);
-            switch (status) {
-                case 200:
-                case 201:
-                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream(), "utf-8"));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-                    return sb.toString();
-            }
-        } catch (Exception ex) {
-            // Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return "";
-
-    }
-
     public static List<String> loadKeyword(String fileName) {
         List<String> keywords = new ArrayList<String>();
         try {
@@ -214,34 +189,16 @@ public class Tools {
         return keywords;
     }
 
-    public static Document getConnect(String url, int timeout) {
-        Document doc = null;
-        try {
-            doc = Jsoup.connect(url).timeout(timeout)
-                    .userAgent(Device.getById(Tools.getRandomNumberInRange(0, 7)).getType())
-                    .followRedirects(true)
-                    .ignoreHttpErrors(true)
-                    .get();
-        } catch (Exception ex) {
-            //Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static String getJSON(String url, int timeout) {
+        HttpConnect hc = new HttpConnect(url, timeout, true);
+        return hc.getString();
 
-        return doc;
     }
 
-    public static Response getResponse(String url, int timeout) {
-        Connection.Response response = null;
-        try {
-            response = Jsoup.connect(url)
-                    .timeout(timeout)
-                    .userAgent(Device.getById(Tools.getRandomNumberInRange(0, 7)).getType())
-                    .followRedirects(true)
-                    .ignoreHttpErrors(true)
-                    .execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response;
+    //static CloseableHttpClient httpclient = HttpClients.createDefault();
+    public static Document getUrlDocument(String url, int timeout) {
+        HttpConnect hc = new HttpConnect(url, timeout);
+        return hc.getDocument();
     }
 
     public static List<String> loadUrl() {
@@ -340,6 +297,6 @@ public class Tools {
             System.out.println("請設定好keyword資料夾設定好關鍵詞在執行。");
             System.exit(1);
         }
-
     }
+
 }

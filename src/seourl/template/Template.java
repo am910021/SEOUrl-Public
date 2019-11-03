@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
-import seourl.Tools;
+import seourl.other.Tools;
 
 /**
  *

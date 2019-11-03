@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package seourl;
+package seourl.other;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
 import lombok.Cleanup;
@@ -23,6 +25,7 @@ import seourl.type.Filter;
 public class Configure {
 
     public static final Date startTime = new Date();
+    public static final InetAddress localAddress;
 
     public static final String KEY_WORD_PATH = "keyword/";
     public static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
@@ -96,6 +99,24 @@ public class Configure {
         boolean enableSogouDomain = true;
         boolean enableSogouSearch = true;
 
+        String ip = System.getProperty("IP");
+        InetAddress tmpIp = null;
+        if (ip != null) {
+            try {
+                tmpIp = InetAddress.getByName(ip);
+            } catch (UnknownHostException ex) {
+            }
+            if (tmpIp == null) {
+                try {
+                    tmpIp = InetAddress.getLocalHost();
+                } catch (UnknownHostException ex) {
+                }
+            }
+            System.out.println("IP設定為 " + tmpIp);
+        }
+
+        localAddress = tmpIp;
+
         try (InputStream input = new FileInputStream("config.txt")) {
 
             Properties prop = new Properties();
@@ -166,7 +187,7 @@ public class Configure {
         return Integer.parseInt(s.replace(" ", ""));
     }
 
-    static void printStatus() {
+    public static void printStatus() {
         System.out.println(ENABLE_WEBARCHIVE ? "WebArchive過濾'啟動'" : "WebArchive過濾'未啟動'");
         if (ENABLE_WEBARCHIVE) {
             System.out.println(WEBARCHIVE_TITLE_FILTER ? "WebArchive過濾Title'啟動'" : "WebArchive過濾Title'未啟動'");

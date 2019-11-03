@@ -13,7 +13,7 @@ import java.util.TreeMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import seourl.Configure;
+import seourl.other.Configure;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateWebArch;
 
@@ -38,7 +38,6 @@ public class WebArchivePack extends PackAbstract {
     @Getter
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
-    private String domain = "";
     private Long readTime = System.currentTimeMillis();
     private final static String green = "<snap style=\"color:green\">%s</snap>";
     private final static String red = "<snap style=\"color:red\">%s</snap>";
@@ -83,27 +82,27 @@ public class WebArchivePack extends PackAbstract {
         String content = "未啟用";
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {
             for (long snapshot : entry.getValue()) {
-
-                if (allPass()) {
+                if (!Configure.WEBARCHIVE_TITLE_FILTER && !Configure.WEBARCHIVE_CONTENT_FILTER) {
                     tWebArch.insertRecord(snapshot, domain, title, content);
-                } else {
-                    if (Configure.WEBARCHIVE_TITLE_FILTER) {
-                        if (this.titleKeyword.containsKey(snapshot)) {
-                            title = String.format(red, this.titleKeyword.get(snapshot));
-                        } else {
-                            title = String.format(green, "通過");
-                        }
-                    }
-
-                    if (Configure.WEBARCHIVE_CONTENT_FILTER) {
-                        if (this.contentKeyword.containsKey(snapshot)) {
-                            title = String.format(red, this.contentKeyword.get(snapshot));
-                        } else {
-                            title = String.format(green, "通過");
-                        }
-                    }
-                    tWebArch.insertRecord(snapshot, domain, title, content);
+                    continue;
                 }
+
+                if (Configure.WEBARCHIVE_TITLE_FILTER) {
+                    if (this.titleKeyword.containsKey(snapshot)) {
+                        title = String.format(red, this.titleKeyword.get(snapshot));
+                    } else {
+                        title = String.format(green, "通過");
+                    }
+                }
+                
+                if (Configure.WEBARCHIVE_CONTENT_FILTER) {
+                    if (this.contentKeyword.containsKey(snapshot)) {
+                        content = String.format(red, this.contentKeyword.get(snapshot));
+                    } else {
+                        content = String.format(green, "通過");
+                    }
+                }
+                tWebArch.insertRecord(snapshot, domain, title, content);
             }
         }
         tWebArch.creatFile();

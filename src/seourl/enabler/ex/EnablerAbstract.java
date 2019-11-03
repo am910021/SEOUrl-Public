@@ -19,6 +19,7 @@ public abstract class EnablerAbstract extends Thread {
 
     @Getter
     protected Map<String, PackAbstract> packMap = new TreeMap<>();   //儲存收集的資料
+    @Getter
     protected DataSetAbstract dsa;
 
     /**

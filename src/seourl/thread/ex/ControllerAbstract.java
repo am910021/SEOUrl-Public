@@ -16,7 +16,6 @@ import seourl.type.Filter;
 public abstract class ControllerAbstract extends Thread {
 
     protected final Filter filter;
-    @Setter
     protected final DataSetAbstract dsa;
 
     @Override
@@ -30,7 +29,7 @@ public abstract class ControllerAbstract extends Thread {
     final protected void printProgress() {
         dsa.addProgress();
         if (dsa.isNeedPrintProgress()) {
-            System.out.printf("%d讀取參數執行進度 %d / %d \r\n", filter.getType(), dsa.getProgress(), dsa.getSize());
+            System.out.printf("%s讀取參數執行進度 %d / %d \r\n", filter.getType(), dsa.getProgress(), dsa.getSize());
         }
     }
 }

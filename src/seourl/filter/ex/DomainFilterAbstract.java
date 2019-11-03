@@ -6,7 +6,7 @@
 package seourl.filter.ex;
 
 import java.util.List;
-import seourl.Configure;
+import seourl.other.Configure;
 
 /**
  *

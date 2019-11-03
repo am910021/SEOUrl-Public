@@ -13,8 +13,8 @@ import com.gargoylesoftware.htmlunit.javascript.host.event.Event;
 import java.util.Iterator;
 import java.util.List;
 import lombok.Getter;
-import seourl.Configure;
-import seourl.Tools;
+import seourl.other.Configure;
+import seourl.other.Tools;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.*;
 

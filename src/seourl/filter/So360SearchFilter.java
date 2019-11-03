@@ -8,7 +8,7 @@ package seourl.filter;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import java.util.Iterator;
 import java.util.List;
-import seourl.Configure;
+import seourl.other.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.So360SerachPack;
 

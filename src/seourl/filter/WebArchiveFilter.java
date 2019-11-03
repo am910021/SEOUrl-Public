@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import seourl.Configure;
-import seourl.Tools;
+import seourl.other.Configure;
+import seourl.other.Tools;
 import seourl.filter.ex.BasicFilterAbstract;
 import seourl.pack.WebArchivePack;
 
@@ -48,7 +48,7 @@ public class WebArchiveFilter extends BasicFilterAbstract {
             timeout += baseTimeout;
             try {
                 
-                doc = Tools.getConnect(tmpUrl, timeout);
+                doc = Tools.getUrlDocument(tmpUrl, timeout);
                 if (doc == null) {
                     throw new Exception("doc is null");
                 }
@@ -56,7 +56,7 @@ public class WebArchiveFilter extends BasicFilterAbstract {
                 if (element != null) {
                     tmpUrl = element.absUrl("href");
                     doc = null;
-                    doc = Tools.getConnect(tmpUrl, timeout);
+                    doc = Tools.getUrlDocument(tmpUrl, timeout);
                 }
 
                 if (doc == null) {

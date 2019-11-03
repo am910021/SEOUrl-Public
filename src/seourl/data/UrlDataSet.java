@@ -9,22 +9,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.Synchronized;
-import seourl.Tools;
+import seourl.other.Tools;
 import seourl.data.ex.DataSetAbstract;
 
 /**
  *
  * @author Yuri
  */
-public class UrlDataSet extends DataSetAbstract {
+public class UrlDataSet extends DataSetAbstract<String> {
 
     private List<String> urls = new ArrayList<>();
     private int nextUrl = 0;
     private final Object readUrlLock = new Object();
 
     @Override
-    public void setData(Object list) {
-        List<String> tmp = (List<String>)list;
+    public void setData(List<String> list) {
+        List<String> tmp = list;
         if (this.urls == null || this.urls.size() > 0) {
             return;
         }

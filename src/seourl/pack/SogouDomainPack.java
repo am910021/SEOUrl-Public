@@ -7,7 +7,7 @@ package seourl.pack;
 
 import seourl.pack.ex.SearchEnginePack;
 import java.util.Date;
-import seourl.Configure;
+import seourl.other.Configure;
 import seourl.template.TemplateSearchEngine;
 
 /**

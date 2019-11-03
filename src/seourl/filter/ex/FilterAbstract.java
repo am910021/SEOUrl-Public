@@ -27,7 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.logging.LogFactory;
 import seourl.type.Device;
-import seourl.Tools;
+import seourl.other.Tools;
 
 /**
  *

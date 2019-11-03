@@ -6,7 +6,7 @@
 package seourl.template;
 
 import java.util.Date;
-import seourl.Tools;
+import seourl.other.Tools;
 
 /**
  *

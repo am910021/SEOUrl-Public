@@ -9,23 +9,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.Synchronized;
-import seourl.TPair;
-import seourl.Tools;
+import seourl.other.TPair;
+import seourl.other.Tools;
 import seourl.data.ex.DataSetAbstract;
 
 /**
  *
  * @author Yuri
  */
-public class SnapsHotsDataSet extends DataSetAbstract {
+public class SnapsHotsDataSet extends DataSetAbstract<TPair<String, Integer, Long>> {
 
     private List<TPair<String, Integer, Long>> wash = new ArrayList<>();
     private int nextWASH = 0;
     private final Object readLock = new Object();
 
     @Override
-    public void setData(Object list) {
-        List<TPair<String, Integer, Long>> tmp = (List<TPair<String, Integer, Long>>) list;
+    public void setData(List<TPair<String, Integer, Long>> list) {
+        List<TPair<String, Integer, Long>> tmp = list;
         if (this.wash == null || this.wash.size() > 0) {
             return;
         }

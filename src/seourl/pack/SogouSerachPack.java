@@ -6,7 +6,7 @@
 package seourl.pack;
 
 import seourl.pack.ex.SearchEnginePack;
-import seourl.Configure;
+import seourl.other.Configure;
 
 /**
  *

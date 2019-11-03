@@ -12,7 +12,7 @@ import lombok.Synchronized;
  *
  * @author Yuri
  */
-public abstract class DataSetAbstract implements Cloneable {
+public abstract class DataSetAbstract<T> implements Cloneable {
 
     private int progress = 0;
     private final Object lockProgress = new Object();
@@ -24,15 +24,15 @@ public abstract class DataSetAbstract implements Cloneable {
 
     public abstract int getSize();
 
-    public abstract Object getNext();
+    public abstract T getNext();
 
     public abstract boolean hasNext();
 
-    public abstract List getListCopy();
+    public abstract List<T> getListCopy();
 
     public abstract DataSetAbstract getClone();
     
-    public abstract void setData(Object list);
+    public abstract void setData(List<T> list);
 
     @Synchronized("lockProgress")
     public int getProgress() {
