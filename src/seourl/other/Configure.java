@@ -100,6 +100,10 @@ public class Configure {
         boolean enableSogouSearch = true;
 
         String ip = System.getProperty("IP");
+        if (ip.equals("127.0.0.1")) {
+            ip = "0.0.0.0";
+        }
+
         InetAddress tmpIp = null;
         if (ip != null) {
             try {
