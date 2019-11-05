@@ -20,18 +20,17 @@ import seourl.pack.SogouDomainPack;
  */
 public class SogouDomainController extends Thread {
 
-    private Date startTime;
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, SogouDomainPack> mSDP = new TreeMap<>();
     private final int pid;
 
-    public SogouDomainController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
+    public SogouDomainController(int pid, UrlDataSet dataSet, List<String> keywords) {
         this.pid = pid;
         this.dataSet = dataSet;
         this.keywords = keywords;
-        this.startTime = startTime;
+
     }
 
     @Override

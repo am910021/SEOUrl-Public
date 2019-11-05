@@ -6,7 +6,6 @@
 package seourl.pack;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -94,7 +93,7 @@ public class WebArchivePack extends PackAbstract {
                         title = String.format(green, "通過");
                     }
                 }
-                
+
                 if (Configure.WEBARCHIVE_CONTENT_FILTER) {
                     if (this.contentKeyword.containsKey(snapshot)) {
                         content = String.format(red, this.contentKeyword.get(snapshot));

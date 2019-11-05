@@ -5,15 +5,10 @@
  */
 package seourl.pack;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import seourl.pack.ex.PackAbstract;
-import seourl.template.TemplateSearchEngine;
-import seourl.template.TemplateWebArch;
 
 /**
  *
@@ -43,6 +38,12 @@ public class JumingPack extends PackAbstract {
         super("",url);
     }
 
+    @Override
+    public String[] getIndexStr(){
+        String tmp[] = {String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", domain, this.getStatus())};
+        return tmp;
+    }
+    
     @Override
     public boolean allPass() {
         return !reg && !qq && !weChat && !gfw && !error;

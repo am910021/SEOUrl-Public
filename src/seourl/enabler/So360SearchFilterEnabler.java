@@ -15,46 +15,46 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.BaiduDomainPack;
+import seourl.pack.So360SerachPack;
 import seourl.pack.ex.PackAbstract;
-import seourl.thread.BaiduDomainController;
+import seourl.thread.So360SearchController;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainFilterEnabler extends EnablerAbstract {
+public class So360SearchFilterEnabler extends EnablerAbstract {
 
-    private Map<Integer, BaiduDomainController> baiduDomainCMap = new HashMap<>();
+    private Map<Integer, So360SearchController> so360SearchMap = new HashMap<>();
 
-    private BaiduDomainFilterEnabler() {
-        Tools.checkKeyWordFile("BAIDU_DOMAIN.txt");
+    private So360SearchFilterEnabler() {
+         Tools.checkKeyWordFile("SO360_SEARCH.txt");
     }
 
-    public static BaiduDomainFilterEnabler getInstance() {
-        return BaiduDomainFilterEnablerHolder.INSTANCE;
+    public static So360SearchFilterEnabler getInstance() {
+        return So360SearchFilterHolder.INSTANCE;
     }
 
     @Override
     public void run() {
-        BaiduDomainController bdc;
+        So360SearchController ssc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            bdc = new BaiduDomainController(i, (UrlDataSet) dsa, Tools.loadKeyword("BAIDU_DOMAIN.txt"));
-            baiduDomainCMap.put(i, bdc);
-            bdc.start();
+            ssc = new So360SearchController(i, (UrlDataSet) dsa, Tools.loadKeyword("SO360_SEARCH.txt"));
+            so360SearchMap.put(i, ssc);
+            ssc.start();
             Tools.sleep(1 * 1000, 5 * 1000);
         }
-        bdc = null;
-        for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
+        ssc = null;
+        for (Map.Entry<Integer, So360SearchController> map : so360SearchMap.entrySet()) {
             try {
                 map.getValue().join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMDP());
+            this.packMap.putAll(map.getValue().getMSDP());
         }
-        baiduDomainCMap = null;
+        so360SearchMap = null;
         if (Configure.DEBUG) {
             for (Map.Entry<String, PackAbstract> map : packMap.entrySet()) {
                 map.getValue().print(map.getKey());
@@ -62,8 +62,8 @@ public class BaiduDomainFilterEnabler extends EnablerAbstract {
         }
     }
 
-    private static class BaiduDomainFilterEnablerHolder {
+    private static class So360SearchFilterHolder {
 
-        private static final BaiduDomainFilterEnabler INSTANCE = new BaiduDomainFilterEnabler();
+        private static final So360SearchFilterEnabler INSTANCE = new So360SearchFilterEnabler();
     }
 }

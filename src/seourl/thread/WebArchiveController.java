@@ -14,6 +14,7 @@ import seourl.other.Tools;
 import seourl.data.SnapsHotsDataSet;
 import seourl.filter.WebArchiveFilter;
 import seourl.pack.WebArchivePack;
+import seourl.pack.ex.PackAbstract;
 import seourl.thread.ex.ControllerAbstract;
 import seourl.type.Filter;
 
@@ -26,10 +27,10 @@ public class WebArchiveController extends ControllerAbstract {
     private final List<String> titleKeywords;
     private final List<String> contentKeywords;
     @Getter
-    private Map<String, WebArchivePack> mWAP = new TreeMap<>();
+    private Map<String, PackAbstract> mWAP = new TreeMap<>();
     private final int pid;
 
-    public WebArchiveController(int pid, Map<String, WebArchivePack> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
+    public WebArchiveController(int pid, Map<String, PackAbstract> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
         super(Filter.WEB_ARCHIVE, dataSet);
         this.pid = pid;
         this.titleKeywords = titleKeywords;
@@ -47,7 +48,7 @@ public class WebArchiveController extends ControllerAbstract {
         while (dsa.hasNext()) {
             tp = ((SnapsHotsDataSet) dsa).getNext();
             url = tp.getLeft();
-            wap = mWAP.get(url);
+            wap = (WebArchivePack) mWAP.get(url);
             waf3.setWap(wap);
             waf3.doAnalysis(url, tp.getRight());
             this.printProgress();

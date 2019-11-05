@@ -20,18 +20,16 @@ import seourl.pack.SogouSerachPack;
  */
 public class SogouSearchController extends Thread {
 
-    private Date startTime;
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, SogouSerachPack> mSDP = new TreeMap<>();
     private final int pid;
 
-    public SogouSearchController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
+    public SogouSearchController(int pid,UrlDataSet dataSet, List<String> keywords) {
         this.pid = pid;
         this.dataSet = dataSet;
         this.keywords = keywords;
-        this.startTime = startTime;
     }
 
     @Override

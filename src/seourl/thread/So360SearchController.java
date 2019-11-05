@@ -20,18 +20,16 @@ import seourl.pack.So360SerachPack;
  */
 public class So360SearchController extends Thread {
 
-    private Date startTime;
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, So360SerachPack> mSDP = new TreeMap<>();
     private final int pid;
 
-    public So360SearchController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
+    public So360SearchController(int pid, UrlDataSet dataSet, List<String> keywords) {
         this.pid = pid;
         this.dataSet = dataSet;
         this.keywords = keywords;
-        this.startTime = startTime;
     }
 
     @Override

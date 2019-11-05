@@ -22,6 +22,7 @@ import seourl.data.SnapsHotsDataSet;
 import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.pack.WebArchivePack;
+import seourl.pack.ex.PackAbstract;
 import seourl.thread.WebArchiveController;
 import seourl.thread.WebArchiveSnapsHotsController;
 
@@ -31,13 +32,12 @@ import seourl.thread.WebArchiveSnapsHotsController;
  */
 public class WebArchiveFilterEnabler extends EnablerAbstract {
 
-    @Getter
-    private Map<String, WebArchivePack> wap2Map = new TreeMap<>();   //WebArchive資料集
-
     private Map<Integer, WebArchiveSnapsHotsController> washcMap = new HashMap<>();
     private Map<Integer, WebArchiveController> wacMap = new HashMap<>();
 
     private WebArchiveFilterEnabler() {
+        Tools.checkKeyWordFile("WEBARCHIVE-TITLE.txt");
+        Tools.checkKeyWordFile("WEBARCHIVE-CONTENT.txt");
     }
 
     public static WebArchiveFilterEnabler getInstance() {
@@ -49,8 +49,6 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         if (!Configure.ENABLE_WEBARCHIVE) {
             return;
         }
-        Tools.checkKeyWordFile("WEBARCHIVE-TITLE.txt");
-        Tools.checkKeyWordFile("WEBARCHIVE-CONTENT.txt");
 
         WebArchiveSnapsHotsController washc;
         int maxThread = Math.min(Configure.WEBARCHIVE_MAX_THREAD, dsa.getSize());
@@ -68,11 +66,11 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Tools.printError(this.getName(), ex);
             }
-            this.wap2Map.putAll(map.getValue().getMWAP());
+            this.packMap.putAll(map.getValue().getMWAP());
         }
         washcMap = null;
         if (Configure.DEBUG) {
-            for (Map.Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
+            for (Map.Entry<String, PackAbstract> map : packMap.entrySet()) {
                 map.getValue().print(map.getKey());
             }
         }
@@ -96,7 +94,7 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         WebArchiveController wac;
 
         for (int i = 0; i < Configure.WEBARCHIVE_MAX_THREAD; i++) {
-            wac = new WebArchiveController(i, wap2Map, snapsHotsDataSet, title, content);
+            wac = new WebArchiveController(i, packMap, snapsHotsDataSet, title, content);
             wacMap.put(i, wac);
             wac.start();
             Tools.sleep(1 * 1000, 5 * 1000);
@@ -113,7 +111,7 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         }
         wacMap = null;
         if (Configure.DEBUG) {
-            for (Map.Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
+            for (Map.Entry<String, PackAbstract> map : packMap.entrySet()) {
                 map.getValue().print(map.getKey());
                 map.getValue().saveFile();
             }
@@ -123,13 +121,16 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
         s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
         System.out.printf("快照讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
+        System.out.printf("URL數量:%d  總快照量:%d\r\n", dsa.getSize(), snapsHotsDataSet.getSize());
     }
 
     private List<TPair<String, Integer, Long>> getSplitSnapsHots() {
         List<TPair<String, Integer, Long>> ltp = new ArrayList<>();
         TPair<String, Integer, Long> tp;
-        for (Map.Entry<String, WebArchivePack> map : wap2Map.entrySet()) {
-            for (Map.Entry<Integer, List<Long>> snapshot : map.getValue().getSnapshots().entrySet()) {
+        WebArchivePack wap;
+        for (Map.Entry<String, PackAbstract> map : packMap.entrySet()) {
+            wap = (WebArchivePack) map.getValue();
+            for (Map.Entry<Integer, List<Long>> snapshot : wap.getSnapshots().entrySet()) {
                 for (Long l : snapshot.getValue()) {
                     tp = new TPair<>(map.getKey(), snapshot.getKey(), l);
                     ltp.add(tp);

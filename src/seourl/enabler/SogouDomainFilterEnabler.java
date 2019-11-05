@@ -7,7 +7,6 @@ package seourl.enabler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import seourl.SEOUrl;
@@ -15,46 +14,47 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.BaiduDomainPack;
+import seourl.pack.SogouDomainPack;
 import seourl.pack.ex.PackAbstract;
-import seourl.thread.BaiduDomainController;
+import seourl.thread.SogouDomainController;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainFilterEnabler extends EnablerAbstract {
+public class SogouDomainFilterEnabler extends EnablerAbstract {
 
-    private Map<Integer, BaiduDomainController> baiduDomainCMap = new HashMap<>();
+    private Map<Integer, SogouDomainController> sogoDomainCMap = new HashMap<>();
 
-    private BaiduDomainFilterEnabler() {
-        Tools.checkKeyWordFile("BAIDU_DOMAIN.txt");
+    private SogouDomainFilterEnabler() {
+        Tools.checkKeyWordFile("SOGOU_DOMAIN.txt");
     }
 
-    public static BaiduDomainFilterEnabler getInstance() {
-        return BaiduDomainFilterEnablerHolder.INSTANCE;
+    public static SogouDomainFilterEnabler getInstance() {
+        return SogouDomainFilterEnablerHolder.INSTANCE;
     }
 
     @Override
     public void run() {
-        BaiduDomainController bdc;
+        SogouDomainController sdc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            bdc = new BaiduDomainController(i, (UrlDataSet) dsa, Tools.loadKeyword("BAIDU_DOMAIN.txt"));
-            baiduDomainCMap.put(i, bdc);
-            bdc.start();
+            sdc = new SogouDomainController(i, (UrlDataSet) dsa, Tools.loadKeyword("SOGOU_DOMAIN.txt"));
+            sogoDomainCMap.put(i, sdc);
+            sdc.start();
             Tools.sleep(1 * 1000, 5 * 1000);
         }
-        bdc = null;
-        for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
+        sdc = null;
+
+        for (Map.Entry<Integer, SogouDomainController> map : sogoDomainCMap.entrySet()) {
             try {
                 map.getValue().join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMDP());
+            this.packMap.putAll(map.getValue().getMSDP());
         }
-        baiduDomainCMap = null;
+        sogoDomainCMap = null;
         if (Configure.DEBUG) {
             for (Map.Entry<String, PackAbstract> map : packMap.entrySet()) {
                 map.getValue().print(map.getKey());
@@ -62,8 +62,8 @@ public class BaiduDomainFilterEnabler extends EnablerAbstract {
         }
     }
 
-    private static class BaiduDomainFilterEnablerHolder {
+    private static class SogouDomainFilterEnablerHolder {
 
-        private static final BaiduDomainFilterEnabler INSTANCE = new BaiduDomainFilterEnabler();
+        private static final SogouDomainFilterEnabler INSTANCE = new SogouDomainFilterEnabler();
     }
 }

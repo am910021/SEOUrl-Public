@@ -35,6 +35,11 @@ public abstract class PackAbstract {
         return "";
     }
 
+    public String[] getIndexStr(){
+        String tmp [] = {this.getSaveLocation(), this.allPass() ? "通過" : "未通過 " + this.getReason()};
+        return tmp;
+    }
+    
     public final String getSaveLocation() {
         return getFinalPath() + domain + ".html";
     }

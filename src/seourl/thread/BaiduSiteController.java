@@ -20,18 +20,16 @@ import seourl.pack.BaiduSitePack;
  */
 public class BaiduSiteController extends Thread {
 
-    private Date startTime;
     private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, BaiduSitePack> mSDP = new TreeMap<>();
     private final int pid;
 
-    public BaiduSiteController(int pid, Date startTime, UrlDataSet dataSet, List<String> keywords) {
+    public BaiduSiteController(int pid, UrlDataSet dataSet, List<String> keywords) {
         this.pid = pid;
         this.dataSet = dataSet;
         this.keywords = keywords;
-        this.startTime = startTime;
     }
 
     @Override
