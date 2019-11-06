@@ -11,6 +11,7 @@ import java.util.List;
 import seourl.other.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.So360SitePack;
+import seourl.type.Filter;
 
 /**
  *
@@ -18,8 +19,8 @@ import seourl.pack.So360SitePack;
  */
 public class So360SiteFilter extends SearchEngineFilterAbstract {
 
-    public So360SiteFilter(int pid, List<String> lkeyWords) {
-        super(pid, "360SO-Site", lkeyWords);
+    public So360SiteFilter(int pid, Filter filter, List<String> keywords) {
+        super(pid, filter, keywords);
     }
 
     public So360SitePack getSSP() {

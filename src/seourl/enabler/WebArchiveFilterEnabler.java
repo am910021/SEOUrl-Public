@@ -64,7 +64,7 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Tools.printError(this.getName(), ex);
             }
-            this.packMap.putAll(map.getValue().getMWAP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         washcMap = null;
         if (Configure.DEBUG) {

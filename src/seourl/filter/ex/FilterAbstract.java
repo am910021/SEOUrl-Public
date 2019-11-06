@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import seourl.other.Configure;
 import seourl.type.Device;
 import seourl.other.Tools;
+import seourl.type.Filter;
 
 /**
  *
@@ -50,8 +51,8 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
     @Getter
     private String cookiePath = "cache/";
 
-    protected FilterAbstract(int pid, String filterType) {
-        super(pid, filterType);
+    protected FilterAbstract(int pid, Filter filter) {
+        super(pid, filter);
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);
         java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
@@ -104,7 +105,7 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
                 }
                 return true;
             } catch (Exception e) {
-                Tools.printError(filterType, e);
+                Tools.printError(filter, e);
                 System.out.printf("取得%s頁面中....失敗。\n", url);
                 Tools.sleep(100);
             }
@@ -135,7 +136,7 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
             }
             in.close();
         } catch (Exception ex) {
-            Tools.printError(filterType, ex);
+            Tools.printError(filter, ex);
         }
         webClient.getCookieManager().clearExpired(new Date());
     }
@@ -146,7 +147,7 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
             out.writeObject(webClient.getCookieManager().getCookies());
             out.close();
         } catch (IOException ex) {
-            Tools.printError(filterType, ex);
+            Tools.printError(filter, ex);
         }
     }
 

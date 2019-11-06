@@ -10,6 +10,7 @@ import java.util.List;
 import seourl.other.Configure;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.BaiduDomainPack;
+import seourl.type.Filter;
 
 /**
  *
@@ -17,8 +18,8 @@ import seourl.pack.BaiduDomainPack;
  */
 public class BaiduDomainFilter extends DomainFilterAbstract {
 
-    public BaiduDomainFilter(int pid, List<String> lkeyWords) {
-        super(pid, "Baidu-Domain", lkeyWords);
+    public BaiduDomainFilter(int pid, Filter filter, List<String> keywords) {
+        super(pid, filter, keywords);
     }
 
     public BaiduDomainPack getBDP() {

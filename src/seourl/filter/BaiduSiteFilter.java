@@ -10,6 +10,7 @@ import java.util.List;
 import seourl.other.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.BaiduSitePack;
+import seourl.type.Filter;
 
 /**
  *
@@ -17,8 +18,8 @@ import seourl.pack.BaiduSitePack;
  */
 public class BaiduSiteFilter extends SearchEngineFilterAbstract {
 
-    public BaiduSiteFilter(int pid,List<String> lkeyWords) {
-        super(pid, "Baidu-Site", lkeyWords);
+    public BaiduSiteFilter(int pid, Filter filter, List<String> lkeyWords) {
+        super(pid, filter, lkeyWords);
     }
 
     public BaiduSitePack getBSP() {

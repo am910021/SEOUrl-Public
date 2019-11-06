@@ -14,6 +14,7 @@ import lombok.Setter;
 import seourl.other.Configure;
 import seourl.other.Tools;
 import seourl.pack.ex.SearchEnginePack;
+import seourl.type.Filter;
 
 /**
  *
@@ -23,11 +24,11 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
 
     @Setter
     protected List<String> lkeyWords = new ArrayList<>();
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     protected SearchEnginePack sep;
 
-    public SearchEngineFilterAbstract(int pid, String filterType, List<String> lkeyWords) {
-        super(pid, filterType);
+    public SearchEngineFilterAbstract(int pid, Filter filter, List<String> lkeyWords) {
+        super(pid, filter);
         this.lkeyWords = lkeyWords;
     }
 
@@ -69,7 +70,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         //分析第1頁
         boolean pass = false;
         pass = doAnalysisContent(tmp, url, 1);
-        System.out.printf("%s %s 第%d頁 分析完成。 \n", filterType, url, 1);
+        System.out.printf("%s %s 第%d頁 分析完成。 \n", filter, url, 1);
         sep.setPage(1, pass);
 
         //分析第2頁之後
@@ -82,7 +83,7 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
                 }
                 tmp = this.getResultList();
                 pass = doAnalysisContent(tmp, url, i);
-                System.out.printf("%s %s 第%d頁 分析完成。 \n", filterType, url, i);
+                System.out.printf("%s %s 第%d頁 分析完成。 \n", filter, url, i);
                 sep.setPage(i, pass);
             }
 
@@ -103,15 +104,15 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
                 this.cleanMemory();
                 page = webClient.getPage(tUrl);
                 status = true;
-                System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filterType, url, i);
+                System.out.printf("%s %s 第%d頁 資料讀取功成。 \n", filter, url, i);
             } catch (Exception ex) {
-                Tools.printError(filterType, ex);
-                System.out.printf("%s %s 第%d頁 資料讀取失敗，重新讀取中。 \n", filterType, url, i);
+                Tools.printError(filter, ex);
+                System.out.printf("%s %s 第%d頁 資料讀取失敗，重新讀取中。 \n", filter, url, i);
                 Tools.sleep(20, 200);
             }
         }
         if (!status) {
-            System.out.printf("%s %s 第%d頁 資料讀取錯誤。 \n", filterType, url, i);
+            System.out.printf("%s %s 第%d頁 資料讀取錯誤。 \n", filter, url, i);
             return false;
         }
         return true;

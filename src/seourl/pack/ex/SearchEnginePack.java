@@ -5,12 +5,10 @@
  */
 package seourl.pack.ex;
 
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import seourl.other.Configure;
-import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateSearchEngine;
 
 /**
@@ -22,7 +20,6 @@ public class SearchEnginePack extends PackAbstract {
 
     protected String type;
     protected String url;
-    protected String domain;
 
     @Getter
     @Setter
@@ -116,6 +113,7 @@ public class SearchEnginePack extends PackAbstract {
         return out;
     }
 
+    @Override
     public boolean allPass() {
         return !this.isError() && !this.isIllegal();
     }

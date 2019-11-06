@@ -28,8 +28,8 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
     @Getter
     private WebArchivePack wap;
 
-    public WebArchiveSnapsHot(int pid) {
-        super(pid, Filter.WEB_ARCHIVE.getType() + "List");
+    public WebArchiveSnapsHot(int pid, Filter filter) {
+        super(pid, filter);
     }
 
     // @Override
@@ -88,7 +88,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                 status = true;
                 System.out.printf("線程-%d 取讀 %s 年代參數．．．．．成功。\r\n", pid, url);
             } catch (Exception ex) {
-                Tools.printError(filterType, ex);
+                Tools.printError(filter, ex);
                 System.out.printf("線程-%d 取讀 %s 年代參數．．．．．失敗。\r\n", pid, url);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
@@ -111,7 +111,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
             }
             Thread.sleep(1, 200);
         } catch (Exception ex) {
-            Tools.printError(filterType, ex);
+            Tools.printError(filter, ex);
             return false;
         }
         return true;
@@ -135,7 +135,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                 status = true;
                 System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．成功。\r\n", pid, url, year);
             } catch (Exception ex) {
-                Tools.printError(filterType, ex);
+                Tools.printError(filter, ex);
                 System.out.printf("線程-%d 取得 %s %d 年快照參數．．．．．失敗。\r\n", pid, url, year);
                 Tools.sleep(10 * 1000, 20 * 1000);
             }
@@ -155,7 +155,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                 }
             }
         } catch (Exception e) {
-            Tools.printError(filterType, e);
+            Tools.printError(filter, e);
             System.out.printf("線程-%d %s %d 年快照參數無法分析。 \r\n", pid, url, year);
         }
         return true;
@@ -177,7 +177,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
                 }
             }
         } catch (Exception e) {
-            Tools.printError(filterType, e);
+            Tools.printError(filter, e);
         }
     }
 

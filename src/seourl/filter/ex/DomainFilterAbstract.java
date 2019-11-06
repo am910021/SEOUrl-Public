@@ -7,6 +7,7 @@ package seourl.filter.ex;
 
 import java.util.List;
 import seourl.other.Configure;
+import seourl.type.Filter;
 
 /**
  *
@@ -20,8 +21,8 @@ public abstract class DomainFilterAbstract extends SearchEngineFilterAbstract {
     @Override
     protected abstract boolean hasPageError();
 
-    public DomainFilterAbstract(int pid, String filterType, List<String> lkeyWords) {
-        super(pid, filterType, lkeyWords);
+    public DomainFilterAbstract(int pid, Filter filter, List<String> lkeyWords) {
+        super(pid, filter, lkeyWords);
     }
 
     @Override

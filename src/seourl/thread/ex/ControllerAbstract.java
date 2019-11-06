@@ -5,7 +5,11 @@
  */
 package seourl.thread.ex;
 
+import java.util.Map;
+import java.util.TreeMap;
+import lombok.Getter;
 import seourl.data.ex.DataSetAbstract;
+import seourl.pack.ex.PackAbstract;
 import seourl.type.Filter;
 
 /**
@@ -17,11 +21,21 @@ public abstract class ControllerAbstract<T extends DataSetAbstract> extends Thre
     protected final Filter filter;
     protected final T dsa;
     protected final int pid;
+    @Getter
+    protected final Map<String, PackAbstract> packMap;
 
     @Override
     public abstract void run();
 
     public ControllerAbstract(int pid, Filter f, T dsa) {
+        this.packMap = new TreeMap<>();
+        this.pid = pid;
+        this.filter = f;
+        this.dsa = dsa;
+    }
+
+    public ControllerAbstract(int pid, Filter f, T dsa, Map<String, PackAbstract> packMap) {
+        this.packMap = packMap;
         this.pid = pid;
         this.filter = f;
         this.dsa = dsa;

@@ -14,7 +14,6 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.SogouSerachPack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.SogouSearchController;
 
@@ -27,7 +26,7 @@ public class SogouSearchFilterEnabler extends EnablerAbstract {
     private Map<Integer, SogouSearchController> sogouSearchCMap = new HashMap<>();
 
     private SogouSearchFilterEnabler() {
-         Tools.checkKeyWordFile("SOGOU_SEARCH.txt");
+        Tools.checkKeyWordFile("SOGOU_SEARCH.txt");
     }
 
     public static SogouSearchFilterEnabler getInstance() {
@@ -51,7 +50,7 @@ public class SogouSearchFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMSDP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         sogouSearchCMap = null;
         if (Configure.DEBUG) {

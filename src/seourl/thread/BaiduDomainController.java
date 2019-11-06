@@ -6,44 +6,23 @@
 package seourl.thread;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import lombok.Getter;
 import seourl.data.UrlDataSet;
 import seourl.filter.BaiduDomainFilter;
-import seourl.pack.BaiduDomainPack;
-import seourl.thread.ex.ControllerAbstract;
+import seourl.thread.ex.SearchEngineControllerAbstract;
 import seourl.type.Filter;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainController extends ControllerAbstract<UrlDataSet> {
-
-    private List<String> keywords;
-    @Getter
-    private Map<String, BaiduDomainPack> mDP = new TreeMap<>();
+public class BaiduDomainController extends SearchEngineControllerAbstract {
 
     public BaiduDomainController(int pid, UrlDataSet dataSet, List<String> keywords) {
-        super(pid, Filter.BAIDU_DOMAIN, dataSet);
-        this.keywords = keywords;
+        super(pid, Filter.BAIDU_DOMAIN, dataSet, keywords);
     }
 
     @Override
-    public void run() {
-        BaiduDomainFilter s = new BaiduDomainFilter(pid,keywords);
-        s.setCookiePath("cache/BaiduDomain/");
-        s.setCookie(pid + "-cookie.bin");
-        s.loadCookie();
-        String url;
-        while (dsa.hasNext()) {
-            url = dsa.getNext();
-            s.doAnalysis(url);
-            mDP.put(url, s.getBDP());
-            s.getBDP().saveFile();
-        }
-        s.saveCookie();
-        s.close();
+    protected void createFilter() {
+        this.sea = new BaiduDomainFilter(pid, filter, keywords);
     }
 }

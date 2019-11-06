@@ -26,6 +26,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jsoup.nodes.Document;
+import seourl.type.Filter;
 
 /**
  *
@@ -202,6 +203,10 @@ public class Tools {
             //Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return urls;
+    }
+
+    public static void printError(final Filter filter, final Throwable t) {
+        printError(filter.getType(), t);
     }
 
     /**

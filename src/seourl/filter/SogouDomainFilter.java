@@ -10,6 +10,7 @@ import java.util.List;
 import seourl.other.Configure;
 import seourl.filter.ex.DomainFilterAbstract;
 import seourl.pack.SogouDomainPack;
+import seourl.type.Filter;
 
 /**
  *
@@ -19,8 +20,8 @@ public class SogouDomainFilter extends DomainFilterAbstract {
 
     private int count = 0;
 
-    public SogouDomainFilter(int pid, List<String> lkeyWords) {
-        super(pid, "Sogou-domain", lkeyWords);
+    public SogouDomainFilter(int pid,Filter filter, List<String> lkeyWords) {
+        super(pid, filter, lkeyWords);
     }
 
     public SogouDomainPack getSSP() {

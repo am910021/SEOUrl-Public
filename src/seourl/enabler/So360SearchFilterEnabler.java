@@ -7,7 +7,6 @@ package seourl.enabler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import seourl.SEOUrl;
@@ -15,7 +14,6 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.So360SerachPack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.So360SearchController;
 
@@ -52,7 +50,7 @@ public class So360SearchFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMSDP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         so360SearchMap = null;
         if (Configure.DEBUG) {

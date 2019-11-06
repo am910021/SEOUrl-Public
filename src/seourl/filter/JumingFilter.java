@@ -17,6 +17,7 @@ import seourl.other.Configure;
 import seourl.other.Tools;
 import seourl.filter.ex.FilterAbstract;
 import seourl.pack.*;
+import seourl.type.Filter;
 
 /**
  *
@@ -27,8 +28,8 @@ public class JumingFilter extends FilterAbstract {
     @Getter
     private JumingPack jp;
 
-    public JumingFilter(int pid) {
-        super(pid, "Juming");
+    public JumingFilter(int pid, Filter filter) {
+        super(pid, filter);
         System.out.println("建立聚名網過濾器。");
     }
 
@@ -55,7 +56,7 @@ public class JumingFilter extends FilterAbstract {
                 }
             }
         } catch (Exception ex) {
-            Tools.printError(filterType, ex);
+            Tools.printError(filter, ex);
         }
         if (login) {
             System.out.println("登入juming中....成功。");
@@ -109,7 +110,7 @@ public class JumingFilter extends FilterAbstract {
             System.out.printf("取得juming中的 %s 訊息....成功。\n", url);
             return true;
         } catch (Exception ex) {
-            Tools.printError(filterType, ex);
+            Tools.printError(filter, ex);
             System.out.printf("取得juming中的 %s 訊息....失敗。\n", url);
             this.jp.setError(true);
         }

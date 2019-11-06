@@ -60,7 +60,7 @@ public class BaiduDomainFilterEnabler<BaiduDomainPack> extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMDP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         baiduDomainCMap = null;
         if (Configure.DEBUG) {

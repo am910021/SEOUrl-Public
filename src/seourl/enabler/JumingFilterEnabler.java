@@ -49,7 +49,7 @@ public class JumingFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMJP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         jcMap = null;
         if (Configure.DEBUG) {

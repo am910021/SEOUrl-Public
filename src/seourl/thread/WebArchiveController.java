@@ -7,8 +7,6 @@ package seourl.thread;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import lombok.Getter;
 import seourl.other.TPair;
 import seourl.other.Tools;
 import seourl.data.SnapsHotsDataSet;
@@ -26,19 +24,16 @@ public class WebArchiveController extends ControllerAbstract<SnapsHotsDataSet> {
 
     private final List<String> titleKeywords;
     private final List<String> contentKeywords;
-    @Getter
-    private Map<String, PackAbstract> mWAP = new TreeMap<>();
 
     public WebArchiveController(int pid, Map<String, PackAbstract> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
-        super(pid, Filter.WEB_ARCHIVE, dataSet);
+        super(pid, Filter.WEB_ARCHIVE, dataSet, mWAP);
         this.titleKeywords = titleKeywords;
         this.contentKeywords = contentKeywords;
-        this.mWAP = mWAP;
     }
 
     @Override
     public void run() {
-        WebArchiveFilter waf3 = new WebArchiveFilter(pid, titleKeywords, contentKeywords);
+        WebArchiveFilter waf3 = new WebArchiveFilter(pid, filter, titleKeywords, contentKeywords);
         TPair<String, Integer, Long> tp;
         WebArchivePack wap;
         String url;
@@ -46,7 +41,7 @@ public class WebArchiveController extends ControllerAbstract<SnapsHotsDataSet> {
         while (dsa.hasNext()) {
             tp = dsa.getNext();
             url = tp.getLeft();
-            wap = (WebArchivePack) mWAP.get(url);
+            wap = (WebArchivePack) packMap.get(url);
             waf3.setWap(wap);
             waf3.doAnalysis(url, tp.getRight());
             this.printProgress();

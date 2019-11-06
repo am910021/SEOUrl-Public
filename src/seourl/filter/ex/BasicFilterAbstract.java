@@ -5,19 +5,21 @@
  */
 package seourl.filter.ex;
 
+import seourl.type.Filter;
+
 /**
  *
  * @author yuri
  */
 public abstract class BasicFilterAbstract {
 
-    protected final String filterType;
+    protected final Filter filter;
     protected final int pid;
 
-    public BasicFilterAbstract(int pid, String filterType) {
+    public BasicFilterAbstract(int pid, Filter filter) {
         this.pid = pid;
-        this.filterType = filterType;
-        System.out.printf("線程-%d 建立 %s 過濾器\n", pid, filterType);
+        this.filter = filter;
+        System.out.printf("線程-%d 建立 %s 過濾器\n", pid, filter.getType());
     }
 
 }

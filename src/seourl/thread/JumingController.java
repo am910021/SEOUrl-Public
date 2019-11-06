@@ -5,12 +5,8 @@
  */
 package seourl.thread;
 
-import java.util.Map;
-import java.util.TreeMap;
-import lombok.Getter;
 import seourl.data.UrlDataSet;
 import seourl.filter.JumingFilter;
-import seourl.pack.JumingPack;
 import seourl.thread.ex.ControllerAbstract;
 import seourl.type.Filter;
 
@@ -18,10 +14,7 @@ import seourl.type.Filter;
  *
  * @author Yuri
  */
-public class JumingController extends ControllerAbstract<UrlDataSet>  {
-
-   @Getter
-    private Map<String, JumingPack> mJP = new TreeMap<>();
+public class JumingController extends ControllerAbstract<UrlDataSet> {
 
     public JumingController(int pid, UrlDataSet dataSet) {
         super(pid, Filter.JUMING, dataSet);
@@ -29,7 +22,7 @@ public class JumingController extends ControllerAbstract<UrlDataSet>  {
 
     @Override
     public void run() {
-        JumingFilter j = new JumingFilter(pid);
+        JumingFilter j = new JumingFilter(pid, filter);
         j.setCookiePath("cache/Juming/");
         j.setCookie(pid + "-cookie.bin");
         j.loadCookie();
@@ -40,7 +33,7 @@ public class JumingController extends ControllerAbstract<UrlDataSet>  {
         while (dsa.hasNext()) {
             url = dsa.getNext();
             j.doAnalysis(url);
-            mJP.put(url, j.getJp());
+            packMap.put(url, j.getJp());
         }
         j.saveCookie();
         j.close();

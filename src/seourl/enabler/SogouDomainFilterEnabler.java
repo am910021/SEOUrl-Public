@@ -14,7 +14,6 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.SogouDomainPack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.SogouDomainController;
 
@@ -52,7 +51,7 @@ public class SogouDomainFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMSDP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         sogoDomainCMap = null;
         if (Configure.DEBUG) {

@@ -14,6 +14,7 @@ import seourl.other.Configure;
 import seourl.other.Tools;
 import seourl.filter.ex.BasicFilterAbstract;
 import seourl.pack.WebArchivePack;
+import seourl.type.Filter;
 
 /**
  *
@@ -30,8 +31,8 @@ public class WebArchiveFilter extends BasicFilterAbstract {
 
     Document doc;
 
-    public WebArchiveFilter(int pid, List<String> listTitle, List<String> listContent) {
-        super(pid, "WebArchive");
+    public WebArchiveFilter(int pid, Filter filter,List<String> listTitle, List<String> listContent) {
+        super(pid, filter);
         this.listTitle = listTitle;
         this.listContent = listContent;
     }
@@ -63,7 +64,7 @@ public class WebArchiveFilter extends BasicFilterAbstract {
                 status = true;
                 System.out.printf("線程-%d 取得 %s %d 快照成功。 \r\n",pid, url, s);
             } catch (Exception ex) {
-                Tools.printError(filterType, ex);
+                Tools.printError(filter, ex);
                 System.out.printf("線程-%d 取得 %s %d 快照失敗。\r\n",pid, url, s);
                 Tools.sleep(1*1000, 5*1000);
             }

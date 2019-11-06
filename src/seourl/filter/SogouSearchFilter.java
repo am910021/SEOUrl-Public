@@ -10,6 +10,7 @@ import java.util.List;
 import seourl.other.Configure;
 import seourl.filter.ex.SearchEngineFilterAbstract;
 import seourl.pack.SogouSerachPack;
+import seourl.type.Filter;
 
 /**
  *
@@ -17,8 +18,8 @@ import seourl.pack.SogouSerachPack;
  */
 public class SogouSearchFilter extends SearchEngineFilterAbstract {
 
-    public SogouSearchFilter(int pid, List<String> lkeyWords) {
-        super(pid, "Sogou-Search", lkeyWords);
+    public SogouSearchFilter(int pid,Filter filter, List<String> lkeyWords) {
+        super(pid, filter, lkeyWords);
     }
 
     public SogouSerachPack getSSP() {

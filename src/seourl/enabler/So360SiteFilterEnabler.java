@@ -51,7 +51,7 @@ public class So360SiteFilterEnabler extends EnablerAbstract {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SEOUrl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.packMap.putAll(map.getValue().getMSDP());
+            this.packMap.putAll(map.getValue().getPackMap());
         }
         so360SiteCMap = null;
         if (Configure.DEBUG) {
