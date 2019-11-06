@@ -13,12 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,18 +28,8 @@ import seourl.enabler.SogouDomainFilterEnabler;
 import seourl.enabler.SogouSearchFilterEnabler;
 import seourl.enabler.WebArchiveFilterEnabler;
 import seourl.enabler.ex.EnablerAbstract;
-import seourl.pack.BaiduSitePack;
-import seourl.pack.So360SerachPack;
-import seourl.pack.So360SitePack;
-import seourl.pack.SogouDomainPack;
-import seourl.pack.SogouSerachPack;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateIndex;
-import seourl.thread.BaiduSiteController;
-import seourl.thread.So360SearchController;
-import seourl.thread.So360SiteController;
-import seourl.thread.SogouDomainController;
-import seourl.thread.SogouSearchController;
 
 /**
  *
@@ -59,27 +44,14 @@ public class SEOUrl {
      */
     private static final Logger LOG = Logger.getLogger(SEOUrl.class.getName());
 
-    private final List<EnablerAbstract> enablerAbstractList = new ArrayList<EnablerAbstract>();
+    private final List<EnablerAbstract> enablerAbstractList = new ArrayList<>();
 
     /**
      * Get the value of enablerAbstractList
      *
      * @return the value of enablerAbstractList
      */
-    private final Date startTime = new Date();
     private final UrlDataSet urlDataSet = new UrlDataSet();
-
-    //最終要輸出的資料
-    private Map<String, SogouSerachPack> sogoSearchPMap = new TreeMap<>();       //百度網站資料集
-
-    private Map<String, SogouDomainPack> sogouDomainPMap = new TreeMap<>();
-
-    //執行中的暫存資料
-    private Map<Integer, SogouDomainController> sogoDomainCMap = new HashMap<>();
-
-    private Map<Integer, SogouSearchController> sogouSearchCMap = new HashMap<>();
-
-    private int totalSnapsHotsSize = 0;
 
     public SEOUrl() {
         Configure.printStatus();
@@ -112,71 +84,6 @@ public class SEOUrl {
         }
     }
 
-    /**
-     * 百度網站過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    private void startSo360SiteFilter(boolean show) {
-
-    }
-
-    /**
-     * 百度網站過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    /**
-     * 搜狗搜尋過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    private void startSogouSearcFilter(boolean show) {
-
-    }
-
-    /**
-     * 百度域名過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    /**
-     * 360搜過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    private void startSo360SearchFIlter(boolean show) {
-
-    }
-
-    /**
-     * 搜狗域名過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl 3.loadKeyword<br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
-    private void startSogouDomainFilter(boolean show) {
-
-    }
-
-    /**
-     * 聚名網過濾 <br>
-     * 必需執行：1.loadUrl 2.splitUrl <br>
-     * 單獨呼叫時為"測式用"
-     *
-     * @param show 是否印出除錯訊息
-     */
     public void start() {
         if (Configure.ENABLE_WEBARCHIVE) {
             enablerAbstractList.add(WebArchiveFilterEnabler.getInstance());
@@ -234,12 +141,12 @@ public class SEOUrl {
 
         int[] count = {0, 0, 0};
 
-        TemplateIndex passT = new TemplateIndex(startTime);
-        passT.insertTime(startTime);
+        TemplateIndex passT = new TemplateIndex(Configure.startTime);
+        passT.insertTime(Configure.startTime);
         passT.setSaveName("index");
 
-        TemplateIndex failT = new TemplateIndex(startTime);
-        failT.insertTime(startTime);
+        TemplateIndex failT = new TemplateIndex(Configure.startTime);
+        failT.insertTime(Configure.startTime);
         failT.setSaveName("index_f");
 
         for (String url : urlDataSet.getListCopy()) {
@@ -248,7 +155,7 @@ public class SEOUrl {
         passT.creatFile();
         failT.creatFile();
         System.out.printf("URL數量:%d  通過:%d 未通過:%d  unknow:%d  \r\n", urlDataSet.getSize(), count[0], count[1], count[2]);
-        long total = (System.currentTimeMillis() - startTime.getTime());
+        long total = (System.currentTimeMillis() - Configure.startTime.getTime());
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
         long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;

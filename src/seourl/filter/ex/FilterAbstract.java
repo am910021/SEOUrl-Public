@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.logging.LogFactory;
+import seourl.other.Configure;
 import seourl.type.Device;
 import seourl.other.Tools;
 
@@ -40,8 +41,9 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
     protected BrowserVersion browser;
 
     public abstract boolean doAnalysis(String url);
+
     protected abstract void createNewSearchEnginePack(String url);
-    
+
     @Getter
     @Setter
     private String cookie = "cookie.bin";
@@ -79,6 +81,9 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setUseInsecureSSL(true);
+        if (Configure.localAddress != null) {
+            webClient.getOptions().setLocalAddress(Configure.localAddress);
+        }
         webClient.waitForBackgroundJavaScriptStartingBefore(3000);
         webClient.getCookieManager().setCookiesEnabled(true);
         webClient.getCurrentWindow().setInnerHeight(Integer.MAX_VALUE);
@@ -144,15 +149,15 @@ public abstract class FilterAbstract extends BasicFilterAbstract {
             Tools.printError(filterType, ex);
         }
     }
-    
-    protected final void cleanMemory(){
-        if(page != null){
+
+    protected final void cleanMemory() {
+        if (page != null) {
             page.cleanUp();
         }
     }
-    
-    protected final void cleanMenory(HtmlPage p){
-        if(p!=null){
+
+    protected final void cleanMenory(HtmlPage p) {
+        if (p != null) {
             p.cleanUp();
         }
     }
