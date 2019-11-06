@@ -9,14 +9,15 @@ package seourl.filter.ex;
  *
  * @author yuri
  */
-public abstract class BasicFilterAbstract implements FilterInterface{
-    protected final String filterType;
+public abstract class BasicFilterAbstract {
 
-    public BasicFilterAbstract(String filterType) {
+    protected final String filterType;
+    protected final int pid;
+
+    public BasicFilterAbstract(int pid, String filterType) {
+        this.pid = pid;
         this.filterType = filterType;
-        System.out.printf("建立 %s 過濾器\n", filterType);
+        System.out.printf("線程-%d 建立 %s 過濾器\n", pid, filterType);
     }
-    
-    
-    
+
 }

@@ -7,7 +7,6 @@ package seourl.enabler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import seourl.SEOUrl;
@@ -15,7 +14,6 @@ import seourl.data.UrlDataSet;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.other.Configure;
 import seourl.other.Tools;
-import seourl.pack.BaiduDomainPack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.BaiduDomainController;
 
@@ -23,7 +21,7 @@ import seourl.thread.BaiduDomainController;
  *
  * @author Yuri
  */
-public class BaiduDomainFilterEnabler extends EnablerAbstract {
+public class BaiduDomainFilterEnabler<BaiduDomainPack> extends EnablerAbstract {
 
     private Map<Integer, BaiduDomainController> baiduDomainCMap = new HashMap<>();
 
@@ -46,6 +44,16 @@ public class BaiduDomainFilterEnabler extends EnablerAbstract {
             Tools.sleep(1 * 1000, 5 * 1000);
         }
         bdc = null;
+        while (true) {
+            for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
+                System.out.println(map.getValue().isAlive());
+            }
+
+            if (0 > 1) {
+                break;
+            }
+        }
+
         for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
             try {
                 map.getValue().join();

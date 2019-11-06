@@ -5,7 +5,6 @@
  */
 package seourl.thread;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,34 +12,33 @@ import lombok.Getter;
 import seourl.data.UrlDataSet;
 import seourl.filter.BaiduDomainFilter;
 import seourl.pack.BaiduDomainPack;
+import seourl.thread.ex.ControllerAbstract;
+import seourl.type.Filter;
 
 /**
  *
  * @author Yuri
  */
-public class BaiduDomainController extends Thread {
+public class BaiduDomainController extends ControllerAbstract<UrlDataSet> {
 
-    private UrlDataSet dataSet;
     private List<String> keywords;
     @Getter
     private Map<String, BaiduDomainPack> mDP = new TreeMap<>();
-    private final int pid;
 
     public BaiduDomainController(int pid, UrlDataSet dataSet, List<String> keywords) {
-        this.pid = pid;
-        this.dataSet = dataSet;
+        super(pid, Filter.BAIDU_DOMAIN, dataSet);
         this.keywords = keywords;
     }
 
     @Override
     public void run() {
-        BaiduDomainFilter s = new BaiduDomainFilter(keywords);
+        BaiduDomainFilter s = new BaiduDomainFilter(pid,keywords);
         s.setCookiePath("cache/BaiduDomain/");
         s.setCookie(pid + "-cookie.bin");
         s.loadCookie();
         String url;
-        while (dataSet.hasNext()) {
-            url = dataSet.getNext();
+        while (dsa.hasNext()) {
+            url = dsa.getNext();
             s.doAnalysis(url);
             mDP.put(url, s.getBDP());
             s.getBDP().saveFile();

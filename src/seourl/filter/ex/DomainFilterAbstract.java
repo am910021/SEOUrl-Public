@@ -20,8 +20,8 @@ public abstract class DomainFilterAbstract extends SearchEngineFilterAbstract {
     @Override
     protected abstract boolean hasPageError();
 
-    public DomainFilterAbstract(String filterType, List<String> lkeyWords) {
-        super(filterType, lkeyWords);
+    public DomainFilterAbstract(int pid, String filterType, List<String> lkeyWords) {
+        super(pid, filterType, lkeyWords);
     }
 
     @Override

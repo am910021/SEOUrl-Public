@@ -5,7 +5,7 @@
  */
 package seourl.pack.ex;
 
-import java.util.Date;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ import lombok.Setter;
  *
  * @author yuri
  */
-public abstract class PackAbstract {
+public abstract class PackAbstract implements Serializable{
 
     protected final String path;
     protected final String domain;

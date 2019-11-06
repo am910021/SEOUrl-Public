@@ -5,7 +5,6 @@
  */
 package seourl.thread.ex;
 
-import lombok.Setter;
 import seourl.data.ex.DataSetAbstract;
 import seourl.type.Filter;
 
@@ -13,17 +12,19 @@ import seourl.type.Filter;
  *
  * @author Yuri
  */
-public abstract class ControllerAbstract extends Thread {
+public abstract class ControllerAbstract<T extends DataSetAbstract> extends Thread {
 
     protected final Filter filter;
-    protected final DataSetAbstract dsa;
+    protected final T dsa;
+    protected final int pid;
 
     @Override
     public abstract void run();
 
-    public ControllerAbstract(Filter f, DataSetAbstract dsa) {
+    public ControllerAbstract(int pid, Filter f, T dsa) {
+        this.pid = pid;
         this.filter = f;
-        this.dsa =dsa;
+        this.dsa = dsa;
     }
 
     final protected void printProgress() {

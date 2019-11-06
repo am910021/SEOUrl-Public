@@ -26,8 +26,8 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
     @Getter(AccessLevel.PROTECTED)
     protected SearchEnginePack sep;
 
-    public SearchEngineFilterAbstract(String filterType, List<String> lkeyWords) {
-        super(filterType);
+    public SearchEngineFilterAbstract(int pid, String filterType, List<String> lkeyWords) {
+        super(pid, filterType);
         this.lkeyWords = lkeyWords;
     }
 

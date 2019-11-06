@@ -18,8 +18,8 @@ import seourl.pack.So360SitePack;
  */
 public class So360SiteFilter extends SearchEngineFilterAbstract {
 
-    public So360SiteFilter(List<String> lkeyWords) {
-        super("360SO-Site", lkeyWords);
+    public So360SiteFilter(int pid, List<String> lkeyWords) {
+        super(pid, "360SO-Site", lkeyWords);
     }
 
     public So360SitePack getSSP() {

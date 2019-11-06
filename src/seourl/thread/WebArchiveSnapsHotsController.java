@@ -19,15 +19,13 @@ import seourl.type.Filter;
  *
  * @author Yuri
  */
-public class WebArchiveSnapsHotsController extends ControllerAbstract {
+public class WebArchiveSnapsHotsController extends ControllerAbstract<UrlDataSet> {
 
     @Getter
     private Map<String, WebArchivePack> mWAP = new TreeMap<>();
-    private final int pid;
 
     public WebArchiveSnapsHotsController(int pid, UrlDataSet dataSet) {
-        super(Filter.WEB_ARCHIVE_LIST, dataSet);
-        this.pid = pid;
+        super(pid, Filter.WEB_ARCHIVE_LIST, dataSet);
     }
 
     @Override
@@ -35,7 +33,7 @@ public class WebArchiveSnapsHotsController extends ControllerAbstract {
         WebArchiveSnapsHot wash = new WebArchiveSnapsHot(pid);
         String url;
         while (dsa.hasNext()) {
-            url = ((UrlDataSet) dsa).getNext();
+            url = dsa.getNext();
             wash.doAnalysis(url);
             mWAP.put(url, wash.getWap());
             this.printProgress();

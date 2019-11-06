@@ -17,8 +17,8 @@ import seourl.pack.SogouSerachPack;
  */
 public class SogouSearchFilter extends SearchEngineFilterAbstract {
 
-    public SogouSearchFilter(List<String> lkeyWords) {
-        super("Sogou-Search", lkeyWords);
+    public SogouSearchFilter(int pid, List<String> lkeyWords) {
+        super(pid, "Sogou-Search", lkeyWords);
     }
 
     public SogouSerachPack getSSP() {

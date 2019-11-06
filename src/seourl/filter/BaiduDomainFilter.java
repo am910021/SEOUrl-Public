@@ -17,8 +17,8 @@ import seourl.pack.BaiduDomainPack;
  */
 public class BaiduDomainFilter extends DomainFilterAbstract {
 
-    public BaiduDomainFilter(List<String> lkeyWords) {
-        super("Baidu-Domain", lkeyWords);
+    public BaiduDomainFilter(int pid, List<String> lkeyWords) {
+        super(pid, "Baidu-Domain", lkeyWords);
     }
 
     public BaiduDomainPack getBDP() {

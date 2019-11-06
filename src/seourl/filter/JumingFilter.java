@@ -27,8 +27,8 @@ public class JumingFilter extends FilterAbstract {
     @Getter
     private JumingPack jp;
 
-    public JumingFilter() {
-        super("Juming");
+    public JumingFilter(int pid) {
+        super(pid, "Juming");
         System.out.println("建立聚名網過濾器。");
     }
 

@@ -22,17 +22,15 @@ import seourl.type.Filter;
  *
  * @author Yuri
  */
-public class WebArchiveController extends ControllerAbstract {
+public class WebArchiveController extends ControllerAbstract<SnapsHotsDataSet> {
 
     private final List<String> titleKeywords;
     private final List<String> contentKeywords;
     @Getter
     private Map<String, PackAbstract> mWAP = new TreeMap<>();
-    private final int pid;
 
     public WebArchiveController(int pid, Map<String, PackAbstract> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
-        super(Filter.WEB_ARCHIVE, dataSet);
-        this.pid = pid;
+        super(pid, Filter.WEB_ARCHIVE, dataSet);
         this.titleKeywords = titleKeywords;
         this.contentKeywords = contentKeywords;
         this.mWAP = mWAP;
@@ -46,7 +44,7 @@ public class WebArchiveController extends ControllerAbstract {
         String url;
 
         while (dsa.hasNext()) {
-            tp = ((SnapsHotsDataSet) dsa).getNext();
+            tp = dsa.getNext();
             url = tp.getLeft();
             wap = (WebArchivePack) mWAP.get(url);
             waf3.setWap(wap);

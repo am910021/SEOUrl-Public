@@ -17,8 +17,8 @@ import seourl.pack.BaiduSitePack;
  */
 public class BaiduSiteFilter extends SearchEngineFilterAbstract {
 
-    public BaiduSiteFilter(List<String> lkeyWords) {
-        super("Baidu-Site", lkeyWords);
+    public BaiduSiteFilter(int pid,List<String> lkeyWords) {
+        super(pid, "Baidu-Site", lkeyWords);
     }
 
     public BaiduSitePack getBSP() {

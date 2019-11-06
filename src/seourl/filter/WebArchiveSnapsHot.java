@@ -27,11 +27,9 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
 
     @Getter
     private WebArchivePack wap;
-    private final int pid;
 
     public WebArchiveSnapsHot(int pid) {
-        super(Filter.WEB_ARCHIVE.getType()+"List");
-        this.pid = pid;
+        super(pid, Filter.WEB_ARCHIVE.getType() + "List");
     }
 
     // @Override

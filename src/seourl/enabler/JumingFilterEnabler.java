@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import seourl.other.Configure;
 import seourl.SEOUrl;
+import seourl.data.UrlDataSet;
 import seourl.other.Tools;
 import seourl.enabler.ex.EnablerAbstract;
 import seourl.pack.ex.PackAbstract;
@@ -36,7 +37,7 @@ public class JumingFilterEnabler extends EnablerAbstract {
         JumingController tc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            tc = new JumingController(i, dsa);
+            tc = new JumingController(i, (UrlDataSet) dsa);
             jcMap.put(i, tc);
             tc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

@@ -29,13 +29,11 @@ public class WebArchiveFilter extends BasicFilterAbstract {
     private List<String> listContent;
 
     Document doc;
-    final int pid;
 
     public WebArchiveFilter(int pid, List<String> listTitle, List<String> listContent) {
-        super("WebArchive");
+        super(pid, "WebArchive");
         this.listTitle = listTitle;
         this.listContent = listContent;
-        this.pid = pid;
     }
 
     public boolean getPage(String url, long s) {
