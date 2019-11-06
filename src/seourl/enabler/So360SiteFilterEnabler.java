@@ -26,7 +26,6 @@ public class So360SiteFilterEnabler extends EnablerAbstract {
     private Map<Integer, So360SiteController> so360SiteCMap = new HashMap<>();
 
     private So360SiteFilterEnabler() {
-         Tools.checkKeyWordFile("SO360_SITE.txt");
     }
 
     public static So360SiteFilterEnabler getInstance() {
@@ -38,7 +37,7 @@ public class So360SiteFilterEnabler extends EnablerAbstract {
         So360SiteController ssc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            ssc = new So360SiteController(i, (UrlDataSet) dsa, Tools.loadKeyword("SO360_SITE.txt"));
+            ssc = new So360SiteController(i, (UrlDataSet) dsa);
             so360SiteCMap.put(i, ssc);
             ssc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

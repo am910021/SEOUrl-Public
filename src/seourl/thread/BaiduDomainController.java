@@ -17,8 +17,8 @@ import seourl.type.Filter;
  */
 public class BaiduDomainController extends SearchEngineControllerAbstract {
 
-    public BaiduDomainController(int pid, UrlDataSet dataSet, List<String> keywords) {
-        super(pid, Filter.BAIDU_DOMAIN, dataSet, keywords);
+    public BaiduDomainController(int pid, UrlDataSet dataSet) {
+        super(pid, Filter.BAIDU_DOMAIN, dataSet);
     }
 
     @Override

@@ -26,7 +26,6 @@ public class SogouSearchFilterEnabler extends EnablerAbstract {
     private Map<Integer, SogouSearchController> sogouSearchCMap = new HashMap<>();
 
     private SogouSearchFilterEnabler() {
-        Tools.checkKeyWordFile("SOGOU_SEARCH.txt");
     }
 
     public static SogouSearchFilterEnabler getInstance() {
@@ -38,7 +37,7 @@ public class SogouSearchFilterEnabler extends EnablerAbstract {
         SogouSearchController ssc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            ssc = new SogouSearchController(i, (UrlDataSet) dsa, Tools.loadKeyword("SOGOU_SEARCH.txt"));
+            ssc = new SogouSearchController(i, (UrlDataSet) dsa);
             sogouSearchCMap.put(i, ssc);
             ssc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

@@ -20,7 +20,7 @@ public class SogouDomainFilter extends DomainFilterAbstract {
 
     private int count = 0;
 
-    public SogouDomainFilter(int pid,Filter filter, List<String> lkeyWords) {
+    public SogouDomainFilter(int pid, Filter filter, List<String> lkeyWords) {
         super(pid, filter, lkeyWords);
     }
 

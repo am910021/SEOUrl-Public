@@ -8,6 +8,7 @@ package seourl.thread.ex;
 import java.util.List;
 import seourl.data.UrlDataSet;
 import seourl.filter.ex.SearchEngineFilterAbstract;
+import seourl.other.Tools;
 import seourl.type.Filter;
 
 /**
@@ -19,18 +20,18 @@ public abstract class SearchEngineControllerAbstract extends ControllerAbstract<
     final protected List<String> keywords;
     protected SearchEngineFilterAbstract sea = null;
 
-
     protected abstract void createFilter();
 
-    public SearchEngineControllerAbstract(int pid, Filter f, UrlDataSet dsa, List<String> keywords) {
-        super(pid, f, dsa);
-        this.keywords = keywords;
+    public SearchEngineControllerAbstract(int pid, Filter filter, UrlDataSet dsa) {
+        super(pid, filter, dsa);
+        Tools.checkKeyWordFile(filter.toString());
+        this.keywords = Tools.loadKeyword(filter.toString());
     }
 
     @Override
     public void run() {
         this.createFilter();
-        sea.setCookiePath("cache/" + this.filter.getType() + "/");
+        sea.setCookiePath("cache/" + filter + "/");
         sea.setCookie(pid + "-cookie.bin");
         sea.loadCookie();
         String url;

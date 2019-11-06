@@ -26,15 +26,17 @@ public class TPair<L, M, R> {
         this.mid = mid;
         this.right = right;
     }
-    
-    public L getLeft(){
+
+    public L getLeft() {
         return left;
     }
-    public M getMid(){
+
+    public M getMid() {
         return mid;
     }
-    public R getRight(){
+
+    public R getRight() {
         return right;
-    }    
-    
+    }
+
 }

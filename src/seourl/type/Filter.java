@@ -27,9 +27,13 @@ public enum Filter {
     @Getter
     private int id;
 
-    @Getter
     private String type;
-    
+
+    @Override
+    public String toString() {
+        return type;
+    }
+
     @Getter
     @Setter
     private boolean enable;

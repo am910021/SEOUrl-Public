@@ -13,7 +13,7 @@ import lombok.Setter;
  *
  * @author yuri
  */
-public abstract class PackAbstract implements Serializable{
+public abstract class PackAbstract implements Serializable {
 
     protected final String path;
     protected final String domain;
@@ -35,11 +35,11 @@ public abstract class PackAbstract implements Serializable{
         return "";
     }
 
-    public String[] getIndexStr(){
-        String tmp [] = {this.getSaveLocation(), this.allPass() ? "通過" : "未通過 " + this.getReason()};
+    public String[] getIndexStr() {
+        String tmp[] = {this.getSaveLocation(), this.allPass() ? "通過" : "未通過 " + this.getReason()};
         return tmp;
     }
-    
+
     public final String getSaveLocation() {
         return getFinalPath() + domain + ".html";
     }

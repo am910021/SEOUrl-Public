@@ -23,7 +23,7 @@ public class JumingController extends ControllerAbstract<UrlDataSet> {
     @Override
     public void run() {
         JumingFilter j = new JumingFilter(pid, filter);
-        j.setCookiePath("cache/Juming/");
+        j.setCookiePath("cache/" + filter.toString() + "/");
         j.setCookie(pid + "-cookie.bin");
         j.loadCookie();
         j.loadWeb("http://www.juming.com");

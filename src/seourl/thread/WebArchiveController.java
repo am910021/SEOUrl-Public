@@ -5,12 +5,14 @@
  */
 package seourl.thread;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import seourl.other.TPair;
 import seourl.other.Tools;
 import seourl.data.SnapsHotsDataSet;
 import seourl.filter.WebArchiveFilter;
+import seourl.other.Configure;
 import seourl.pack.WebArchivePack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.ex.ControllerAbstract;
@@ -25,10 +27,23 @@ public class WebArchiveController extends ControllerAbstract<SnapsHotsDataSet> {
     private final List<String> titleKeywords;
     private final List<String> contentKeywords;
 
-    public WebArchiveController(int pid, Map<String, PackAbstract> mWAP, SnapsHotsDataSet dataSet, List<String> titleKeywords, List<String> contentKeywords) {
+    public WebArchiveController(int pid, Map<String, PackAbstract> mWAP, SnapsHotsDataSet dataSet) {
         super(pid, Filter.WEB_ARCHIVE, dataSet, mWAP);
-        this.titleKeywords = titleKeywords;
-        this.contentKeywords = contentKeywords;
+
+        if (Configure.WEBARCHIVE_TITLE_FILTER) {
+            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString());
+            titleKeywords = Tools.loadKeyword(Filter.WEB_ARCHIVE.toString() + "TITLE");
+        } else {
+            titleKeywords = new ArrayList<>();
+        }
+
+        if (Configure.WEBARCHIVE_CONTENT_FILTER) {
+            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString());
+            contentKeywords = Tools.loadKeyword(Filter.WEB_ARCHIVE.toString() + "CONTENT");
+        } else {
+            contentKeywords = new ArrayList<>();
+        }
+
     }
 
     @Override

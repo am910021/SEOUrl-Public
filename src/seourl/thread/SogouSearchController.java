@@ -17,8 +17,8 @@ import seourl.type.Filter;
  */
 public class SogouSearchController extends SearchEngineControllerAbstract {
 
-    public SogouSearchController(int pid, UrlDataSet dataSet, List<String> keywords) {
-        super(pid, Filter.SOGOU_SEARCH, dataSet, keywords);
+    public SogouSearchController(int pid, UrlDataSet dataSet) {
+        super(pid, Filter.SOGOU_SEARCH, dataSet);
     }
 
     @Override

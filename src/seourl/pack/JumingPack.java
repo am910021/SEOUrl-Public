@@ -35,15 +35,15 @@ public class JumingPack extends PackAbstract {
     boolean error = false;
 
     public JumingPack(String url) {
-        super("",url);
+        super("", url);
     }
 
     @Override
-    public String[] getIndexStr(){
+    public String[] getIndexStr() {
         String tmp[] = {String.format("<a href=\"http://www.juming.com/hao/?cha_ym=%s\" target=\"_blank\">%s</a>", domain, this.getStatus())};
         return tmp;
     }
-    
+
     @Override
     public boolean allPass() {
         return !reg && !qq && !weChat && !gfw && !error;

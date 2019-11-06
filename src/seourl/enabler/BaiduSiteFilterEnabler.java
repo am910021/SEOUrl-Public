@@ -26,7 +26,6 @@ public class BaiduSiteFilterEnabler extends EnablerAbstract {
     private Map<Integer, BaiduSiteController> baiduSiteCMap = new HashMap<>();
 
     private BaiduSiteFilterEnabler() {
-        Tools.checkKeyWordFile("BAIDU_SITE.txt");
     }
 
     public static BaiduSiteFilterEnabler getInstance() {
@@ -38,7 +37,7 @@ public class BaiduSiteFilterEnabler extends EnablerAbstract {
         BaiduSiteController bsc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            bsc = new BaiduSiteController(i, (UrlDataSet) dsa, Tools.loadKeyword("BAIDU_SITE.txt"));
+            bsc = new BaiduSiteController(i, (UrlDataSet) dsa);
             baiduSiteCMap.put(i, bsc);
             bsc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

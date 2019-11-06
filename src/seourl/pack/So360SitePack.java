@@ -15,7 +15,7 @@ import seourl.other.Configure;
 public class So360SitePack extends SearchEnginePack {
 
     public So360SitePack(String url) {
-        super("files/So360Site/", "360搜尋網站",url);
+        super("files/So360Site/", "360搜尋網站", url);
         this.url = Configure.SO360_SITE;
     }
 

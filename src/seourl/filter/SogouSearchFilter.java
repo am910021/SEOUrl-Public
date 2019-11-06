@@ -18,7 +18,7 @@ import seourl.type.Filter;
  */
 public class SogouSearchFilter extends SearchEngineFilterAbstract {
 
-    public SogouSearchFilter(int pid,Filter filter, List<String> lkeyWords) {
+    public SogouSearchFilter(int pid, Filter filter, List<String> lkeyWords) {
         super(pid, filter, lkeyWords);
     }
 

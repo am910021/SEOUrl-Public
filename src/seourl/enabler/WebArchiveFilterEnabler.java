@@ -23,6 +23,7 @@ import seourl.pack.WebArchivePack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.WebArchiveController;
 import seourl.thread.WebArchiveSnapsHotsController;
+import seourl.type.Filter;
 
 /**
  *
@@ -32,10 +33,10 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
 
     private Map<Integer, WebArchiveSnapsHotsController> washcMap = new HashMap<>();
     private Map<Integer, WebArchiveController> wacMap = new HashMap<>();
+    List<String> title;
+    List<String> content;
 
     private WebArchiveFilterEnabler() {
-        Tools.checkKeyWordFile("WEBARCHIVE-TITLE.txt");
-        Tools.checkKeyWordFile("WEBARCHIVE-CONTENT.txt");
     }
 
     public static WebArchiveFilterEnabler getInstance() {
@@ -86,13 +87,12 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         SnapsHotsDataSet snapsHotsDataSet = new SnapsHotsDataSet();
         snapsHotsDataSet.setData(getSplitSnapsHots());
         int totalSnapsHotsSize = snapsHotsDataSet.getSize();
-        List<String> title = Tools.loadKeyword("WEBARCHIVE-TITLE.txt");;
-        List<String> content = Tools.loadKeyword("WEBARCHIVE-CONTENT.txt");
+
         System.out.printf("URL數量:%d  預計讀取快照量:%d\n", dsa.getSize(), totalSnapsHotsSize);
         WebArchiveController wac;
 
         for (int i = 0; i < Configure.WEBARCHIVE_MAX_THREAD; i++) {
-            wac = new WebArchiveController(i, packMap, snapsHotsDataSet, title, content);
+            wac = new WebArchiveController(i, packMap, snapsHotsDataSet);
             wacMap.put(i, wac);
             wac.start();
             Tools.sleep(1 * 1000, 5 * 1000);

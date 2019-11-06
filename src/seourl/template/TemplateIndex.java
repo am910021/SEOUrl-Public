@@ -14,8 +14,6 @@ import seourl.other.Tools;
  */
 public class TemplateIndex extends Template {
 
-    
-    
     public TemplateIndex(Date startTime) {
         super("index", startTime);
     }

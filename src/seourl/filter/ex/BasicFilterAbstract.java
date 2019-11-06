@@ -19,7 +19,7 @@ public abstract class BasicFilterAbstract {
     public BasicFilterAbstract(int pid, Filter filter) {
         this.pid = pid;
         this.filter = filter;
-        System.out.printf("線程-%d 建立 %s 過濾器\n", pid, filter.getType());
+        System.out.printf("線程-%d 建立 %s 過濾器\n", pid, filter);
     }
 
 }

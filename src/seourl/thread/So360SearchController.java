@@ -17,8 +17,8 @@ import seourl.type.Filter;
  */
 public class So360SearchController extends SearchEngineControllerAbstract {
 
-    public So360SearchController(int pid, UrlDataSet dataSet, List<String> keywords) {
-        super(pid, Filter.SO360_SEARCH, dataSet, keywords);
+    public So360SearchController(int pid, UrlDataSet dataSet) {
+        super(pid, Filter.SO360_SEARCH, dataSet);
     }
 
     @Override

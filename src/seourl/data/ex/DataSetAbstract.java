@@ -31,7 +31,7 @@ public abstract class DataSetAbstract<T> implements Cloneable {
     public abstract List<T> getListCopy();
 
     public abstract DataSetAbstract getClone();
-    
+
     public abstract void setData(List<T> list);
 
     @Synchronized("lockProgress")

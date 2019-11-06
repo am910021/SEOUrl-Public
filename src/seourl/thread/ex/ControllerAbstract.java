@@ -15,6 +15,7 @@ import seourl.type.Filter;
 /**
  *
  * @author Yuri
+ * @param <T> extends DataSetAbstract
  */
 public abstract class ControllerAbstract<T extends DataSetAbstract> extends Thread {
 
@@ -44,7 +45,7 @@ public abstract class ControllerAbstract<T extends DataSetAbstract> extends Thre
     final protected void printProgress() {
         dsa.addProgress();
         if (dsa.isNeedPrintProgress()) {
-            System.out.printf("%s讀取參數執行進度 %d / %d \r\n", filter.getType(), dsa.getProgress(), dsa.getSize());
+            System.out.printf("%s讀取參數執行進度 %d / %d \r\n", filter, dsa.getProgress(), dsa.getSize());
         }
     }
 }

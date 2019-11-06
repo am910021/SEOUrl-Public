@@ -31,7 +31,7 @@ public class WebArchiveFilter extends BasicFilterAbstract {
 
     Document doc;
 
-    public WebArchiveFilter(int pid, Filter filter,List<String> listTitle, List<String> listContent) {
+    public WebArchiveFilter(int pid, Filter filter, List<String> listTitle, List<String> listContent) {
         super(pid, filter);
         this.listTitle = listTitle;
         this.listContent = listContent;
@@ -46,7 +46,7 @@ public class WebArchiveFilter extends BasicFilterAbstract {
         while ((!status && count < Configure.WEBARCH_TRY_REDECT_TIMES)) {
             timeout += baseTimeout;
             try {
-                
+
                 doc = Tools.getUrlDocument(tmpUrl, timeout);
                 if (doc == null) {
                     throw new Exception("doc is null");
@@ -62,11 +62,11 @@ public class WebArchiveFilter extends BasicFilterAbstract {
                     throw new Exception("doc is null");
                 }
                 status = true;
-                System.out.printf("線程-%d 取得 %s %d 快照成功。 \r\n",pid, url, s);
+                System.out.printf("線程-%d 取得 %s %d 快照成功。 \r\n", pid, url, s);
             } catch (Exception ex) {
                 Tools.printError(filter, ex);
-                System.out.printf("線程-%d 取得 %s %d 快照失敗。\r\n",pid, url, s);
-                Tools.sleep(1*1000, 5*1000);
+                System.out.printf("線程-%d 取得 %s %d 快照失敗。\r\n", pid, url, s);
+                Tools.sleep(1 * 1000, 5 * 1000);
             }
             count++;
         }

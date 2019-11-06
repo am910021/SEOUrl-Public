@@ -26,7 +26,6 @@ public class So360SearchFilterEnabler extends EnablerAbstract {
     private Map<Integer, So360SearchController> so360SearchMap = new HashMap<>();
 
     private So360SearchFilterEnabler() {
-         Tools.checkKeyWordFile("SO360_SEARCH.txt");
     }
 
     public static So360SearchFilterEnabler getInstance() {
@@ -38,7 +37,7 @@ public class So360SearchFilterEnabler extends EnablerAbstract {
         So360SearchController ssc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            ssc = new So360SearchController(i, (UrlDataSet) dsa, Tools.loadKeyword("SO360_SEARCH.txt"));
+            ssc = new So360SearchController(i, (UrlDataSet) dsa);
             so360SearchMap.put(i, ssc);
             ssc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

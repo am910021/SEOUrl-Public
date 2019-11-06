@@ -26,7 +26,6 @@ public class BaiduDomainFilterEnabler<BaiduDomainPack> extends EnablerAbstract {
     private Map<Integer, BaiduDomainController> baiduDomainCMap = new HashMap<>();
 
     private BaiduDomainFilterEnabler() {
-        Tools.checkKeyWordFile("BAIDU_DOMAIN.txt");
     }
 
     public static BaiduDomainFilterEnabler getInstance() {
@@ -38,7 +37,7 @@ public class BaiduDomainFilterEnabler<BaiduDomainPack> extends EnablerAbstract {
         BaiduDomainController bdc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
-            bdc = new BaiduDomainController(i, (UrlDataSet) dsa, Tools.loadKeyword("BAIDU_DOMAIN.txt"));
+            bdc = new BaiduDomainController(i, (UrlDataSet) dsa);
             baiduDomainCMap.put(i, bdc);
             bdc.start();
             Tools.sleep(1 * 1000, 5 * 1000);

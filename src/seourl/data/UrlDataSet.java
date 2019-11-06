@@ -41,7 +41,7 @@ public class UrlDataSet extends DataSetAbstract<String> {
     public int getSize() {
         return urls.size();
     }
-    
+
     @Synchronized("readUrlLock")
     @Override
     public String getNext() {

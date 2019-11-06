@@ -46,7 +46,7 @@ public class Template {
     protected String savePath;
     @Setter
     protected String saveName;
-    
+
     protected int line = 0;
 
     protected Template(String type, Date startTime) {

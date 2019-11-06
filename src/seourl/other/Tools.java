@@ -152,6 +152,7 @@ public class Tools {
     }
 
     public static List<String> loadKeyword(String fileName) {
+        fileName+=".txt";
         List<String> keywords = new ArrayList<String>();
         try {
             File file = new File(Configure.KEY_WORD_PATH + fileName);
@@ -206,7 +207,7 @@ public class Tools {
     }
 
     public static void printError(final Filter filter, final Throwable t) {
-        printError(filter.getType(), t);
+        printError(filter.toString(), t);
     }
 
     /**
@@ -266,6 +267,7 @@ public class Tools {
     }
 
     public static void checkKeyWordFile(String file) {
+        file += ".txt";
         Tools.checkDir(Configure.KEY_WORD_PATH);
         File k = new File(Configure.KEY_WORD_PATH + file);
 
