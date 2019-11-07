@@ -17,6 +17,7 @@ import seourl.type.Filter;
  */
 public abstract class SearchEngineControllerAbstract extends ControllerAbstract<UrlDataSet> {
 
+    protected boolean needCookie = true;
     final protected List<String> keywords;
     protected SearchEngineFilterAbstract sea = null;
 
@@ -32,8 +33,11 @@ public abstract class SearchEngineControllerAbstract extends ControllerAbstract<
     public void run() {
         this.createFilter();
         sea.setCookiePath("cache/" + filter + "/");
-        sea.setCookie(pid + "-cookie.bin");
-        sea.loadCookie();
+        if (needCookie) {
+            sea.setCookie(pid + "-cookie.bin");
+            sea.loadCookie();
+        }
+
         String url;
         while (dsa.hasNext()) {
             url = dsa.getNext();
@@ -41,7 +45,9 @@ public abstract class SearchEngineControllerAbstract extends ControllerAbstract<
             packMap.put(url, sea.getSep());
             sea.getSep().saveFile();
         }
-        sea.saveCookie();
+        if (needCookie) {
+            sea.saveCookie();
+        }
         sea.close();
     }
 

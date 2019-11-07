@@ -10,30 +10,32 @@ import lombok.Setter;
 import lombok.ToString;
 import seourl.other.Configure;
 import seourl.template.TemplateSearchEngine;
+import seourl.type.Filter;
 
 /**
  *
  * @author yuri
  */
-@ToString
+@ToString(callSuper = true)
 public class SearchEnginePack extends PackAbstract {
 
-    protected String type;
+    @Setter
     protected String url;
+    
 
     @Getter
     @Setter
-    private boolean illegal = false;
+    protected boolean illegal = false;
 
-    private boolean error[] = {false, false, false};
+    protected boolean error[] = {false, false, false};
 
-    private boolean page[] = {false, false, false};
+    protected boolean page[] = {false, false, false};
 
-    private String keyword[] = {"", "", ""};
+    protected String keyword[] = {"", "", ""};
 
-    public SearchEnginePack(String path, String type, String url) {
-        super(path, url);
-        this.type = type;
+    public SearchEnginePack(Filter filter, String domain, String url) {
+        super(filter, domain);
+        this.url = url;
     }
 
     public String getStatus() {
@@ -123,8 +125,8 @@ public class SearchEnginePack extends PackAbstract {
         TemplateSearchEngine tse = new TemplateSearchEngine(Configure.startTime);
         tse.setSavePath(this.getFinalPath());
         tse.setSaveName(domain);
-        tse.insertTitle(this.type, domain);
-        tse.insertType(this.type);
+        tse.insertTitle(filter.toString(), domain);
+        tse.insertType(filter.toString());
         tse.insertDomain(domain);
         tse.insertTime(this.getReadTime());
         tse.insertRecord(url + domain, domain, this.getError(), this.getPage(), this.getKeyWord());

@@ -33,8 +33,8 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
     }
 
     // @Override
-    protected void createNewSearchEnginePack(String url) {
-        this.wap = new WebArchivePack(url);
+    protected void createNewSearchEnginePack(String domain) {
+        this.wap = new WebArchivePack(filter, domain);
     }
 
     public boolean doAnalysis(String url) {

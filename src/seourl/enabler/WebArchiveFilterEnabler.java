@@ -23,7 +23,6 @@ import seourl.pack.WebArchivePack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.WebArchiveController;
 import seourl.thread.WebArchiveSnapsHotsController;
-import seourl.type.Filter;
 
 /**
  *

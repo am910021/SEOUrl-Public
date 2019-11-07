@@ -61,8 +61,8 @@ public class SogouDomainFilter extends DomainFilterAbstract {
     }
 
     @Override
-    final protected void createNewSearchEnginePack(String url) {
-        this.sep = new SogouDomainPack(url);
+    final protected void createNewSearchEnginePack(String domain) {
+        this.sep = new SogouDomainPack(filter, domain);
     }
 
     @Override

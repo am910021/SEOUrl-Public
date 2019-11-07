@@ -5,8 +5,10 @@
  */
 package seourl.pack;
 
+import lombok.ToString;
 import seourl.pack.ex.SearchEnginePack;
 import seourl.other.Configure;
+import seourl.type.Filter;
 
 /**
  *
@@ -14,9 +16,8 @@ import seourl.other.Configure;
  */
 public class So360SerachPack extends SearchEnginePack {
 
-    public So360SerachPack(String url) {
-        super("files/So360Serach/", "360搜尋", url);
-        this.url = Configure.SO360_SEARCH;
+    public So360SerachPack(Filter filter, String url) {
+        super(filter, url, Configure.SO360_SEARCH);
     }
 
 }

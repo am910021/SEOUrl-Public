@@ -43,15 +43,15 @@ public class BaiduDomainFilterEnabler<BaiduDomainPack> extends EnablerAbstract {
             Tools.sleep(1 * 1000, 5 * 1000);
         }
         bdc = null;
-        while (true) {
-            for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
-                System.out.println(map.getValue().isAlive());
-            }
-
-            if (0 > 1) {
-                break;
-            }
-        }
+//        while (true) {
+//            for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
+//                System.out.println(map.getValue().isAlive());
+//            }
+//
+//            if (0 > 1) {
+//                break;
+//            }
+//        }
 
         for (Map.Entry<Integer, BaiduDomainController> map : baiduDomainCMap.entrySet()) {
             try {

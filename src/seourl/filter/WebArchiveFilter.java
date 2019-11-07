@@ -88,8 +88,8 @@ public class WebArchiveFilter extends BasicFilterAbstract {
 
     private boolean[] doFilter(long snapshot) {
         boolean status[] = {true, true};
-        String title = doc.title();
-        String content = doc.body().text();
+        String title = doc.title().toUpperCase();
+        String content = doc.body().text().toUpperCase();
 
         if (Configure.WEBARCHIVE_TITLE_FILTER) {
             for (String s : listTitle) {

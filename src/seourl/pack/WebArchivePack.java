@@ -15,12 +15,12 @@ import lombok.ToString;
 import seourl.other.Configure;
 import seourl.pack.ex.PackAbstract;
 import seourl.template.TemplateWebArch;
+import seourl.type.Filter;
 
 /**
  *
  * @author yuri
  */
-@ToString
 public class WebArchivePack extends PackAbstract {
 
     @Getter
@@ -37,12 +37,12 @@ public class WebArchivePack extends PackAbstract {
     @Getter
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
-    private Long readTime = System.currentTimeMillis();
+
     private final static String green = "<snap style=\"color:green\">%s</snap>";
     private final static String red = "<snap style=\"color:red\">%s</snap>";
 
-    public WebArchivePack(String url) {
-        super("files/WebArchive/", url);
+    public WebArchivePack(Filter filter, String domain) {
+        super(filter, domain);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class WebArchivePack extends PackAbstract {
         tWebArch.setSaveName(domain);
         tWebArch.insertTitle(domain);
         tWebArch.insertDomain(domain);
-        tWebArch.insertTime(readTime);
+        tWebArch.insertTime(this.getReadTime());
         String title = "未啟用";
         String content = "未啟用";
         for (Map.Entry<Integer, List<Long>> entry : snapshots.entrySet()) {

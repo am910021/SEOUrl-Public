@@ -31,6 +31,7 @@ public class Configure {
     public static final int MAX_THREAD = 5; //多線程，聚名網 sogou 專用
     public static final int WEBARCHIVE_MAX_THREAD = 5; //多線程，聚名網 sogou 專用
 
+    public static final String JUMING_FILTER_LOGIN = "http://www.juming.com/";
     public static final String JUMING_FILTER = "http://www.juming.com/hao/?cha_ym=";
     public static final String WEBARCHIVE = "http://web.archive.org/web/%d/http://%s/";
     public static final String BAIDU_DOMAIN = "https://www.baidu.com/s?wd=domain:";

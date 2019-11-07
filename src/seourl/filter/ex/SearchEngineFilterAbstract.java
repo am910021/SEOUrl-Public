@@ -98,9 +98,9 @@ public abstract class SearchEngineFilterAbstract extends FilterAbstract {
         while ((!status && (System.currentTimeMillis() - time) < Configure.RELOAD_PAGE_TIME * 1000)) {
             try {
                 String tUrl = getPageUrl(url, i);
-                if (Configure.DEBUG) {
-                    System.out.println(tUrl);
-                }
+//                if (Configure.DEBUG) {
+//                    System.out.println(tUrl);
+//                }
                 this.cleanMemory();
                 page = webClient.getPage(tUrl);
                 status = true;

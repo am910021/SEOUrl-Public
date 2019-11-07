@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import seourl.pack.ex.PackAbstract;
+import seourl.type.Filter;
 
 /**
  *
@@ -34,8 +35,8 @@ public class JumingPack extends PackAbstract {
     @Setter
     boolean error = false;
 
-    public JumingPack(String url) {
-        super("", url);
+    public JumingPack(Filter filter, String url) {
+        super(filter, url);
     }
 
     @Override

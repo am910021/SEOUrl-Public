@@ -5,8 +5,10 @@
  */
 package seourl.pack;
 
+import lombok.ToString;
 import seourl.pack.ex.SearchEnginePack;
 import seourl.other.Configure;
+import seourl.type.Filter;
 
 /**
  *
@@ -14,9 +16,8 @@ import seourl.other.Configure;
  */
 public class BaiduSitePack extends SearchEnginePack {
 
-    public BaiduSitePack(String url) {
-        super("files/BaiduSite/", "百度搜尋", url);
-        this.url = Configure.BAIDU_SITE;
+    public BaiduSitePack(Filter filter, String url) {
+        super(filter, url, Configure.BAIDU_SITE);
     }
 
 }

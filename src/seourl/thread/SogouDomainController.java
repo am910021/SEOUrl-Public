@@ -5,7 +5,6 @@
  */
 package seourl.thread;
 
-import java.util.List;
 import seourl.data.UrlDataSet;
 import seourl.filter.SogouDomainFilter;
 import seourl.thread.ex.SearchEngineControllerAbstract;
@@ -19,7 +18,7 @@ public class SogouDomainController extends SearchEngineControllerAbstract {
 
     public SogouDomainController(int pid, UrlDataSet dataSet) {
         super(pid, Filter.SOGOU_DOMAIN, dataSet);
-
+        this.needCookie = false;
     }
 
     @Override

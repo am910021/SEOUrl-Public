@@ -118,7 +118,7 @@ public class JumingFilter extends FilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack(String url) {
-        jp = new JumingPack(url);
+    protected void createNewSearchEnginePack(String domain) {
+        jp = new JumingPack(filter, domain);
     }
 }

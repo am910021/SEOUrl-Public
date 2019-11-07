@@ -22,6 +22,7 @@ public abstract class ControllerAbstract<T extends DataSetAbstract> extends Thre
     protected final Filter filter;
     protected final T dsa;
     protected final int pid;
+    
     @Getter
     protected final Map<String, PackAbstract> packMap;
 

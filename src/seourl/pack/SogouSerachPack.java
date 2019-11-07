@@ -5,8 +5,10 @@
  */
 package seourl.pack;
 
+import lombok.ToString;
 import seourl.pack.ex.SearchEnginePack;
 import seourl.other.Configure;
+import seourl.type.Filter;
 
 /**
  *
@@ -14,9 +16,8 @@ import seourl.other.Configure;
  */
 public class SogouSerachPack extends SearchEnginePack {
 
-    public SogouSerachPack(String url) {
-        super("files/SogouSerach/", "搜狗搜尋", url);
-        this.url = Configure.SOGOU_SEARCH;
+    public SogouSerachPack(Filter filter, String domain) {
+        super(filter, domain, Configure.SOGOU_SEARCH);
     }
 
 }

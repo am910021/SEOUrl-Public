@@ -69,8 +69,8 @@ public class So360SiteFilter extends SearchEngineFilterAbstract {
     }
 
     @Override
-    protected void createNewSearchEnginePack(String url) {
-        this.sep = new So360SitePack(url);
+    protected void createNewSearchEnginePack(String domain) {
+        this.sep = new So360SitePack(filter, domain);
     }
 
     @Override

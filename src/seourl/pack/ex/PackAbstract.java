@@ -8,18 +8,21 @@ package seourl.pack.ex;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import seourl.type.Filter;
 
 /**
  *
  * @author yuri
  */
+@ToString
 public abstract class PackAbstract implements Serializable {
 
-    protected final String path;
+    protected final Filter filter;
     protected final String domain;
 
-    public PackAbstract(String path, String domain) {
-        this.path = path;
+    public PackAbstract(Filter filter, String domain) {
+        this.filter = filter;
         this.domain = domain;
     }
 
@@ -46,14 +49,14 @@ public abstract class PackAbstract implements Serializable {
 
     protected final String getFinalPath() {
         if (allPass()) {
-            return this.path + "pass/";
+            return "files/" + filter.toString() + "pass/";
         } else {
-            return this.path + "fail/";
+            return "files/" + filter.toString() + "fail/";
         }
     }
 
     public void print(String url) {
-        System.out.println(url + "  " + this.toString());
+        System.out.println(this.toString());
     }
 
 }
