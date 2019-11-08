@@ -100,7 +100,13 @@ public class Configure {
         boolean enableSogouDomain = true;
         boolean enableSogouSearch = true;
 
-        String ip = System.getProperty("IP");
+        String ip = "127.0.0.1";
+        try {
+            ip = System.getProperty("IP");
+        } catch (Exception e) {
+
+        }
+
         if (ip.equals("127.0.0.1")) {
             ip = "0.0.0.0";
         }
