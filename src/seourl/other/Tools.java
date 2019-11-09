@@ -152,7 +152,7 @@ public class Tools {
     }
 
     public static List<String> loadKeyword(String fileName) {
-        fileName+=".txt";
+        fileName += ".txt";
         List<String> keywords = new ArrayList<String>();
         try {
             File file = new File(Configure.KEY_WORD_PATH + fileName);
@@ -175,8 +175,9 @@ public class Tools {
     }
 
     public static String getJSON(String url, int timeout) {
-        HttpConnect hc = new HttpConnect(url, timeout, true);
-        return hc.getString();
+        HttpConnect hc = new HttpConnect(url, timeout);
+        hc.setJson(true);
+        return hc.getJson();
 
     }
 
@@ -231,6 +232,29 @@ public class Tools {
             out = new FileOutputStream(file, true);
             out.write("---------------------------------\r\n".getBytes());
             out.write(getString(t).getBytes());
+            out.write("\n---------------------------------\r\n".getBytes());
+        } catch (IOException ess) {
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ignore) {
+            }
+        }
+    }
+
+    public static void printError(final String fileName, final String s) {
+        FileOutputStream out = null;
+        final String file = FILE_PATH + ERROR + fileName + ".log";
+        try {
+            File outputFile = new File(file);
+            if (outputFile.getParentFile() != null) {
+                outputFile.getParentFile().mkdirs();
+            }
+            out = new FileOutputStream(file, true);
+            out.write("---------------------------------\r\n".getBytes());
+            out.write(s.getBytes());
             out.write("\n---------------------------------\r\n".getBytes());
         } catch (IOException ess) {
         } finally {

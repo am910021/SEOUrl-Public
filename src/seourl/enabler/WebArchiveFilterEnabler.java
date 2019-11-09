@@ -77,19 +77,20 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
         long h = TimeUnit.MILLISECONDS.toHours(total);
         long m = TimeUnit.MILLISECONDS.toMinutes(total) - (h * 60);
         long s = TimeUnit.MILLISECONDS.toSeconds(total) - ((h * 60) + m) * 60;
-        System.out.printf("快照列表讀取時間:%d小時 %d分鐘 %d秒\n", h, m, s);
-
-        if (!Configure.WEBARCHIVE_TITLE_FILTER && !Configure.WEBARCHIVE_CONTENT_FILTER) {
-            return;
-        }
 
         SnapsHotsDataSet snapsHotsDataSet = new SnapsHotsDataSet();
         snapsHotsDataSet.setData(getSplitSnapsHots());
         int totalSnapsHotsSize = snapsHotsDataSet.getSize();
 
-        System.out.printf("URL數量:%d  預計讀取快照量:%d\n", dsa.getSize(), totalSnapsHotsSize);
-        WebArchiveController wac;
+        System.out.printf("快照列表讀取時間:%d小時 %d分鐘 %d秒  共：%d 個快照\r\n", h, m, s, totalSnapsHotsSize);
 
+        if (!Configure.WEBARCHIVE_TITLE_FILTER && !Configure.WEBARCHIVE_CONTENT_FILTER) {
+            snapsHotsDataSet = null;
+            return;
+        }
+
+        System.out.printf("URL數量:%d  預計讀取快照量:%d\r\n", dsa.getSize(), totalSnapsHotsSize);
+        WebArchiveController wac;
         for (int i = 0; i < Configure.WEBARCHIVE_MAX_THREAD; i++) {
             wac = new WebArchiveController(i, packMap, snapsHotsDataSet);
             wacMap.put(i, wac);

@@ -37,7 +37,6 @@ public class WebArchivePack extends PackAbstract {
     @Getter
     private Map<Long, String> contentKeyword = new TreeMap<>(Collections.reverseOrder());
 
-
     private final static String green = "<snap style=\"color:green\">%s</snap>";
     private final static String red = "<snap style=\"color:red\">%s</snap>";
 
@@ -47,7 +46,26 @@ public class WebArchivePack extends PackAbstract {
 
     @Override
     public boolean allPass() {
-        return snapshots.size() > 0 && this.titleKeyword.size() == 0 && this.contentKeyword.size() == 0 && !urlErrpr && yearError.size() == 0 && error.size() == 0;
+        if (snapshots.size() == 0) {
+            return false;
+        }
+        if (this.titleKeyword.size() > 0) {
+            return false;
+        }
+        if (this.contentKeyword.size() > 0) {
+            return false;
+        }
+        if (urlErrpr) {
+            return false;
+        }
+        if (yearError.size() > 0) {
+            return false;
+        }
+        if (error.size() > 0) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

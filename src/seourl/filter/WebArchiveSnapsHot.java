@@ -156,6 +156,7 @@ public class WebArchiveSnapsHot extends BasicFilterAbstract {
             }
         } catch (Exception e) {
             Tools.printError(filter, e);
+            Tools.printError(filter.toString(), s);
             System.out.printf("線程-%d %s %d 年快照參數無法分析。 \r\n", pid, url, year);
         }
         return true;
