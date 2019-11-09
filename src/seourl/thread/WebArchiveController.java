@@ -31,14 +31,12 @@ public class WebArchiveController extends ControllerAbstract<SnapsHotsDataSet> {
         super(pid, Filter.WEB_ARCHIVE, dataSet, mWAP);
 
         if (Configure.WEBARCHIVE_TITLE_FILTER) {
-            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString() + "-TITLE");
             titleKeywords = Tools.loadKeyword(Filter.WEB_ARCHIVE.toString() + "-TITLE");
         } else {
             titleKeywords = new ArrayList<>();
         }
 
         if (Configure.WEBARCHIVE_CONTENT_FILTER) {
-            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString() + "-CONTENT");
             contentKeywords = Tools.loadKeyword(Filter.WEB_ARCHIVE.toString() + "-CONTENT");
         } else {
             contentKeywords = new ArrayList<>();

@@ -23,6 +23,7 @@ import seourl.pack.WebArchivePack;
 import seourl.pack.ex.PackAbstract;
 import seourl.thread.WebArchiveController;
 import seourl.thread.WebArchiveSnapsHotsController;
+import seourl.type.Filter;
 
 /**
  *
@@ -36,6 +37,13 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
     List<String> content;
 
     private WebArchiveFilterEnabler() {
+        if (Configure.WEBARCHIVE_TITLE_FILTER) {
+            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString() + "-TITLE");
+        }
+
+        if (Configure.WEBARCHIVE_CONTENT_FILTER) {
+            Tools.checkKeyWordFile(Filter.WEB_ARCHIVE.toString() + "-CONTENT");
+        }
     }
 
     public static WebArchiveFilterEnabler getInstance() {
@@ -44,7 +52,7 @@ public class WebArchiveFilterEnabler extends EnablerAbstract {
 
     @Override
     public void run() {
-        if (!Configure.ENABLE_WEBARCHIVE) {
+        if (dsa.getSize() == 0) {
             return;
         }
 

@@ -34,13 +34,17 @@ public class JumingFilterEnabler extends EnablerAbstract {
 
     @Override
     public void run() {
+        if (dsa.getSize() == 0) {
+            return;
+        }
+
         JumingController tc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {
             tc = new JumingController(i, (UrlDataSet) dsa);
             jcMap.put(i, tc);
             tc.start();
-            Tools.sleep(1 * 1000, 5 * 1000);
+            Tools.sleep(5 * 1000, 15 * 1000);
         }
         tc = null;
         for (Map.Entry<Integer, JumingController> map : jcMap.entrySet()) {

@@ -34,6 +34,10 @@ public class SogouDomainFilterEnabler extends EnablerAbstract {
 
     @Override
     public void run() {
+        if (dsa.getSize() == 0) {
+            return;
+        }
+
         SogouDomainController sdc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {

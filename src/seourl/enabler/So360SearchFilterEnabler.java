@@ -34,6 +34,10 @@ public class So360SearchFilterEnabler extends EnablerAbstract {
 
     @Override
     public void run() {
+        if (dsa.getSize() == 0) {
+            return;
+        }
+
         So360SearchController ssc;
         int maxThread = Math.min(Configure.MAX_THREAD, dsa.getSize());
         for (int i = 0; i < maxThread; i++) {

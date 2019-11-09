@@ -89,7 +89,6 @@ public class SEOUrl {
             enablerAbstractList.add(WebArchiveFilterEnabler.getInstance());
             WebArchiveFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
         }
-
         if (Configure.ENABLE_JUMING_FILTER) {
             enablerAbstractList.add(JumingFilterEnabler.getInstance());
             JumingFilterEnabler.getInstance().setDsa(urlDataSet.getClone());
